@@ -297,9 +297,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c7ea7a2c40e73c4bbffaad91f7bbc37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpd: 30
-  maxHealth: 100
-  currHealth: 0
+  moveSpd: 50
   jumpVelocity: 5
   fallMultipler: 2.5
   lowJumpMultiplier: 2

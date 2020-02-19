@@ -49,6 +49,30 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""ClearClones"",
+                    ""type"": ""Button"",
+                    ""id"": ""8210257b-56ab-44a3-8638-ce5a796c27c7"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""IncreaseTimescale"",
+                    ""type"": ""Button"",
+                    ""id"": ""589b545d-6d4b-445b-be0f-2345ef733a81"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""DecreaseTimescale"",
+                    ""type"": ""Button"",
+                    ""id"": ""335657d1-cbf6-46c2-9f68-9ae8cc7bf218"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -188,10 +212,43 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                     ""name"": """",
                     ""id"": ""d23e72fb-7057-4d96-9606-50b0366a008c"",
                     ""path"": ""<Keyboard>/space"",
-                    ""interactions"": ""Press(behavior=2)"",
+                    ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KB&M"",
                     ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9de355b4-5824-4464-9687-6a2128bdccc2"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KB&M"",
+                    ""action"": ""ClearClones"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""649e3dad-e6f7-4170-801a-6f7c002cd34c"",
+                    ""path"": ""<Keyboard>/numpadPlus"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KB&M"",
+                    ""action"": ""IncreaseTimescale"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""35ef55b7-5baf-4a61-94b9-3519aad13adc"",
+                    ""path"": ""<Keyboard>/numpadMinus"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KB&M"",
+                    ""action"": ""DecreaseTimescale"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -223,6 +280,9 @@ public class @PlayerActions : IInputActionCollection, IDisposable
         m_Character_Look = m_Character.FindAction("Look", throwIfNotFound: true);
         m_Character_Spawn = m_Character.FindAction("Spawn", throwIfNotFound: true);
         m_Character_Jump = m_Character.FindAction("Jump", throwIfNotFound: true);
+        m_Character_ClearClones = m_Character.FindAction("ClearClones", throwIfNotFound: true);
+        m_Character_IncreaseTimescale = m_Character.FindAction("IncreaseTimescale", throwIfNotFound: true);
+        m_Character_DecreaseTimescale = m_Character.FindAction("DecreaseTimescale", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -276,6 +336,9 @@ public class @PlayerActions : IInputActionCollection, IDisposable
     private readonly InputAction m_Character_Look;
     private readonly InputAction m_Character_Spawn;
     private readonly InputAction m_Character_Jump;
+    private readonly InputAction m_Character_ClearClones;
+    private readonly InputAction m_Character_IncreaseTimescale;
+    private readonly InputAction m_Character_DecreaseTimescale;
     public struct CharacterActions
     {
         private @PlayerActions m_Wrapper;
@@ -284,6 +347,9 @@ public class @PlayerActions : IInputActionCollection, IDisposable
         public InputAction @Look => m_Wrapper.m_Character_Look;
         public InputAction @Spawn => m_Wrapper.m_Character_Spawn;
         public InputAction @Jump => m_Wrapper.m_Character_Jump;
+        public InputAction @ClearClones => m_Wrapper.m_Character_ClearClones;
+        public InputAction @IncreaseTimescale => m_Wrapper.m_Character_IncreaseTimescale;
+        public InputAction @DecreaseTimescale => m_Wrapper.m_Character_DecreaseTimescale;
         public InputActionMap Get() { return m_Wrapper.m_Character; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -305,6 +371,15 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                 @Jump.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnJump;
                 @Jump.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnJump;
                 @Jump.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnJump;
+                @ClearClones.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnClearClones;
+                @ClearClones.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnClearClones;
+                @ClearClones.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnClearClones;
+                @IncreaseTimescale.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnIncreaseTimescale;
+                @IncreaseTimescale.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnIncreaseTimescale;
+                @IncreaseTimescale.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnIncreaseTimescale;
+                @DecreaseTimescale.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnDecreaseTimescale;
+                @DecreaseTimescale.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnDecreaseTimescale;
+                @DecreaseTimescale.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnDecreaseTimescale;
             }
             m_Wrapper.m_CharacterActionsCallbackInterface = instance;
             if (instance != null)
@@ -321,6 +396,15 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                 @Jump.started += instance.OnJump;
                 @Jump.performed += instance.OnJump;
                 @Jump.canceled += instance.OnJump;
+                @ClearClones.started += instance.OnClearClones;
+                @ClearClones.performed += instance.OnClearClones;
+                @ClearClones.canceled += instance.OnClearClones;
+                @IncreaseTimescale.started += instance.OnIncreaseTimescale;
+                @IncreaseTimescale.performed += instance.OnIncreaseTimescale;
+                @IncreaseTimescale.canceled += instance.OnIncreaseTimescale;
+                @DecreaseTimescale.started += instance.OnDecreaseTimescale;
+                @DecreaseTimescale.performed += instance.OnDecreaseTimescale;
+                @DecreaseTimescale.canceled += instance.OnDecreaseTimescale;
             }
         }
     }
@@ -340,5 +424,8 @@ public class @PlayerActions : IInputActionCollection, IDisposable
         void OnLook(InputAction.CallbackContext context);
         void OnSpawn(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
+        void OnClearClones(InputAction.CallbackContext context);
+        void OnIncreaseTimescale(InputAction.CallbackContext context);
+        void OnDecreaseTimescale(InputAction.CallbackContext context);
     }
 }

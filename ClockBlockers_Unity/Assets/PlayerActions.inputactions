@@ -44,6 +44,22 @@
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "IncreaseTimescale",
+                    "type": "Button",
+                    "id": "589b545d-6d4b-445b-be0f-2345ef733a81",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "DecreaseTimescale",
+                    "type": "Button",
+                    "id": "335657d1-cbf6-46c2-9f68-9ae8cc7bf218",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -183,7 +199,7 @@
                     "name": "",
                     "id": "d23e72fb-7057-4d96-9606-50b0366a008c",
                     "path": "<Keyboard>/space",
-                    "interactions": "Press(behavior=2)",
+                    "interactions": "",
                     "processors": "",
                     "groups": "KB&M",
                     "action": "Jump",
@@ -198,6 +214,28 @@
                     "processors": "",
                     "groups": "KB&M",
                     "action": "ClearClones",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "649e3dad-e6f7-4170-801a-6f7c002cd34c",
+                    "path": "<Keyboard>/numpadPlus",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KB&M",
+                    "action": "IncreaseTimescale",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "35ef55b7-5baf-4a61-94b9-3519aad13adc",
+                    "path": "<Keyboard>/numpadMinus",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KB&M",
+                    "action": "DecreaseTimescale",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -62,9 +62,15 @@ public abstract class BaseController : MonoBehaviour
 
     protected void AffectGravity()
     {
-        if (characterController.isGrounded) return;
+        if (characterController.isGrounded)
+        {
+            var tempGrav = Physics.gravity * 0.1f;
+            if (moveVector.y < tempGrav.y)
+            moveVector = tempGrav;
+            return;
+        }
 
-        if (characterController.velocity.y <= 0)
+        if (moveVector.y <= 0)
         {
             moveVector += Physics.gravity * (fallMultipler - 1) * Time.fixedDeltaTime;
         }

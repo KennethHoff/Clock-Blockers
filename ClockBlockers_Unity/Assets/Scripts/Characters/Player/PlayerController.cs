@@ -27,8 +27,8 @@ public class PlayerController : BaseController
 
     private Vector2 movementInput;
 
-    private float cameraRotation;
-    private float characterRotation;
+    [SerializeField] private float upDowncameraRotation;
+    [SerializeField] private float sideToSideCharacterRotation;
 
 
     [Header("Player Setting")]
@@ -51,8 +51,8 @@ public class PlayerController : BaseController
     protected override void FixedUpdate()
     {
         MoveCharacterByInput();
-        RotateCharacter(characterRotation);
-        RotateCamera(cameraRotation);
+        RotateCharacter(sideToSideCharacterRotation);
+        RotateCamera(upDowncameraRotation);
 
         SaveCharacterActions();
 
@@ -64,8 +64,8 @@ public class PlayerController : BaseController
     {
         var value = ctx.Get<Vector2>();
 
-        characterRotation = value.x * horizontalMouseSensitivity * Time.fixedDeltaTime;
-        cameraRotation = value.y * verticalMouseSensitivity * Time.fixedDeltaTime;
+        sideToSideCharacterRotation = value.x * horizontalMouseSensitivity * Time.fixedDeltaTime;
+        upDowncameraRotation = value.y * verticalMouseSensitivity * Time.fixedDeltaTime;
     }
 
     public void OnMovement(InputValue ctx)
@@ -78,7 +78,7 @@ public class PlayerController : BaseController
         CreateClone();
     }
 
-    public void OnJump(InputValue ctx)
+    public void OnJump()
     {
         //holdingSpace = ctx.isPressed;
         //if (holdingSpace) AttemptToJump();
@@ -92,6 +92,18 @@ public class PlayerController : BaseController
         {
             Destroy(cloneParent.GetChild(i).gameObject);
         }
+    }
+
+    private void OnIncreaseTimescale()
+    {
+        Debug.Log("Increasing timescale. Now at: " + Time.timeScale);
+        Time.timeScale += 1;
+    }
+
+    private void OnDecreaseTimescale()
+    {
+        Debug.Log("Decreasing timescale. Now at: " + Time.timeScale);
+        Time.timeScale -= 1;
     }
 
     public void RotateCamera(float rotation)
@@ -110,12 +122,6 @@ public class PlayerController : BaseController
         var newAngle = new Vector3(clampedX, 0, 0);
 
         cam.transform.localRotation = Quaternion.Euler(newAngle);
-    }
-
-    public void RotateCameraViaInput()
-    {
-        RotateCamera(cameraRotation);
-        cameraRotation = 0;
     }
 
     private void SaveCharacterActions()
@@ -150,7 +156,7 @@ public class PlayerController : BaseController
 
         // After rotating, set the current rotation to 0. I set the rotation in the "Mouse moved" event.
         // And then every frame rotate the camera based on that, but if I don't reset it it'll keep turning.
-        cameraRotation = 0;
+        sideToSideCharacterRotation = 0;
     }
 
 
