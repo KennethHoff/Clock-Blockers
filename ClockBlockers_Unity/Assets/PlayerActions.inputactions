@@ -22,10 +22,10 @@
                     "interactions": ""
                 },
                 {
-                    "name": "Spawn",
+                    "name": "Shoot",
                     "type": "Button",
-                    "id": "25542b2e-fc3a-4122-8b48-f26141e42ee2",
-                    "expectedControlType": "Button",
+                    "id": "0cd467c4-6c6b-42ef-8dd7-efc7e57e4401",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": ""
                 },
@@ -33,6 +33,14 @@
                     "name": "Jump",
                     "type": "Button",
                     "id": "60daafb2-1bbd-4a40-a470-59e12d23fae4",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Spawn",
+                    "type": "Button",
+                    "id": "25542b2e-fc3a-4122-8b48-f26141e42ee2",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
@@ -197,17 +205,6 @@
                 },
                 {
                     "name": "",
-                    "id": "d23e72fb-7057-4d96-9606-50b0366a008c",
-                    "path": "<Keyboard>/space",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "KB&M",
-                    "action": "Jump",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "9de355b4-5824-4464-9687-6a2128bdccc2",
                     "path": "<Keyboard>/c",
                     "interactions": "",
@@ -236,6 +233,28 @@
                     "processors": "",
                     "groups": "KB&M",
                     "action": "DecreaseTimescale",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d23e72fb-7057-4d96-9606-50b0366a008c",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KB&M",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7a1cc27f-7660-4874-8052-a40007957a06",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "Press(behavior=2)",
+                    "processors": "",
+                    "groups": "KB&M",
+                    "action": "Shoot",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

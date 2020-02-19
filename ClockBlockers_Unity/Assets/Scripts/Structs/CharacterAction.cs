@@ -5,11 +5,12 @@ using UnityEngine;
 
 public class CharacterAction
 {
-    public String action;
+    public String method;
+    public String parameter;
     public float time;
 
     public override string ToString()
     {
-        return action + "should be called " + time + " seconds after spawn.";
+        return method + "should be called " + time + " seconds after spawn.";
     }
 }

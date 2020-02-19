@@ -35,10 +35,10 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                     ""interactions"": """"
                 },
                 {
-                    ""name"": ""Spawn"",
+                    ""name"": ""ShootRayCast"",
                     ""type"": ""Button"",
-                    ""id"": ""25542b2e-fc3a-4122-8b48-f26141e42ee2"",
-                    ""expectedControlType"": ""Button"",
+                    ""id"": ""0cd467c4-6c6b-42ef-8dd7-efc7e57e4401"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """"
                 },
@@ -46,6 +46,14 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                     ""name"": ""Jump"",
                     ""type"": ""Button"",
                     ""id"": ""60daafb2-1bbd-4a40-a470-59e12d23fae4"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Spawn"",
+                    ""type"": ""Button"",
+                    ""id"": ""25542b2e-fc3a-4122-8b48-f26141e42ee2"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
@@ -83,7 +91,7 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Movement"",
+                    ""method"": ""Movement"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -94,7 +102,7 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KB&M"",
-                    ""action"": ""Movement"",
+                    ""method"": ""Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -105,7 +113,7 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KB&M"",
-                    ""action"": ""Movement"",
+                    ""method"": ""Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -116,7 +124,7 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KB&M"",
-                    ""action"": ""Movement"",
+                    ""method"": ""Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -127,7 +135,7 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KB&M"",
-                    ""action"": ""Movement"",
+                    ""method"": ""Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -138,7 +146,7 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KB&M"",
-                    ""action"": ""Look"",
+                    ""method"": ""Look"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -149,7 +157,7 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": ""ScaleVector2(x=25,y=25)"",
                     ""groups"": """",
-                    ""action"": ""Look"",
+                    ""method"": ""Look"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -160,7 +168,7 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KB&M"",
-                    ""action"": ""Look"",
+                    ""method"": ""Look"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -171,7 +179,7 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KB&M"",
-                    ""action"": ""Look"",
+                    ""method"": ""Look"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -182,7 +190,7 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KB&M"",
-                    ""action"": ""Look"",
+                    ""method"": ""Look"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -193,7 +201,7 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KB&M"",
-                    ""action"": ""Look"",
+                    ""method"": ""Look"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -204,18 +212,7 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KB&M"",
-                    ""action"": ""Spawn"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""d23e72fb-7057-4d96-9606-50b0366a008c"",
-                    ""path"": ""<Keyboard>/space"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""KB&M"",
-                    ""action"": ""Jump"",
+                    ""method"": ""Spawn"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -226,7 +223,7 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KB&M"",
-                    ""action"": ""ClearClones"",
+                    ""method"": ""ClearClones"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -237,7 +234,7 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KB&M"",
-                    ""action"": ""IncreaseTimescale"",
+                    ""method"": ""IncreaseTimescale"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -248,7 +245,29 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KB&M"",
-                    ""action"": ""DecreaseTimescale"",
+                    ""method"": ""DecreaseTimescale"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d23e72fb-7057-4d96-9606-50b0366a008c"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KB&M"",
+                    ""method"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7a1cc27f-7660-4874-8052-a40007957a06"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": ""Press(behavior=2)"",
+                    ""processors"": """",
+                    ""groups"": ""KB&M"",
+                    ""method"": ""ShootRayCast"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -278,8 +297,9 @@ public class @PlayerActions : IInputActionCollection, IDisposable
         m_Character = asset.FindActionMap("Character", throwIfNotFound: true);
         m_Character_Movement = m_Character.FindAction("Movement", throwIfNotFound: true);
         m_Character_Look = m_Character.FindAction("Look", throwIfNotFound: true);
-        m_Character_Spawn = m_Character.FindAction("Spawn", throwIfNotFound: true);
+        m_Character_Shoot = m_Character.FindAction("ShootRayCast", throwIfNotFound: true);
         m_Character_Jump = m_Character.FindAction("Jump", throwIfNotFound: true);
+        m_Character_Spawn = m_Character.FindAction("Spawn", throwIfNotFound: true);
         m_Character_ClearClones = m_Character.FindAction("ClearClones", throwIfNotFound: true);
         m_Character_IncreaseTimescale = m_Character.FindAction("IncreaseTimescale", throwIfNotFound: true);
         m_Character_DecreaseTimescale = m_Character.FindAction("DecreaseTimescale", throwIfNotFound: true);
@@ -334,8 +354,9 @@ public class @PlayerActions : IInputActionCollection, IDisposable
     private ICharacterActions m_CharacterActionsCallbackInterface;
     private readonly InputAction m_Character_Movement;
     private readonly InputAction m_Character_Look;
-    private readonly InputAction m_Character_Spawn;
+    private readonly InputAction m_Character_Shoot;
     private readonly InputAction m_Character_Jump;
+    private readonly InputAction m_Character_Spawn;
     private readonly InputAction m_Character_ClearClones;
     private readonly InputAction m_Character_IncreaseTimescale;
     private readonly InputAction m_Character_DecreaseTimescale;
@@ -345,8 +366,9 @@ public class @PlayerActions : IInputActionCollection, IDisposable
         public CharacterActions(@PlayerActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @Movement => m_Wrapper.m_Character_Movement;
         public InputAction @Look => m_Wrapper.m_Character_Look;
-        public InputAction @Spawn => m_Wrapper.m_Character_Spawn;
+        public InputAction @Shoot => m_Wrapper.m_Character_Shoot;
         public InputAction @Jump => m_Wrapper.m_Character_Jump;
+        public InputAction @Spawn => m_Wrapper.m_Character_Spawn;
         public InputAction @ClearClones => m_Wrapper.m_Character_ClearClones;
         public InputAction @IncreaseTimescale => m_Wrapper.m_Character_IncreaseTimescale;
         public InputAction @DecreaseTimescale => m_Wrapper.m_Character_DecreaseTimescale;
@@ -365,12 +387,15 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                 @Look.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnLook;
                 @Look.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnLook;
                 @Look.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnLook;
-                @Spawn.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnSpawn;
-                @Spawn.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnSpawn;
-                @Spawn.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnSpawn;
+                @Shoot.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnShoot;
+                @Shoot.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnShoot;
+                @Shoot.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnShoot;
                 @Jump.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnJump;
                 @Jump.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnJump;
                 @Jump.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnJump;
+                @Spawn.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnSpawn;
+                @Spawn.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnSpawn;
+                @Spawn.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnSpawn;
                 @ClearClones.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnClearClones;
                 @ClearClones.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnClearClones;
                 @ClearClones.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnClearClones;
@@ -390,12 +415,15 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                 @Look.started += instance.OnLook;
                 @Look.performed += instance.OnLook;
                 @Look.canceled += instance.OnLook;
-                @Spawn.started += instance.OnSpawn;
-                @Spawn.performed += instance.OnSpawn;
-                @Spawn.canceled += instance.OnSpawn;
+                @Shoot.started += instance.OnShoot;
+                @Shoot.performed += instance.OnShoot;
+                @Shoot.canceled += instance.OnShoot;
                 @Jump.started += instance.OnJump;
                 @Jump.performed += instance.OnJump;
                 @Jump.canceled += instance.OnJump;
+                @Spawn.started += instance.OnSpawn;
+                @Spawn.performed += instance.OnSpawn;
+                @Spawn.canceled += instance.OnSpawn;
                 @ClearClones.started += instance.OnClearClones;
                 @ClearClones.performed += instance.OnClearClones;
                 @ClearClones.canceled += instance.OnClearClones;
@@ -422,8 +450,9 @@ public class @PlayerActions : IInputActionCollection, IDisposable
     {
         void OnMovement(InputAction.CallbackContext context);
         void OnLook(InputAction.CallbackContext context);
-        void OnSpawn(InputAction.CallbackContext context);
+        void OnShoot(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
+        void OnSpawn(InputAction.CallbackContext context);
         void OnClearClones(InputAction.CallbackContext context);
         void OnIncreaseTimescale(InputAction.CallbackContext context);
         void OnDecreaseTimescale(InputAction.CallbackContext context);

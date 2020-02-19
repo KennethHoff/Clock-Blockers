@@ -2,100 +2,147 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Security.Policy;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using Utility;
 
 public class CloneController : BaseController
 {
-    private int currentActionIndex = 0;
-    [Header("Setup Values")]
-    public Material CompletedMaterial;
-
-    public CharacterAction[] actionArray;
-
-    public int RemainingActions { get => actionArray.Length - currentActionIndex; }
-
-    public float TimeUntilLastActionIsCompleted
+    private void Start()
     {
-        get => actionArray.Last().time - TimeAlive;
+        EngageAllActions();
     }
 
-    protected override void FixedUpdate()
+    private void EngageAllActions()
     {
-        base.FixedUpdate();
-        CheckIfTimeForAction();
-    }
-
-    private void CheckIfTimeForAction()
-    {
-        if (HaveCompletedAllActions()) return;
-        var curTime = Time.time - spawnTime;
-
-        RunAllActionsThisFrame(curTime);
-
-    }
-
-    private void RunAllActionsThisFrame(float curTime)
-    {
-        if (actionArray[currentActionIndex].time <= curTime)
+        foreach (var characterAction in actionArray)
         {
-            //Debug.Log("Checking time of index: " + currentActionIndex);
-            RetrieveActionFromString(actionArray[currentActionIndex].action);
-            currentActionIndex++;
-
-            if (HaveCompletedAllActions()) return;
-            RunAllActionsThisFrame(curTime);
+            RunActionFromString(characterAction);
         }
     }
-
-    private bool HaveCompletedAllActions()
+    private void RunActionFromString(CharacterAction charAction)
     {
-        var value = actionArray.Length <= currentActionIndex;
 
-        if (value)
-        {
-            GetComponentInChildren<Renderer>().material = CompletedMaterial;
-            return true;
-        }
+        //var funcName = Regex.Match(actionString, "(?<=func: ).*?(?=params: )").ToString(); // Get function, by string.
+        //var para = Regex.Match(actionString, "(?<=params: ).*").ToString(); // Get parameters, by string.
 
-        return false;
-    }
-    private void RetrieveActionFromString(string actionString)
-    {
-        var funcName = Regex.Match(actionString, "(?<=func: ).*?(?=params: )").ToString(); // Get function, by string.
-        var para = Regex.Match(actionString, "(?<=params: ).*").ToString(); // Get parameters, by string.
+        //switch (funcName)
+        //{
+        //    case "moveCharacter":
+        //        var move = UsefulMethods.StringToVector3(para);
+        //        StartCoroutine(WaitMoveCharacterViaAction(move, charAction.time));
+        //        break;
+        //    case "rotateCharacter":
+        //        var charRot = float.Parse(para);
+        //        StartCoroutine(WaitRotateCharacterViaAction(charRot, charAction.time));
+        //        break;
+        //    case "jumpCharacter":
+        //        StartCoroutine(WaitJumpCharacterViaAction(charAction.time));
+        //        break;
+        //    case "rotateCamera":
+        //        var camRot = float.Parse(para);
+        //        StartCoroutine(WaitRotateCameraViaAction(camRot, charAction.time));
+        //        break;
+        //    case "shootGun":
+        //        StartCoroutine(WaitShootGunViaAction(charAction.time));
+        //        break;
+        //    case "spawnClone":
+        //        StartCoroutine(WaitSpawnClone(charAction.time));
+        //        break;
+        //    default:
+        //        Debug.Log(funcName + " is not a valid funcName");
+        //        break;
+        //}
 
+        var actionString = charAction.method;
+        var paramString = charAction.parameter;
 
-        switch (funcName)
+        switch (actionString)
         {
             case "moveCharacter":
-                var moveVector = UsefulMethods.StringToVector3(para);
-                MoveCharacterViaAction(moveVector);
+                var move = UsefulMethods.StringToVector3(paramString);
+                StartCoroutine(WaitMoveCharacterViaAction(move, charAction.time));
                 break;
             case "rotateCharacter":
-                var xRotation = float.Parse(para);
-                RotateCharacterViaAction(xRotation);
+                var charRot = float.Parse(paramString);
+                StartCoroutine(WaitRotateCharacterViaAction(charRot, charAction.time));
                 break;
             case "jumpCharacter":
-                AttemptToJump();
+                StartCoroutine(WaitJumpCharacterViaAction(charAction.time));
+                break;
+            case "rotateCamera":
+                var camRot = float.Parse(paramString);
+                StartCoroutine(WaitRotateCameraViaAction(camRot, charAction.time));
+                break;
+            case "shootGun":
+                StartCoroutine(WaitShootGunViaAction(charAction.time));
+                break;
+            case "spawnClone":
+                StartCoroutine(WaitSpawnClone(charAction.time));
                 break;
             default:
-                Debug.Log(funcName + " is not a valid funcName");
+                Debug.Log(actionString + " is not a valid Method Name");
                 break;
         }
+    }
+
+    private IEnumerator WaitSpawnClone(float timeToOccur)
+    {
+        yield return new WaitForSeconds(timeToOccur - Time.fixedDeltaTime);
+        yield return new WaitForFixedUpdate();
+        spawnClone();
+    }
+
+    private IEnumerator WaitShootGunViaAction(float timeToOccur)
+    {
+        yield return new WaitForSeconds(timeToOccur - Time.fixedDeltaTime);
+        yield return new WaitForFixedUpdate();
+        AttemptToShoot();
+    }
+
+    private IEnumerator WaitRotateCameraViaAction(float rotation, float timeToOccur)
+    {
+        yield return new WaitForSeconds(timeToOccur - Time.fixedDeltaTime);
+        yield return new WaitForFixedUpdate();
+        RotateCameraViaAction(rotation);
+    }
+
+    private void RotateCameraViaAction(float rotation)
+    {
+        RotateCamera(rotation);
     }
 
     public void RotateCharacterViaAction(float rotation)
     {
-        //Debug.Log("Rotating via Action.");
         RotateCharacter(rotation);
     }
 
-    public void MoveCharacterViaAction(Vector3 moveVector)
+    public void MoveCharacterViaAction(Vector3 move)
     {
-        //Debug.Log("Moving via Action");
-        MoveCharacterForward(moveVector.x, moveVector.z);
+        MoveCharacterForward(move.x, move.z);
     }
 
+
+    private IEnumerator WaitMoveCharacterViaAction(Vector3 move, float timeToOccur)
+    {
+        yield return new WaitForSeconds(timeToOccur - Time.fixedDeltaTime);
+        yield return new WaitForFixedUpdate();
+        MoveCharacterViaAction(move);
+    }
+
+    private IEnumerator WaitRotateCharacterViaAction(float rotation, float timeToOccur)
+    {
+        yield return new WaitForSeconds(timeToOccur - Time.fixedDeltaTime);
+        yield return new WaitForFixedUpdate();
+        RotateCharacter(rotation);
+    }
+
+    private IEnumerator WaitJumpCharacterViaAction(float timeToOccur)
+    {
+        yield return new WaitForSeconds(timeToOccur - Time.fixedDeltaTime);
+        yield return new WaitForFixedUpdate();
+        AttemptToJump();
+    }
 }

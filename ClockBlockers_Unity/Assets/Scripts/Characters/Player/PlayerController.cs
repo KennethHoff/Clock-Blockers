@@ -10,25 +10,18 @@ using System.Text.RegularExpressions;
 
 public class PlayerController : BaseController
 {
-    private Camera cam;
 
     [Header("Setup Variables")]
 
-    [SerializeField] private GameObject clonePrefab = null;
 
-    [SerializeField] private Transform cloneParent = null;
+    //private List<String> currentFrameActions;
 
-    /// <summary>
-    /// Actions executed this frame
-    /// </summary>
-    private List<String> currentFrameActions;
-
-    public List<CharacterAction> characterActions;
+    private List<Tuple<string, string>> currentFrameActions;
 
     private Vector2 movementInput;
 
-    [SerializeField] private float upDowncameraRotation;
-    [SerializeField] private float sideToSideCharacterRotation;
+    private float upDowncameraRotation;
+    private float sideToSideCharacterRotation;
 
 
     [Header("Player Setting")]
@@ -42,10 +35,8 @@ public class PlayerController : BaseController
     protected override void Awake()
     {
         base.Awake();
-        currentFrameActions = new List<string>();
+        currentFrameActions = new List<Tuple<string, string>>();
         characterActions = new List<CharacterAction>();
-
-        cam = GetComponentInChildren<Camera>();
     }
 
     protected override void FixedUpdate()
@@ -59,8 +50,8 @@ public class PlayerController : BaseController
         base.FixedUpdate();
 
     }
-    
-    public void OnLook(InputValue ctx)
+
+    private void OnLook(InputValue ctx)
     {
         var value = ctx.Get<Vector2>();
 
@@ -68,29 +59,32 @@ public class PlayerController : BaseController
         upDowncameraRotation = value.y * verticalMouseSensitivity * Time.fixedDeltaTime;
     }
 
-    public void OnMovement(InputValue ctx)
+    private void OnMovement(InputValue ctx)
     {
         movementInput = ctx.Get<Vector2>();
     }
 
-    public void OnSpawn()
+    private void OnSpawn()
     {
-        CreateClone();
+        StartCoroutine(WaitSpawnClone());
     }
 
-    public void OnJump()
+    private void OnJump()
     {
-        //holdingSpace = ctx.isPressed;
-        //if (holdingSpace) AttemptToJump();
-        AttemptToJump();
+        StartCoroutine(WaitAttemptToJump());
     }
 
-    public void OnClearClones()
+    private void OnShoot(InputValue ctx)
+    {
+        if (ctx.isPressed) StartCoroutine(WaitAttemptToShoot());
+    }
+
+    private void OnClearClones()
     {
         Debug.Log("Clearing children");
-        for (int i = 0; i < cloneParent.childCount; i++)
+        for (int i = 0; i < GameController.gc.cloneParent.childCount; i++)
         {
-            Destroy(cloneParent.GetChild(i).gameObject);
+            Destroy(GameController.gc.cloneParent.GetChild(i).gameObject);
         }
     }
 
@@ -106,30 +100,42 @@ public class PlayerController : BaseController
         Time.timeScale -= 1;
     }
 
-    public void RotateCamera(float rotation)
-    {
+    //private void SaveCharacterActions()
+    //{
+    //    if (!recordActions) return;
+    //    foreach (var method in currentFrameActions)
+    //    {
+    //        var newAction = new CharacterAction { method = method, time = Time.fixedTime - spawnTime };
+    //        characterActions.Add(newAction);
+    //    }
+    //    currentFrameActions.Clear();
+    //}
 
-        var minAngle = -90;
-        var maxAngle = 90;
+    //private void SaveActionAsString(string functionName, string parameters)
+    //{
+    //    var funcName = "func: " + functionName;
+    //    var para = "params: " + parameters;
+    //    var finalString = funcName + para;
 
-        var currentAngle = cam.transform.rotation.eulerAngles;
+    //    currentFrameActions.Add(finalString);
 
-        var newX = currentAngle.x - rotation;
 
-        var preclampedX = newX > 180 ? newX - 360 : newX;
-        var clampedX = Mathf.Clamp(preclampedX, minAngle, maxAngle);
 
-        var newAngle = new Vector3(clampedX, 0, 0);
-
-        cam.transform.localRotation = Quaternion.Euler(newAngle);
-    }
+    //    //var newAction = new CharacterAction() {method = finalString, time = Time.fixedTime - spawnTime};
+    //    //characterActions.Add(newAction);
+    //}
 
     private void SaveCharacterActions()
     {
         if (!recordActions) return;
         foreach (var action in currentFrameActions)
         {
-            var newAction = new CharacterAction {action = action, time = Time.time - spawnTime};
+            var newAction = new CharacterAction
+            {
+                method = action.Item1,
+                parameter = action.Item2, 
+                time = Time.fixedTime - spawnTime
+            };
             characterActions.Add(newAction);
         }
         currentFrameActions.Clear();
@@ -137,26 +143,38 @@ public class PlayerController : BaseController
 
     private void SaveActionAsString(string functionName, string parameters)
     {
-        var funcName = "func: " + functionName;
-        var para = "params: " + parameters;
-        var finalString = funcName + para;
-        currentFrameActions.Add(finalString);
-
-        //Debug.Log("Saved: " + currentFrameActions.Last());
+        currentFrameActions.Add(Tuple.Create(functionName, parameters));
     }
 
-    protected override void RotateCharacter(float yRotation)
+    private void SaveActionAsString(string functionName)
     {
-        if (Mathf.Abs(yRotation) >= minRotateValue)
+        SaveActionAsString(functionName, "");
+    }
+
+    protected override void RotateCharacter(float rotation)
+    {
+        if (Mathf.Abs(rotation) >= minRotateValue)
         {
-            base.RotateCharacter(yRotation);
+            SaveActionAsString("rotateCharacter", rotation.ToString("F6"));
+            base.RotateCharacter(rotation);
+
+            // After rotating, set the current rotation to 0. I set the rotation in the "Mouse moved" event.
+            // And then every frame rotate the camera based on that, but if I don't reset it it'll keep turning.
+            sideToSideCharacterRotation = 0;
         }
 
-        SaveActionAsString("rotateCharacter", yRotation.ToString("F6"));
+    }
 
-        // After rotating, set the current rotation to 0. I set the rotation in the "Mouse moved" event.
-        // And then every frame rotate the camera based on that, but if I don't reset it it'll keep turning.
-        sideToSideCharacterRotation = 0;
+    protected override void RotateCamera(float rotation)
+    {
+
+        if (Mathf.Abs(rotation) >= minRotateValue)
+        {
+            SaveActionAsString("rotateCamera", rotation.ToString("F6"));
+            base.RotateCamera(rotation);
+            upDowncameraRotation = 0;
+        }
+
     }
 
 
@@ -169,33 +187,55 @@ public class PlayerController : BaseController
 
     protected override void MoveCharacterForward(float x, float y)
     {
-        base.MoveCharacterForward(x, y);
         var cloneVector = new Vector3(x, 0, y).Round(6);
 
         SaveActionAsString("moveCharacter", cloneVector.ToString("F6"));
+        base.MoveCharacterForward(x, y);
     }
 
-    protected override void ExecuteJump()
+    protected override void AttemptToJump()
     {
-        base.ExecuteJump();
-        SaveActionAsString("jumpCharacter", "");
+        SaveActionAsString("jumpCharacter");
+        base.AttemptToJump();
     }
 
-
-    public GameObject CreateClone()
+    protected override void AttemptToShoot()
     {
-
-        var newClone = Instantiate(clonePrefab, startPos, startRot, cloneParent);
-
-        var newCloneController = newClone.GetComponent<CloneController>();
-
-        newCloneController.actionArray = characterActions.ToArray();
-
-        newCloneController.moveSpd = moveSpd;
-        newCloneController.jumpVelocity = jumpVelocity;
-        newCloneController.fallMultipler = fallMultipler;
-        newCloneController.lowJumpMultiplier = lowJumpMultiplier;
-
-        return newClone;
+        SaveActionAsString("shootGun");
+        base.AttemptToShoot();
     }
+
+    protected override void spawnClone()
+    {
+        if (enableRecursiveClones) SaveActionAsString("spawnClone");
+
+        // TODO: BAD PRACTICE ALERT!
+        SaveCharacterActions();
+
+        //for (int i = 0; i < 100; i++)
+        //{
+        base.spawnClone();
+        //}
+    }
+
+
+
+    private IEnumerator WaitAttemptToJump()
+    {
+        yield return new WaitForFixedUpdate();
+        AttemptToJump();
+    }
+
+    private IEnumerator WaitAttemptToShoot()
+    {
+        yield return new WaitForFixedUpdate();
+        AttemptToShoot();
+    }
+
+    private IEnumerator WaitSpawnClone()
+    {
+        yield return new WaitForFixedUpdate();
+        spawnClone();
+    }
+
 }
