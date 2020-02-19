@@ -300,7 +300,7 @@ MonoBehaviour:
   moveSpd: 30
   maxHealth: 100
   currHealth: 0
-  jumpVelocity: 2
+  jumpVelocity: 5
   fallMultipler: 2.5
   lowJumpMultiplier: 2
   recordActions: 1

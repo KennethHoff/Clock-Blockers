@@ -23,8 +23,8 @@ public abstract class BaseController : MonoBehaviour
 
     [Header("Character Values")]
     public float moveSpd;
-    public float maxHealth;
-    public float currHealth;
+    //public float maxHealth;
+    //public float currHealth;
 
     public float jumpVelocity;
 
@@ -37,7 +37,7 @@ public abstract class BaseController : MonoBehaviour
     /// <summary>
     /// If Space is being held, you jump higher
     /// </summary>
-    protected bool holdingSpace;
+    //protected bool holdingSpace;
 
     [Header("Debug Values")]
     [SerializeField] protected Vector3 moveVector;
@@ -54,14 +54,10 @@ public abstract class BaseController : MonoBehaviour
         startRot = transform.rotation;
     }
 
-    protected virtual void Update()
-    {
-        characterController.Move(moveVector);
-    }
-
-    protected void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         AffectGravity();
+        characterController.Move(moveVector);
     }
 
     protected void AffectGravity()
@@ -70,14 +66,12 @@ public abstract class BaseController : MonoBehaviour
 
         if (characterController.velocity.y <= 0)
         {
-            //characterController.Move(Physics.gravity * (fallMultipler - 1) * Time.deltaTime);
             moveVector += Physics.gravity * (fallMultipler - 1) * Time.fixedDeltaTime;
         }
-        else if (characterController.velocity.y > 0 && !holdingSpace)
-        {
-            //characterController.Move(Physics.gravity * (lowJumpMultiplier - 1) * Time.deltaTime);
-            moveVector += Physics.gravity * (lowJumpMultiplier - 1) * Time.fixedDeltaTime;
-        }
+        //else if (characterController.velocity.y > 0 && !holdingSpace)
+        //{
+        //    moveVector += Physics.gravity * (lowJumpMultiplier - 1) * Time.fixedDeltaTime;
+        //}
 
         moveVector += Physics.gravity * Time.fixedDeltaTime;
     }
@@ -118,7 +112,7 @@ public abstract class BaseController : MonoBehaviour
         right.Normalize();
 
         var prelimMove = forward * y + right * x;
-        var moveVector = prelimMove * moveSpd * Time.deltaTime;
+        var moveVector = prelimMove * moveSpd * Time.fixedDeltaTime;
         var roundedVector = moveVector.Round(6); // Useful for perfectly replicating the value later, if stored.
 
 

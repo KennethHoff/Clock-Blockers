@@ -48,16 +48,15 @@ public class PlayerController : BaseController
         cam = GetComponentInChildren<Camera>();
     }
 
-    protected override void Update()
+    protected override void FixedUpdate()
     {
-
         MoveCharacterByInput();
         RotateCharacter(characterRotation);
         RotateCamera(cameraRotation);
 
         SaveCharacterActions();
 
-        base.Update();
+        base.FixedUpdate();
 
     }
     
@@ -65,8 +64,8 @@ public class PlayerController : BaseController
     {
         var value = ctx.Get<Vector2>();
 
-        characterRotation = value.x * horizontalMouseSensitivity * Time.deltaTime;
-        cameraRotation = value.y * verticalMouseSensitivity * Time.deltaTime;
+        characterRotation = value.x * horizontalMouseSensitivity * Time.fixedDeltaTime;
+        cameraRotation = value.y * verticalMouseSensitivity * Time.fixedDeltaTime;
     }
 
     public void OnMovement(InputValue ctx)
@@ -81,8 +80,9 @@ public class PlayerController : BaseController
 
     public void OnJump(InputValue ctx)
     {
-        holdingSpace = ctx.isPressed;
-        if (holdingSpace) AttemptToJump();
+        //holdingSpace = ctx.isPressed;
+        //if (holdingSpace) AttemptToJump();
+        AttemptToJump();
     }
 
     public void OnClearClones()
@@ -184,6 +184,11 @@ public class PlayerController : BaseController
         var newCloneController = newClone.GetComponent<CloneController>();
 
         newCloneController.actionArray = characterActions.ToArray();
+
+        newCloneController.moveSpd = moveSpd;
+        newCloneController.jumpVelocity = jumpVelocity;
+        newCloneController.fallMultipler = fallMultipler;
+        newCloneController.lowJumpMultiplier = lowJumpMultiplier;
 
         return newClone;
     }
