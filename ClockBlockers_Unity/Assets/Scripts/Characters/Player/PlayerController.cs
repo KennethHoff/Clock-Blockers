@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 using Utility;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using JetBrains.Annotations;
 
 public class PlayerController : BaseController
 {
@@ -29,7 +30,7 @@ public class PlayerController : BaseController
     public float horizontalMouseSensitivity;
 
 
-    private float minRotateValue = 0.1f;
+    private readonly float minRotateValue = 0.0001f;
 
 
     protected override void Awake()
@@ -42,8 +43,6 @@ public class PlayerController : BaseController
     protected override void FixedUpdate()
     {
         MoveCharacterByInput();
-        RotateCharacter(sideToSideCharacterRotation);
-        RotateCamera(upDowncameraRotation);
 
         SaveCharacterActions();
 
@@ -51,12 +50,18 @@ public class PlayerController : BaseController
 
     }
 
+    private void Update()
+    {
+        RotateCharacter(sideToSideCharacterRotation);
+        RotateCamera(upDowncameraRotation);
+    }
+
     private void OnLook(InputValue ctx)
     {
         var value = ctx.Get<Vector2>();
 
-        sideToSideCharacterRotation = value.x * horizontalMouseSensitivity * Time.fixedDeltaTime;
-        upDowncameraRotation = value.y * verticalMouseSensitivity * Time.fixedDeltaTime;
+        sideToSideCharacterRotation = value.x * horizontalMouseSensitivity * Time.deltaTime;
+        upDowncameraRotation = value.y * verticalMouseSensitivity * Time.deltaTime;
     }
 
     private void OnMovement(InputValue ctx)
@@ -81,7 +86,7 @@ public class PlayerController : BaseController
 
     private void OnClearClones()
     {
-        Debug.Log("Clearing children");
+        Debug.Log("Clearing childrens");
         for (int i = 0; i < GameController.gc.cloneParent.childCount; i++)
         {
             Destroy(GameController.gc.cloneParent.GetChild(i).gameObject);
@@ -99,32 +104,6 @@ public class PlayerController : BaseController
         Debug.Log("Decreasing timescale. Now at: " + Time.timeScale);
         Time.timeScale -= 1;
     }
-
-    //private void SaveCharacterActions()
-    //{
-    //    if (!recordActions) return;
-    //    foreach (var method in currentFrameActions)
-    //    {
-    //        var newAction = new CharacterAction { method = method, time = Time.fixedTime - spawnTime };
-    //        characterActions.Add(newAction);
-    //    }
-    //    currentFrameActions.Clear();
-    //}
-
-    //private void SaveActionAsString(string functionName, string parameters)
-    //{
-    //    var funcName = "func: " + functionName;
-    //    var para = "params: " + parameters;
-    //    var finalString = funcName + para;
-
-    //    currentFrameActions.Add(finalString);
-
-
-
-    //    //var newAction = new CharacterAction() {method = finalString, time = Time.fixedTime - spawnTime};
-    //    //characterActions.Add(newAction);
-    //}
-
     private void SaveCharacterActions()
     {
         if (!recordActions) return;
@@ -144,6 +123,8 @@ public class PlayerController : BaseController
     private void SaveActionAsString(string functionName, string parameters)
     {
         currentFrameActions.Add(Tuple.Create(functionName, parameters));
+
+        if (debugLogEveryAction) Debug.Log("Time: " + Time.time + ". Function: " + functionName + ". Parameters:" + parameters);
     }
 
     private void SaveActionAsString(string functionName)
@@ -155,8 +136,11 @@ public class PlayerController : BaseController
     {
         if (Mathf.Abs(rotation) >= minRotateValue)
         {
-            SaveActionAsString("rotateCharacter", rotation.ToString("F6"));
-            base.RotateCharacter(rotation);
+            var stringedFloat = rotation.ToString(GameController.gc.FloatPointPrecisionString);
+            var roundedFloat = float.Parse(stringedFloat);
+
+            SaveActionAsString("rotateCharacter", stringedFloat);
+            base.RotateCharacter(roundedFloat);
 
             // After rotating, set the current rotation to 0. I set the rotation in the "Mouse moved" event.
             // And then every frame rotate the camera based on that, but if I don't reset it it'll keep turning.
@@ -170,8 +154,15 @@ public class PlayerController : BaseController
 
         if (Mathf.Abs(rotation) >= minRotateValue)
         {
-            SaveActionAsString("rotateCamera", rotation.ToString("F6"));
-            base.RotateCamera(rotation);
+
+            var stringedFloat = rotation.ToString(GameController.gc.FloatPointPrecisionString);
+            var roundedFloat = float.Parse(stringedFloat);
+
+            SaveActionAsString("rotateCamera", stringedFloat);
+            base.RotateCamera(roundedFloat);
+
+            // After rotating, set the current rotation to 0. I set the rotation in the "Mouse moved" event.
+            // And then every frame rotate the camera based on that, but if I don't reset it it'll keep turning.
             upDowncameraRotation = 0;
         }
 
@@ -205,7 +196,7 @@ public class PlayerController : BaseController
         base.AttemptToShoot();
     }
 
-    protected override void spawnClone()
+    protected override void SpawnClone()
     {
         if (enableRecursiveClones) SaveActionAsString("spawnClone");
 
@@ -214,7 +205,7 @@ public class PlayerController : BaseController
 
         //for (int i = 0; i < 100; i++)
         //{
-        base.spawnClone();
+        base.SpawnClone();
         //}
     }
 
@@ -235,7 +226,7 @@ public class PlayerController : BaseController
     private IEnumerator WaitSpawnClone()
     {
         yield return new WaitForFixedUpdate();
-        spawnClone();
+        SpawnClone();
     }
 
 }

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8226554681425684949}
   - component: {fileID: 2504291987557203411}
   - component: {fileID: 8793027651953047643}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}

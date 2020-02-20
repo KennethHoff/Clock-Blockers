@@ -25,37 +25,6 @@ public class CloneController : BaseController
     private void RunActionFromString(CharacterAction charAction)
     {
 
-        //var funcName = Regex.Match(actionString, "(?<=func: ).*?(?=params: )").ToString(); // Get function, by string.
-        //var para = Regex.Match(actionString, "(?<=params: ).*").ToString(); // Get parameters, by string.
-
-        //switch (funcName)
-        //{
-        //    case "moveCharacter":
-        //        var move = UsefulMethods.StringToVector3(para);
-        //        StartCoroutine(WaitMoveCharacterViaAction(move, charAction.time));
-        //        break;
-        //    case "rotateCharacter":
-        //        var charRot = float.Parse(para);
-        //        StartCoroutine(WaitRotateCharacterViaAction(charRot, charAction.time));
-        //        break;
-        //    case "jumpCharacter":
-        //        StartCoroutine(WaitJumpCharacterViaAction(charAction.time));
-        //        break;
-        //    case "rotateCamera":
-        //        var camRot = float.Parse(para);
-        //        StartCoroutine(WaitRotateCameraViaAction(camRot, charAction.time));
-        //        break;
-        //    case "shootGun":
-        //        StartCoroutine(WaitShootGunViaAction(charAction.time));
-        //        break;
-        //    case "spawnClone":
-        //        StartCoroutine(WaitSpawnClone(charAction.time));
-        //        break;
-        //    default:
-        //        Debug.Log(funcName + " is not a valid funcName");
-        //        break;
-        //}
-
         var actionString = charAction.method;
         var paramString = charAction.parameter;
 
@@ -92,7 +61,7 @@ public class CloneController : BaseController
     {
         yield return new WaitForSeconds(timeToOccur - Time.fixedDeltaTime);
         yield return new WaitForFixedUpdate();
-        spawnClone();
+        SpawnClone();
     }
 
     private IEnumerator WaitShootGunViaAction(float timeToOccur)

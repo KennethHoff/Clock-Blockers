@@ -8,7 +8,7 @@ using Utility;
 public abstract class BaseController : MonoBehaviour
 {
 
-    protected Camera cam;
+    internal Camera cam;
 
     protected CharacterController characterController;
 
@@ -25,22 +25,16 @@ public abstract class BaseController : MonoBehaviour
     protected Vector3 startPos;
     protected Quaternion startRot;
 
-    [SerializeField] protected float bulletSpd;
-
     [Header("Setup Variables")]
     public GameObject clonePrefab = null;
-    public BulletController bulletPrefab;
-
     public GunController gun;
-    private Transform gunTip;
 
+    [Header("Debug Variables")] 
+    public bool debugLogEveryAction;
 
-    [Header("Character Values")]
+    [Header("Character Variables")]
     public float moveSpd;
     public float jumpVelocity;
-
-    public float fallMultipler = 2.5f;
-    public float lowJumpMultiplier = 2f;
 
     public float minCamAngle;
     public float maxCamAngle;
@@ -69,7 +63,8 @@ public abstract class BaseController : MonoBehaviour
         startRot = transform.rotation;
 
         cam = GetComponentInChildren<Camera>();
-        gunTip = gun.GetComponentInChildren<GunTip>().transform;
+
+        gun.holder = this;
     }
 
     protected virtual void FixedUpdate()
@@ -80,21 +75,13 @@ public abstract class BaseController : MonoBehaviour
 
     protected void AffectGravity()
     {
+        //if (characterController.velocity.y == 0) moveVector.y = 0;
         if (characterController.isGrounded)
         {
             var tempGrav = Physics.gravity * 0.1f;
             if (moveVector.y < tempGrav.y) moveVector = tempGrav;
             return;
         }
-
-        if (moveVector.y <= 0)
-        {
-            moveVector += Physics.gravity * (fallMultipler - 1) * Time.fixedDeltaTime;
-        }
-        //else if (characterController.velocity.y > 0 && !holdingSpace)
-        //{
-        //    moveVector += Physics.gravity * (lowJumpMultiplier - 1) * Time.fixedDeltaTime;
-        //}
 
         moveVector += Physics.gravity * Time.fixedDeltaTime;
     }
@@ -103,15 +90,10 @@ public abstract class BaseController : MonoBehaviour
     protected virtual void AttemptToJump()
     {
 
-        //Debug.Log("Attempting to Jump!");
         if (characterController.isGrounded)
         {
             ExecuteJump();
         }
-        //else
-        //{
-        //    Debug.Log("Can't jump. Not on ground!");
-        //}
         
     }
     protected virtual void ExecuteJump()
@@ -165,37 +147,18 @@ public abstract class BaseController : MonoBehaviour
 
     protected virtual void AttemptToShoot()
     {
+
         // TODO: Add Ammo checks etc..
-        ShootRayCast();
+        gun.PullTrigger();
     }
 
-    protected virtual void ShootRayCast()
-    {
-
-        RaycastHit hit;
-        var didHit = Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, gun.range);
-
-        if (didHit)
-        {
-            var baseController = hit.transform.GetComponent<BaseController>();
-            if (baseController != null)
-            {
-                baseController.AttemptDealDamage(gun.damage, gun.damageType);
-            }
-            Debug.Log("We hit: " + hit.transform.name);
-        }
-        else
-        {
-            Debug.Log("Hit nothing!");
-        }
-    }
 
     protected void HealToFull()
     {
         currHealth = maxHealth;
     }
 
-    private void AttemptDealDamage(float gunDamage, Enums.DamageType gunDamageType)
+    internal void AttemptDealDamage(float gunDamage, Enums.DamageType gunDamageType)
     {
         DealDamage(gunDamage, gunDamageType);
     }
@@ -229,7 +192,7 @@ public abstract class BaseController : MonoBehaviour
     }
 
 
-    protected virtual void spawnClone()
+    protected virtual void SpawnClone()
     {
 
         var newClone = Instantiate(clonePrefab, startPos, startRot, GameController.gc.cloneParent);
@@ -246,9 +209,6 @@ public abstract class BaseController : MonoBehaviour
         
         newCloneController.moveSpd = moveSpd;
         newCloneController.jumpVelocity = jumpVelocity;
-        newCloneController.fallMultipler = fallMultipler;
-        newCloneController.lowJumpMultiplier = lowJumpMultiplier;
-        newCloneController.bulletPrefab = bulletPrefab;
 
         newCloneController.maxHealth = maxHealth;
     }
