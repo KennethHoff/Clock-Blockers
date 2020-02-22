@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Security.Policy;
-using System.Text.RegularExpressions;
+﻿using System.Collections;
+using DataStructures;
 using UnityEngine;
 using Utility;
 
 public class CloneController : BaseController
 {
-    private void Start()
+
+    public float relativeSpeed;
+    protected override void Start()
     {
+        base.Start();
         EngageAllActions();
     }
 
@@ -24,35 +22,33 @@ public class CloneController : BaseController
     }
     private void RunActionFromString(CharacterAction charAction)
     {
+        var speedAdjustedTime = charAction.time * (1/relativeSpeed);
 
-        var actionString = charAction.method;
-        var paramString = charAction.parameter;
-
-        switch (actionString)
+        switch (charAction.action)
         {
-            case "moveCharacter":
-                var move = UsefulMethods.StringToVector3(paramString);
-                StartCoroutine(WaitMoveCharacterViaAction(move, charAction.time));
+            case Actions.Move:
+                var move = UsefulMethods.StringToVector3(charAction.parameter);
+                StartCoroutine(WaitMoveCharacterViaAction(move, speedAdjustedTime));
                 break;
-            case "rotateCharacter":
-                var charRot = float.Parse(paramString);
-                StartCoroutine(WaitRotateCharacterViaAction(charRot, charAction.time));
+            case Actions.RotateCharacter:
+                var charRot = float.Parse(charAction.parameter);
+                StartCoroutine(WaitRotateCharacterViaAction(charRot, speedAdjustedTime));
                 break;
-            case "jumpCharacter":
-                StartCoroutine(WaitJumpCharacterViaAction(charAction.time));
+            case Actions.Jump:
+                StartCoroutine(WaitJumpCharacterViaAction(speedAdjustedTime));
                 break;
-            case "rotateCamera":
-                var camRot = float.Parse(paramString);
-                StartCoroutine(WaitRotateCameraViaAction(camRot, charAction.time));
+            case Actions.RotateCamera:
+                var camRot = float.Parse(charAction.parameter);
+                StartCoroutine(WaitRotateCameraViaAction(camRot, speedAdjustedTime));
                 break;
-            case "shootGun":
-                StartCoroutine(WaitShootGunViaAction(charAction.time));
+            case Actions.Shoot:
+                StartCoroutine(WaitShootGunViaAction(speedAdjustedTime));
                 break;
-            case "spawnClone":
-                StartCoroutine(WaitSpawnClone(charAction.time));
+            case Actions.SpawnClone:
+                StartCoroutine(WaitSpawnClone(speedAdjustedTime));
                 break;
             default:
-                Debug.Log(actionString + " is not a valid Method Name");
+                Debug.Log(charAction.action + " is not a valid Method Name");
                 break;
         }
     }
@@ -90,7 +86,7 @@ public class CloneController : BaseController
 
     public void MoveCharacterViaAction(Vector3 move)
     {
-        MoveCharacterForward(move.x, move.z);
+        MoveCharacterForward(new Vector3(move.x, 0, move.z));
     }
 
 

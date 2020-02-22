@@ -162,6 +162,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   clonePrefab: {fileID: 545294842873806572}
   gun: {fileID: 339135242804527360}
+  debugLogEveryAction: 0
   moveSpd: 30
   jumpVelocity: 0
   minCamAngle: -90
@@ -173,6 +174,7 @@ MonoBehaviour:
   armor: 0
   shielding: 0
   isAlive: 0
+  relativeSpeed: 1
 --- !u!1 &1494452207659306941
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Mathematics;
+using DataStructures;
 using UnityEngine;
 using Utility;
 
-public abstract class BaseController : MonoBehaviour
+public abstract class BaseController : MonoBehaviour, IInteractable
 {
 
-    internal Camera cam;
+    internal new Camera camera;
 
     protected CharacterController characterController;
 
@@ -22,11 +22,27 @@ public abstract class BaseController : MonoBehaviour
 
     protected float TimeAlive { get => Time.fixedTime - spawnTime; }
 
+    /// <summary>
+    /// World position
+    /// </summary>
     protected Vector3 startPos;
+
+    /// <summary>
+    /// World rotation
+    /// </summary>
     protected Quaternion startRot;
 
+    /// <summary>
+    /// Local position, relative to the parent object of the character.
+    /// </summary>
+    protected Vector3 camStartPos;
+    /// <summary>
+    /// Local rotation, relative to the parent object of the character.
+    /// </summary>
+    protected Quaternion camStartRot;
+
     [Header("Setup Variables")]
-    public GameObject clonePrefab = null;
+    public GameObject clonePrefab;
     public GunController gun;
 
     [Header("Debug Variables")] 
@@ -55,22 +71,28 @@ public abstract class BaseController : MonoBehaviour
 
     protected virtual void Awake()
     {
-        spawnTime = Time.fixedTime;
-
+        camera = GetComponentInChildren<Camera>();
         characterController = GetComponentInChildren<CharacterController>();
+        gun.holder = this;
 
+    }
+
+    protected virtual void Start()
+    {
         startPos = transform.position;
         startRot = transform.rotation;
 
-        cam = GetComponentInChildren<Camera>();
+        camStartPos = camera.transform.localPosition;
+        camStartRot = camera.transform.localRotation;
 
-        gun.holder = this;
+        spawnTime = Time.fixedTime;
+
     }
 
     protected virtual void FixedUpdate()
     {
-        AffectGravity();
-        characterController.Move(moveVector);
+        //AffectGravity();
+        //characterController.Move(moveVector);
     }
 
     protected void AffectGravity()
@@ -110,7 +132,7 @@ public abstract class BaseController : MonoBehaviour
 
     protected virtual void RotateCamera(float rotation)
     {
-        var currentAngle = cam.transform.rotation.eulerAngles;
+        var currentAngle = camera.transform.rotation.eulerAngles;
 
         var newX = currentAngle.x - rotation;
 
@@ -119,10 +141,10 @@ public abstract class BaseController : MonoBehaviour
 
         var newAngle = new Vector3(clampedX, 0, 0);
 
-        cam.transform.localRotation = Quaternion.Euler(newAngle);
+        camera.transform.localRotation = Quaternion.Euler(newAngle);
     }
 
-    protected virtual void MoveCharacterForward(float x, float y)
+    protected virtual void MoveCharacterForward(Vector3 vector)
     {
         var forward = transform.forward;
         var right = transform.right;
@@ -131,9 +153,9 @@ public abstract class BaseController : MonoBehaviour
         forward.Normalize();
         right.Normalize();
 
-        var prelimMove = forward * y + right * x;
-        var moveVector = prelimMove * moveSpd * Time.fixedDeltaTime;
-        var roundedVector = moveVector.Round(6); // Useful for perfectly replicating the value later, if stored.
+        var prelimMove = forward * vector.z + right * vector.x;
+        var moveVector = prelimMove * moveSpd;
+        var roundedVector = moveVector.Round(GameController.instance.floatingPointPrecision); // Useful for perfectly replicating the value later, if stored.
 
 
         //Debug.Log("Clone Moving in the following vector: " + roundedVector.ToString("F6"));
@@ -158,9 +180,9 @@ public abstract class BaseController : MonoBehaviour
         currHealth = maxHealth;
     }
 
-    internal void AttemptDealDamage(float gunDamage, Enums.DamageType gunDamageType)
+    internal void AttemptDealDamage(DamagePacket damagePacket)
     {
-        DealDamage(gunDamage, gunDamageType);
+        DealDamage(damagePacket);
     }
 
     /// <summary>
@@ -170,9 +192,9 @@ public abstract class BaseController : MonoBehaviour
     /// </summary>
     /// <param name="gunDamage"></param>
     /// <param name="gunDamageType"></param>
-    private void DealDamage(float gunDamage, Enums.DamageType gunDamageType)
+    private void DealDamage(DamagePacket damagePacket)
     {
-        currHealth -= gunDamage;
+        currHealth -= damagePacket.damage;
         if (currHealth <= 0)
         {
             AttemptKill();
@@ -186,7 +208,7 @@ public abstract class BaseController : MonoBehaviour
 
     private void Kill()
     {
-        GetComponentInChildren<CharacterBodyController>().GetComponent<Renderer>().material = GameController.gc.deadMaterial;
+        GetComponentInChildren<CharacterBodyController>().GetComponent<Renderer>().material = GameController.instance.deadMaterial;
         StopAllCoroutines();
         Destroy(this.gameObject, 1.25f);
     }
@@ -194,10 +216,14 @@ public abstract class BaseController : MonoBehaviour
 
     protected virtual void SpawnClone()
     {
-
-        var newClone = Instantiate(clonePrefab, startPos, startRot, GameController.gc.cloneParent);
+        var newClone = Instantiate(clonePrefab, startPos, startRot, GameController.instance.cloneParent);
 
         var newCloneController = newClone.GetComponent<CloneController>();
+
+        newCloneController.camera.transform.localRotation = camStartRot;
+
+        //newCloneController.cam.transform.position = camStartPos;
+        //newCloneController.cam.transform.rotation = camStartRot;
 
         if (GetComponent<PlayerController>()) newCloneController.actionArray = characterActions.ToArray();
         else if (GetComponent<CloneController>()) newCloneController.actionArray = actionArray;
@@ -211,5 +237,13 @@ public abstract class BaseController : MonoBehaviour
         newCloneController.jumpVelocity = jumpVelocity;
 
         newCloneController.maxHealth = maxHealth;
+
+        Debug.Log("Position: " + transform.position.ToString("F10") + " | Rotation: " + transform.rotation.ToString("F10") + " | Name: " + name);
+
+    }
+
+    public void OnHit(DamagePacket damagePacket, Vector3 hitPosition)
+    {
+        AttemptDealDamage(damagePacket);
     }
 }

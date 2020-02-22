@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using DataStructures;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Utility;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using JetBrains.Annotations;
 
 public class PlayerController : BaseController
 {
@@ -17,7 +14,7 @@ public class PlayerController : BaseController
 
     //private List<String> currentFrameActions;
 
-    private List<Tuple<string, string>> currentFrameActions;
+    private List<Tuple<Actions, string>> currentFrameActions;
 
     private Vector2 movementInput;
 
@@ -30,13 +27,11 @@ public class PlayerController : BaseController
     public float horizontalMouseSensitivity;
 
 
-    private readonly float minRotateValue = 0.0001f;
-
 
     protected override void Awake()
     {
         base.Awake();
-        currentFrameActions = new List<Tuple<string, string>>();
+        currentFrameActions = new List<Tuple<Actions, string>>();
         characterActions = new List<CharacterAction>();
     }
 
@@ -86,23 +81,23 @@ public class PlayerController : BaseController
 
     private void OnClearClones()
     {
-        Debug.Log("Clearing childrens");
-        for (int i = 0; i < GameController.gc.cloneParent.childCount; i++)
+        Debug.Log("Clearing children");
+        for (int i = 0; i < GameController.instance.cloneParent.childCount; i++)
         {
-            Destroy(GameController.gc.cloneParent.GetChild(i).gameObject);
+            Destroy(GameController.instance.cloneParent.GetChild(i).gameObject);
         }
     }
 
     private void OnIncreaseTimescale()
     {
-        Debug.Log("Increasing timescale. Now at: " + Time.timeScale);
         Time.timeScale += 1;
+        Debug.Log("Increasing timescale. Now at: " + Time.timeScale);
     }
 
     private void OnDecreaseTimescale()
     {
-        Debug.Log("Decreasing timescale. Now at: " + Time.timeScale);
         Time.timeScale -= 1;
+        Debug.Log("Decreasing timescale. Now at: " + Time.timeScale);
     }
     private void SaveCharacterActions()
     {
@@ -111,94 +106,79 @@ public class PlayerController : BaseController
         {
             var newAction = new CharacterAction
             {
-                method = action.Item1,
+                action = action.Item1,
                 parameter = action.Item2, 
-                time = Time.fixedTime - spawnTime
+                time = Time.fixedTime - spawnTime,
             };
             characterActions.Add(newAction);
         }
         currentFrameActions.Clear();
     }
 
-    private void SaveActionAsString(string functionName, string parameters)
+    private void SaveActionAsString(Actions action, string parameters)
     {
-        currentFrameActions.Add(Tuple.Create(functionName, parameters));
+        currentFrameActions.Add(Tuple.Create(action, parameters));
 
-        if (debugLogEveryAction) Debug.Log("Time: " + Time.time + ". Function: " + functionName + ". Parameters:" + parameters);
+        if (debugLogEveryAction) Debug.Log("Time: " + Time.time + ". Function: " + action + ". Parameters:" + parameters);
     }
 
-    private void SaveActionAsString(string functionName)
+    private void SaveActionAsString(Actions action)
     {
-        SaveActionAsString(functionName, "");
+        SaveActionAsString(action, "");
     }
 
     protected override void RotateCharacter(float rotation)
     {
-        if (Mathf.Abs(rotation) >= minRotateValue)
-        {
-            var stringedFloat = rotation.ToString(GameController.gc.FloatPointPrecisionString);
-            var roundedFloat = float.Parse(stringedFloat);
+        var stringedFloat = rotation.ToString(GameController.instance.FloatPointPrecisionString);
+        var roundedFloat = float.Parse(stringedFloat);
 
-            SaveActionAsString("rotateCharacter", stringedFloat);
-            base.RotateCharacter(roundedFloat);
-
-            // After rotating, set the current rotation to 0. I set the rotation in the "Mouse moved" event.
-            // And then every frame rotate the camera based on that, but if I don't reset it it'll keep turning.
-            sideToSideCharacterRotation = 0;
-        }
-
+        SaveActionAsString(Actions.RotateCharacter, stringedFloat);
+        base.RotateCharacter(roundedFloat);
     }
 
     protected override void RotateCamera(float rotation)
     {
+        var stringedFloat = rotation.ToString(GameController.instance.FloatPointPrecisionString);
+        var roundedFloat = float.Parse(stringedFloat);
 
-        if (Mathf.Abs(rotation) >= minRotateValue)
-        {
-
-            var stringedFloat = rotation.ToString(GameController.gc.FloatPointPrecisionString);
-            var roundedFloat = float.Parse(stringedFloat);
-
-            SaveActionAsString("rotateCamera", stringedFloat);
-            base.RotateCamera(roundedFloat);
-
-            // After rotating, set the current rotation to 0. I set the rotation in the "Mouse moved" event.
-            // And then every frame rotate the camera based on that, but if I don't reset it it'll keep turning.
-            upDowncameraRotation = 0;
-        }
+        SaveActionAsString(Actions.RotateCamera, stringedFloat);
+        base.RotateCamera(roundedFloat);
 
     }
 
 
     private void MoveCharacterByInput()
     {
-        if (movementInput.magnitude < 0.1f) return;
+        if (movementInput.magnitude < 0.1f) return; // If no input, magnitude = 0. I don't want it to record every frame for all eternity. Only when moving.
 
-        MoveCharacterForward(movementInput.x, movementInput.y);
+        var timeAdjustedInput = movementInput * Time.fixedDeltaTime;
+        MoveCharacterForward(new Vector3(timeAdjustedInput.x, 0, timeAdjustedInput.y));
     }
 
-    protected override void MoveCharacterForward(float x, float y)
+    protected override void MoveCharacterForward(Vector3 vector)
     {
-        var cloneVector = new Vector3(x, 0, y).Round(6);
+        var roundedVector = vector.Round(GameController.instance.floatingPointPrecision);
+        var stringedVector = roundedVector.ToString(GameController.instance.FloatPointPrecisionString);
 
-        SaveActionAsString("moveCharacter", cloneVector.ToString("F6"));
-        base.MoveCharacterForward(x, y);
+        SaveActionAsString(Actions.Move, stringedVector);
+        base.MoveCharacterForward(roundedVector);
     }
 
     protected override void AttemptToJump()
     {
-        SaveActionAsString("jumpCharacter");
+        SaveActionAsString(Actions.Jump);
         base.AttemptToJump();
     }
 
     protected override void AttemptToShoot()
     {
-        SaveActionAsString("shootGun");
+        SaveActionAsString(Actions.Shoot);
         base.AttemptToShoot();
     }
 
     protected override void SpawnClone()
     {
-        if (enableRecursiveClones) SaveActionAsString("spawnClone");
+        if (enableRecursiveClones) SaveActionAsString(Actions.SpawnClone);
 
         // TODO: BAD PRACTICE ALERT!
         SaveCharacterActions();
