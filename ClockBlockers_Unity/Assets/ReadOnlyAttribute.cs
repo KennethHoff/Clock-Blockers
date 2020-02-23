@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
-using UnityEditor;
 
-public class ReadOnlyAttribute : PropertyAttribute
-{
+namespace ClockBlockers {
+    public class ReadOnlyAttribute : PropertyAttribute
+    {
 
+    }
 }

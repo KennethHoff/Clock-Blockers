@@ -1,12 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using DataStructures;
+﻿using ClockBlockers.DataStructures;
 using UnityEngine;
 
-public class OldGunController : MonoBehaviour
-{
-    public float range;
-    public float damage;
-    public Enums.DamageType damageType;
+namespace ClockBlockers.Components {
+    public class OldGunController : MonoBehaviour
+    {
+        public float range;
+        public float damage;
+        public Enums.DamageType damageType;
+    }
 }
 

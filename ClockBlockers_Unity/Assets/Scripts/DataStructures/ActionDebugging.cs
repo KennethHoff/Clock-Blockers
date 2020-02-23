@@ -15,11 +15,11 @@
 //    private void DebugActions(CharacterAction[] actionArray)
 //    {
 //        var checkAmounts = CheckActionAmounts(actionArray);
-//        Debug.Log(checkAmounts.Count);
+//        Logging.Log(checkAmounts.Count);
 
 //        foreach (var checkAmount in checkAmounts)
 //        {
-//            Debug.Log(checkAmount.name + ": " + checkAmount.parameters.Count);
+//            Logging.Log(checkAmount.name + ": " + checkAmount.parameters.Count);
 //        }
 //    }
 

@@ -1,26 +1,28 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Unity.Collections;
+﻿using ClockBlockers.Characters;
+using ClockBlockers.Utility;
 using UnityEngine;
 
-public class BulletController : MonoBehaviour
+namespace ClockBlockers.Components
 {
-    private Rigidbody rb;
-    [ReadOnly] public int creatorInstanceID;
-
-    private void Awake()
+    public class BulletController : MonoBehaviour
     {
-        rb = GetComponent<Rigidbody>();
-    }
+        private Rigidbody _rigidbody;
+        [HideInInspector] public int creatorInstanceId;
 
-    private void OnCollisionEnter(Collision collision)
-    {
+        private void Awake()
+        {
+            _rigidbody = GetComponent<Rigidbody>();
+        }
 
-        if (collision.transform.GetComponent<BaseController>()) return;
-        Debug.Log("Bullet collided!");
+        private void OnCollisionEnter(Collision collision)
+        {
 
-        Destroy(rb);
+            if (collision.transform.GetComponent<BaseController>()) return;
+            Logging.Log("Bullet collided!");
 
-        transform.parent = collision.transform;
+            Destroy(_rigidbody);
+
+            transform.parent = collision.transform;
+        }
     }
 }

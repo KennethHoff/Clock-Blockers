@@ -1,4 +1,4 @@
-﻿namespace DataStructures
+﻿namespace ClockBlockers.DataStructures
 {
     public class Enums
     {

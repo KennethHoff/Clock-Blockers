@@ -1,18 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class GunTip : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
+namespace ClockBlockers.Components {
+    public class GunTip : MonoBehaviour
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

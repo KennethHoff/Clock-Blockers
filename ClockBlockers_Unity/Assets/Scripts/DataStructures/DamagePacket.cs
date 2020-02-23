@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace DataStructures
+namespace ClockBlockers.DataStructures
 {
     public struct DamagePacket
     {

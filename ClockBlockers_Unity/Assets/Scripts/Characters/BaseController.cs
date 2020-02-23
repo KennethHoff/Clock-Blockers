@@ -1,249 +1,253 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using DataStructures;
+﻿using System.Collections.Generic;
+using ClockBlockers.Components;
+using ClockBlockers.DataStructures;
+using ClockBlockers.GameControllers;
+using ClockBlockers.Utility;
 using UnityEngine;
-using Utility;
 
-public abstract class BaseController : MonoBehaviour, IInteractable
+namespace ClockBlockers.Characters
 {
-
-    internal new Camera camera;
-
-    protected CharacterController characterController;
-
-    [HideInInspector] public List<CharacterAction> characterActions; // Actions recorded
-    [HideInInspector] public CharacterAction[] actionArray; // Actions received from "outside"
-
-    /// <summary>
-    /// the frame the character was spawned on. Used to know which frame it should perform which actions. (X frames after spawn .. )
-    /// </summary>
-    protected float spawnTime;
-
-    protected float TimeAlive { get => Time.fixedTime - spawnTime; }
-
-    /// <summary>
-    /// World position
-    /// </summary>
-    protected Vector3 startPos;
-
-    /// <summary>
-    /// World rotation
-    /// </summary>
-    protected Quaternion startRot;
-
-    /// <summary>
-    /// Local position, relative to the parent object of the character.
-    /// </summary>
-    protected Vector3 camStartPos;
-    /// <summary>
-    /// Local rotation, relative to the parent object of the character.
-    /// </summary>
-    protected Quaternion camStartRot;
-
-    [Header("Setup Variables")]
-    public GameObject clonePrefab;
-    public GunController gun;
-
-    [Header("Debug Variables")] 
-    public bool debugLogEveryAction;
-
-    [Header("Character Variables")]
-    public float moveSpd;
-    public float jumpVelocity;
-
-    public float minCamAngle;
-    public float maxCamAngle;
-
-    public bool recordActions = false;
-    
-    public bool enableRecursiveClones;
-    [Space(10)]
-    public float maxHealth;
-    public float currHealth;
-    public float armor;
-    public float shielding;
-    public bool isAlive;
-
-
-    protected Vector3 moveVector;
-
-
-    protected virtual void Awake()
+    public abstract class BaseController : MonoBehaviour, IInteractable
     {
-        camera = GetComponentInChildren<Camera>();
-        characterController = GetComponentInChildren<CharacterController>();
-        gun.holder = this;
+        internal new Camera camera;
 
-    }
+        protected CharacterController characterController;
 
-    protected virtual void Start()
-    {
-        startPos = transform.position;
-        startRot = transform.rotation;
+        [HideInInspector]
+        public List<CharacterAction> characterActions; // Actions recorded
 
-        camStartPos = camera.transform.localPosition;
-        camStartRot = camera.transform.localRotation;
+        [HideInInspector]
+        public CharacterAction[] actionArray; // Actions received from "outside"
 
-        spawnTime = Time.fixedTime;
+        /// <summary>
+        ///     the frame the character was spawned on. Used to know which frame it should perform which actions. (X frames after
+        ///     spawn .. )
+        /// </summary>
+        protected float spawnTime;
 
-    }
-
-    protected virtual void FixedUpdate()
-    {
-        //AffectGravity();
-        //characterController.Move(moveVector);
-    }
-
-    protected void AffectGravity()
-    {
-        //if (characterController.velocity.y == 0) moveVector.y = 0;
-        if (characterController.isGrounded)
+        protected float TimeAlive
         {
-            var tempGrav = Physics.gravity * 0.1f;
-            if (moveVector.y < tempGrav.y) moveVector = tempGrav;
-            return;
+            get => Time.fixedTime - spawnTime;
         }
 
-        moveVector += Physics.gravity * Time.fixedDeltaTime;
-    }
+        /// <summary>
+        ///     World position
+        /// </summary>
+        protected Vector3 startPos;
+
+        /// <summary>
+        ///     World rotation
+        /// </summary>
+        protected Quaternion startRot;
+
+        /// <summary>
+        ///     Local position, relative to the parent object of the character.
+        /// </summary>
+        protected Vector3 camStartPos;
+
+        /// <summary>
+        ///     Local rotation, relative to the parent object of the character.
+        /// </summary>
+        protected Quaternion camStartRot;
+
+        [Header("Setup Variables")]
+        public GameObject clonePrefab;
+
+        public GunController gun;
+
+        [Header("Debug Variables")]
+        public bool debugLogEveryAction;
+
+        [Header("Character Variables")]
+        public float moveSpd;
+
+        public float jumpVelocity;
+
+        public float minCamAngle;
+        public float maxCamAngle;
+
+        public bool recordActions;
+
+        public bool enableRecursiveClones;
+
+        [Space(10)]
+        public float maxHealth;
+
+        public float currHealth;
+        public float armor;
+        public float shielding;
+        public bool isAlive;
 
 
-    protected virtual void AttemptToJump()
-    {
+        protected Vector3 moveVector;
 
-        if (characterController.isGrounded)
+
+        protected virtual void Awake()
         {
-            ExecuteJump();
+            camera = GetComponentInChildren<Camera>();
+            characterController = GetComponentInChildren<CharacterController>();
+            gun.holder = this;
         }
-        
-    }
-    protected virtual void ExecuteJump()
-    {
-        moveVector = Vector3.up * jumpVelocity;
-        //Debug.Log("Jumped!");
-    }
 
-    protected virtual void RotateCharacter(float yRotation)
-    {
-        var newAngle = new Vector3(0, yRotation, 0);
-        transform.Rotate(newAngle);
-    }
-
-    protected virtual void RotateCamera(float rotation)
-    {
-        var currentAngle = camera.transform.rotation.eulerAngles;
-
-        var newX = currentAngle.x - rotation;
-
-        var preclampedX = newX > 180 ? newX - 360 : newX;
-        var clampedX = Mathf.Clamp(preclampedX, minCamAngle, maxCamAngle);
-
-        var newAngle = new Vector3(clampedX, 0, 0);
-
-        camera.transform.localRotation = Quaternion.Euler(newAngle);
-    }
-
-    protected virtual void MoveCharacterForward(Vector3 vector)
-    {
-        var forward = transform.forward;
-        var right = transform.right;
-        forward.y = 0;
-        right.y = 0;
-        forward.Normalize();
-        right.Normalize();
-
-        var prelimMove = forward * vector.z + right * vector.x;
-        var moveVector = prelimMove * moveSpd;
-        var roundedVector = moveVector.Round(GameController.instance.floatingPointPrecision); // Useful for perfectly replicating the value later, if stored.
-
-
-        //Debug.Log("Clone Moving in the following vector: " + roundedVector.ToString("F6"));
-        MoveCharacter(roundedVector);
-    }
-
-    protected void MoveCharacter(Vector3 vector)
-    {
-        characterController.Move(vector);
-    }
-
-    protected virtual void AttemptToShoot()
-    {
-
-        // TODO: Add Ammo checks etc..
-        gun.PullTrigger();
-    }
-
-
-    protected void HealToFull()
-    {
-        currHealth = maxHealth;
-    }
-
-    internal void AttemptDealDamage(DamagePacket damagePacket)
-    {
-        DealDamage(damagePacket);
-    }
-
-    /// <summary>
-    /// Deal Damage means the entity in question is dealing damage, not dealing damage to other entities.
-    ///
-    /// ie: This deals damage to itself.
-    /// </summary>
-    /// <param name="gunDamage"></param>
-    /// <param name="gunDamageType"></param>
-    private void DealDamage(DamagePacket damagePacket)
-    {
-        currHealth -= damagePacket.damage;
-        if (currHealth <= 0)
+        protected virtual void Start()
         {
-            AttemptKill();
+            Transform transform1 = transform;
+            startPos = transform1.position;
+            startRot = transform1.rotation;
+
+            Transform transform2 = camera.transform;
+            camStartPos = transform2.localPosition;
+            camStartRot = transform2.localRotation;
+
+            spawnTime = Time.fixedTime;
         }
-    }
 
-    private void AttemptKill()
-    {
-        Kill();
-    }
-
-    private void Kill()
-    {
-        GetComponentInChildren<CharacterBodyController>().GetComponent<Renderer>().material = GameController.instance.deadMaterial;
-        StopAllCoroutines();
-        Destroy(this.gameObject, 1.25f);
-    }
-
-
-    protected virtual void SpawnClone()
-    {
-        var newClone = Instantiate(clonePrefab, startPos, startRot, GameController.instance.cloneParent);
-
-        var newCloneController = newClone.GetComponent<CloneController>();
-
-        newCloneController.camera.transform.localRotation = camStartRot;
-
-        //newCloneController.cam.transform.position = camStartPos;
-        //newCloneController.cam.transform.rotation = camStartRot;
-
-        if (GetComponent<PlayerController>()) newCloneController.actionArray = characterActions.ToArray();
-        else if (GetComponent<CloneController>()) newCloneController.actionArray = actionArray;
-        else
+        protected virtual void FixedUpdate()
         {
-            Debug.LogError("Somewhat terrible has happened - How did a non-clone, non-player create a clone?");
-            Debug.Break();
+            //AffectGravity();
+            //characterController.Move(moveVector);
         }
-        
-        newCloneController.moveSpd = moveSpd;
-        newCloneController.jumpVelocity = jumpVelocity;
 
-        newCloneController.maxHealth = maxHealth;
+        protected void AffectGravity()
+        {
+            //if (characterController.velocity.y == 0) moveVector.y = 0;
+            if (characterController.isGrounded)
+            {
+                Vector3 tempGrav = Physics.gravity * 0.1f;
+                if (moveVector.y < tempGrav.y) moveVector = tempGrav;
+                return;
+            }
 
-        Debug.Log("Position: " + transform.position.ToString("F10") + " | Rotation: " + transform.rotation.ToString("F10") + " | Name: " + name);
+            moveVector += Physics.gravity * Time.fixedDeltaTime;
+        }
 
-    }
 
-    public void OnHit(DamagePacket damagePacket, Vector3 hitPosition)
-    {
-        AttemptDealDamage(damagePacket);
+        protected virtual void AttemptToJump()
+        {
+            if (characterController.isGrounded)
+            {
+                ExecuteJump();
+            }
+        }
+
+        protected virtual void ExecuteJump()
+        {
+            moveVector = Vector3.up * jumpVelocity;
+            //Logging.Log("Jumped!");
+        }
+
+        protected virtual void RotateCharacter(float yRotation)
+        {
+            var newAngle = new Vector3(0, yRotation, 0);
+            transform.Rotate(newAngle);
+        }
+
+        protected virtual void RotateCamera(float rotation)
+        {
+            Vector3 currentAngle = camera.transform.rotation.eulerAngles;
+
+            float newX = currentAngle.x - rotation;
+
+            float preclampedX = newX > 180 ? newX - 360 : newX;
+            float clampedX = Mathf.Clamp(preclampedX, minCamAngle, maxCamAngle);
+
+            var newAngle = new Vector3(clampedX, 0, 0);
+
+            camera.transform.localRotation = Quaternion.Euler(newAngle);
+        }
+
+        protected virtual void MoveCharacterForward(Vector3 vector)
+        {
+            var transform1 = transform;
+            Vector3 forward = transform1.forward;
+            Vector3 right = transform1.right;
+            forward.y = 0;
+            right.y = 0;
+            forward.Normalize();
+            right.Normalize();
+
+            Vector3 prelimMove = (forward * vector.z) + (right * vector.x);
+            Vector3 move = prelimMove * moveSpd;
+            Vector3 roundedVector =
+                move.Round(GameController.instance
+                    .floatingPointPrecision); // Useful for perfectly replicating the value later, if stored.
+
+
+            //Logging.Log("Clone Moving in the following vector: " + roundedVector.ToString("F6"));
+            MoveCharacter(roundedVector);
+        }
+
+        protected void MoveCharacter(Vector3 vector) { characterController.Move(vector); }
+
+        protected virtual void AttemptToShoot()
+        {
+            // TODO: Add Ammo checks etc..
+            gun.PullTrigger();
+        }
+
+
+        protected void HealToFull() { currHealth = maxHealth; }
+
+        internal void AttemptDealDamage(DamagePacket damagePacket) { DealDamage(damagePacket); }
+
+        /// <summary>
+        ///     Deal Damage means the entity in question is dealing damage, not dealing damage to other entities.
+        ///     ie: This deals damage to itself.
+        /// </summary>
+        private void DealDamage(DamagePacket damagePacket)
+        {
+            currHealth -= damagePacket.damage;
+            if (currHealth <= 0)
+            {
+                AttemptKill();
+            }
+        }
+
+        private void AttemptKill() { Kill(); }
+
+        private void Kill()
+        {
+            GetComponentInChildren<CharacterBodyController>().GetComponent<Renderer>().material =
+                GameController.instance.deadMaterial;
+            StopAllCoroutines();
+            Destroy(gameObject, 1.25f);
+        }
+
+
+        protected virtual void SpawnClone()
+        {
+            GameObject newClone = Instantiate(clonePrefab, startPos, startRot, GameController.instance.cloneParent);
+
+            var newCloneController = newClone.GetComponent<CloneController>();
+
+            newCloneController.camera.transform.localRotation = camStartRot;
+
+            //newCloneController.cam.transform.position = camStartPos;
+            //newCloneController.cam.transform.rotation = camStartRot;
+
+            if (GetComponent<CharacterController>() != null)
+            {
+                newCloneController.actionArray = characterActions.ToArray();
+            }
+            else if (GetComponent<CharacterController>() != null)
+            {
+                newCloneController.actionArray = actionArray;
+            }
+            else
+            {
+                Logging.LogError("Somewhat terrible has happened - How did a non-clone, non-player create a clone?");
+                Debug.Break();
+            }
+
+            newCloneController.moveSpd = moveSpd;
+            newCloneController.jumpVelocity = jumpVelocity;
+
+            newCloneController.maxHealth = maxHealth;
+
+            Logging.Log("Position: " + transform.position.ToString("F10") + " | Rotation: " +
+                      transform.rotation.ToString("F10") + " | Name: " + name);
+        }
+
+        public void OnHit(DamagePacket damagePacket, Vector3 hitPosition) { AttemptDealDamage(damagePacket); }
     }
 }

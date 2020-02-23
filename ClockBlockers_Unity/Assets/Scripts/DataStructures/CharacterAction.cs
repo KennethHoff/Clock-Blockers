@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DataStructures
+namespace ClockBlockers.DataStructures
 {
     public class CharacterAction
     {
