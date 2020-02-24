@@ -7,65 +7,69 @@
       <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
       <e p="Assets" t="Include">
+        <e p="_Project" t="Include">
+          <e p="Main.asmdef" t="Include" />
+          <e p="NewFolderStructure" t="Include">
+            <e p="Actions" t="Include">
+              <e p="ActionStorage.cs" t="Include" />
+              <e p="ActionSystems.cs" t="Include" />
+              <e p="CharacterAction.cs" t="Include" />
+            </e>
+          </e>
+          <e p="Scripts" t="Include">
+            <e p="Characters" t="Include">
+              <e p="BaseController.cs" t="Include" />
+              <e p="CloneController.cs" t="Include" />
+              <e p="PlayerController.cs" t="Include" />
+            </e>
+            <e p="Components" t="Include">
+              <e p="CharacterBody.cs" t="Include" />
+              <e p="GunController.cs" t="Include" />
+            </e>
+            <e p="DataStructures" t="Include">
+              <e p="DamagePacket.cs" t="Include" />
+              <e p="Enums.cs" t="Include" />
+              <e p="IInteractable.cs" t="Include" />
+            </e>
+            <e p="Environment" t="Include">
+              <e p="Crate1.cs" t="Include" />
+              <e p="Plane1.cs" t="Include" />
+              <e p="Platform1.cs" t="Include" />
+              <e p="ShootingTarget1.cs" t="Include" />
+            </e>
+            <e p="GameControllers" t="Include">
+              <e p="GameController.cs" t="Include" />
+              <e p="PlayerManagement.cs" t="Include" />
+            </e>
+            <e p="InputSystem" t="Include">
+              <e p="PlayerActions.cs" t="Include" />
+            </e>
+            <e p="UI" t="Include">
+              <e p="BaseGameMenu.cs" t="Include" />
+              <e p="MainMenu.cs" t="Include" />
+              <e p="OptionsMenu.cs" t="Include" />
+            </e>
+            <e p="Utility" t="Include">
+              <e p="DataManipulation.cs" t="Include" />
+              <e p="ExtensionMethods.cs" t="Include" />
+              <e p="Logging.cs" t="Include" />
+            </e>
+          </e>
+          <e p="Tests" t="Include">
+            <e p="EditMode" t="Include">
+              <e p="EditModeTests.asmdef" t="Include" />
+              <e p="NewTestScript.cs" t="Include" />
+            </e>
+            <e p="PlayMode" t="Include">
+              <e p="NewTestScript.cs" t="Include" />
+              <e p="PlayModeTests.asmdef" t="Include" />
+            </e>
+          </e>
+        </e>
         <e p="Editor" t="Include">
           <e p="ReadOnlyDrawer.cs" t="Include" />
         </e>
         <e p="ReadOnlyAttribute.cs" t="Include" />
-        <e p="Scripts" t="Include">
-          <e p="Characters" t="Include">
-            <e p="BaseController.cs" t="Include" />
-            <e p="CloneController.cs" t="Include" />
-            <e p="PlayerController.cs" t="Include" />
-          </e>
-          <e p="Components" t="Include">
-            <e p="BulletController.cs" t="Include" />
-            <e p="CharacterBodyController.cs" t="Include" />
-            <e p="GunController.cs" t="Include" />
-            <e p="GunTip.cs" t="Include" />
-            <e p="OldGunController.cs" t="Include" />
-          </e>
-          <e p="DataStructures" t="Include">
-            <e p="ActionDebugging.cs" t="Include" />
-            <e p="CharacterAction.cs" t="Include" />
-            <e p="DamagePacket.cs" t="Include" />
-            <e p="Enums.cs" t="Include" />
-            <e p="IInteractable.cs" t="Include" />
-          </e>
-          <e p="Environment" t="Include">
-            <e p="Crate1.cs" t="Include" />
-            <e p="Plane1.cs" t="Include" />
-            <e p="Platform1.cs" t="Include" />
-            <e p="ShootingTarget1.cs" t="Include" />
-          </e>
-          <e p="GameControllers" t="Include">
-            <e p="GameController.cs" t="Include" />
-            <e p="PlayerManagement.cs" t="Include" />
-          </e>
-          <e p="InputSystem" t="Include">
-            <e p="PlayerActions.cs" t="Include" />
-          </e>
-          <e p="Main.asmdef" t="Include" />
-          <e p="UI" t="Include">
-            <e p="BaseGameMenu.cs" t="Include" />
-            <e p="MainMenu.cs" t="Include" />
-            <e p="OptionsMenu.cs" t="Include" />
-          </e>
-          <e p="Utility" t="Include">
-            <e p="ExtensionMethods.cs" t="Include" />
-            <e p="Logging.cs" t="Include" />
-            <e p="UsefulMethods.cs" t="Include" />
-          </e>
-        </e>
-        <e p="Tests" t="Include">
-          <e p="EditMode" t="Include">
-            <e p="EditModeTests.asmdef" t="Include" />
-            <e p="NewTestScript.cs" t="Include" />
-          </e>
-          <e p="PlayMode" t="Include">
-            <e p="NewTestScript.cs" t="Include" />
-            <e p="PlayModeTests.asmdef" t="Include" />
-          </e>
-        </e>
         <e p="TextMesh Pro" t="Include">
           <e p="Fonts" t="Include">
             <e p="LiberationSans - OFL.txt" t="Include" />
@@ -101,6 +105,14 @@
       <e p="obj" t="ExcludeRecursive" />
       <e p="Packages" t="ExcludeRecursive" />
       <e p="PlayModeTests.csproj" t="IncludeRecursive" />
+      <e p="PowerInspector.Demo.csproj" t="IncludeRecursive" />
+      <e p="PowerInspector.Demo.Drawers.csproj" t="IncludeRecursive" />
+      <e p="PowerInspector.Editor.csproj" t="IncludeRecursive" />
+      <e p="PowerInspector.Runtime.csproj" t="IncludeRecursive" />
+      <e p="Sisus.Attributes.csproj" t="IncludeRecursive" />
+      <e p="Sisus.CreateScriptWizard.csproj" t="IncludeRecursive" />
+      <e p="Sisus.FastReflection.csproj" t="IncludeRecursive" />
+      <e p="Sisus.WebView.csproj" t="IncludeRecursive" />
       <e p="Temp\bin" t="ExcludeRecursive" />
     </e>
   </component>
