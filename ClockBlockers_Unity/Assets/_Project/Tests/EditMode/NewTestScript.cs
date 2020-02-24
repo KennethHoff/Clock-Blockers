@@ -5,7 +5,6 @@ using NUnit.Framework;
 using UnityEngine.TestTools;
 
 
-
 namespace ClockBlockers.Tests.EditMode
 {
 	public class NewTestScript

@@ -9,7 +9,6 @@ using ClockBlockers.Utility;
 using UnityEngine;
 
 
-
 namespace ClockBlockers.Environment
 {
 	public class ShootingTarget1 : MonoBehaviour, IInteractable

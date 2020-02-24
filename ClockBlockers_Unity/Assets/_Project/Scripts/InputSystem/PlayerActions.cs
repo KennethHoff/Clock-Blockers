@@ -8,13 +8,14 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
 
 
-public class @PlayerActions : IInputActionCollection, IDisposable
-{
-	public InputActionAsset asset { get; }
-
-	public @PlayerActions()
+namespace ClockBlockers.InputSystem {
+	public class @PlayerActions : IInputActionCollection, IDisposable
 	{
-		asset = InputActionAsset.FromJson(@"{
+		public InputActionAsset asset { get; }
+
+		public @PlayerActions()
+		{
+			asset = InputActionAsset.FromJson(@"{
     ""name"": ""PlayerActions"",
     ""maps"": [
         {
@@ -425,257 +426,258 @@ public class @PlayerActions : IInputActionCollection, IDisposable
     ]
 }");
 
-		// Character
-		m_Character = asset.FindActionMap("Character", throwIfNotFound: true);
-		m_Character_Movement = m_Character.FindAction("Movement", throwIfNotFound: true);
-		m_Character_Look = m_Character.FindAction("Look", throwIfNotFound: true);
-		m_Character_Shoot = m_Character.FindAction("Shoot", throwIfNotFound: true);
-		m_Character_Jump = m_Character.FindAction("Jump", throwIfNotFound: true);
-		m_Character_Spawn = m_Character.FindAction("Spawn", throwIfNotFound: true);
-		m_Character_ClearClones = m_Character.FindAction("ClearClones", throwIfNotFound: true);
-		m_Character_IncreaseTimescale = m_Character.FindAction("IncreaseTimescale", throwIfNotFound: true);
-		m_Character_DecreaseTimescale = m_Character.FindAction("DecreaseTimescale", throwIfNotFound: true);
-		m_Character_Pause = m_Character.FindAction("Pause", throwIfNotFound: true);
-		m_Character_SaveCharacterActions = m_Character.FindAction("SaveCharacterActions", throwIfNotFound: true);
-		m_Character_LoadCharacterActions = m_Character.FindAction("LoadCharacterActions", throwIfNotFound: true);
-		m_Character_ResetRound = m_Character.FindAction("ResetRound", throwIfNotFound: true);
-		m_Character_ToggleCursor = m_Character.FindAction("ToggleCursor", throwIfNotFound: true);
-	}
-
-	public void Dispose()
-	{
-		UnityEngine.Object.Destroy(asset);
-	}
-
-	public InputBinding? bindingMask
-	{
-		get => asset.bindingMask;
-		set => asset.bindingMask = value;
-	}
-
-	public ReadOnlyArray<InputDevice>? devices
-	{
-		get => asset.devices;
-		set => asset.devices = value;
-	}
-
-	public ReadOnlyArray<InputControlScheme> controlSchemes => asset.controlSchemes;
-
-	public bool Contains(InputAction action)
-	{
-		return asset.Contains(action);
-	}
-
-	public IEnumerator<InputAction> GetEnumerator()
-	{
-		return asset.GetEnumerator();
-	}
-
-	IEnumerator IEnumerable.GetEnumerator()
-	{
-		return GetEnumerator();
-	}
-
-	public void Enable()
-	{
-		asset.Enable();
-	}
-
-	public void Disable()
-	{
-		asset.Disable();
-	}
-
-	// Character
-	private readonly InputActionMap m_Character;
-	private ICharacterActions m_CharacterActionsCallbackInterface;
-	private readonly InputAction m_Character_Movement;
-	private readonly InputAction m_Character_Look;
-	private readonly InputAction m_Character_Shoot;
-	private readonly InputAction m_Character_Jump;
-	private readonly InputAction m_Character_Spawn;
-	private readonly InputAction m_Character_ClearClones;
-	private readonly InputAction m_Character_IncreaseTimescale;
-	private readonly InputAction m_Character_DecreaseTimescale;
-	private readonly InputAction m_Character_Pause;
-	private readonly InputAction m_Character_SaveCharacterActions;
-	private readonly InputAction m_Character_LoadCharacterActions;
-	private readonly InputAction m_Character_ResetRound;
-	private readonly InputAction m_Character_ToggleCursor;
-
-	public struct CharacterActions
-	{
-		private @PlayerActions m_Wrapper;
-
-		public CharacterActions(@PlayerActions wrapper)
-		{
-			m_Wrapper = wrapper;
+			// Character
+			m_Character = asset.FindActionMap("Character", throwIfNotFound: true);
+			m_Character_Movement = m_Character.FindAction("Movement", throwIfNotFound: true);
+			m_Character_Look = m_Character.FindAction("Look", throwIfNotFound: true);
+			m_Character_Shoot = m_Character.FindAction("Shoot", throwIfNotFound: true);
+			m_Character_Jump = m_Character.FindAction("Jump", throwIfNotFound: true);
+			m_Character_Spawn = m_Character.FindAction("Spawn", throwIfNotFound: true);
+			m_Character_ClearClones = m_Character.FindAction("ClearClones", throwIfNotFound: true);
+			m_Character_IncreaseTimescale = m_Character.FindAction("IncreaseTimescale", throwIfNotFound: true);
+			m_Character_DecreaseTimescale = m_Character.FindAction("DecreaseTimescale", throwIfNotFound: true);
+			m_Character_Pause = m_Character.FindAction("Pause", throwIfNotFound: true);
+			m_Character_SaveCharacterActions = m_Character.FindAction("SaveCharacterActions", throwIfNotFound: true);
+			m_Character_LoadCharacterActions = m_Character.FindAction("LoadCharacterActions", throwIfNotFound: true);
+			m_Character_ResetRound = m_Character.FindAction("ResetRound", throwIfNotFound: true);
+			m_Character_ToggleCursor = m_Character.FindAction("ToggleCursor", throwIfNotFound: true);
 		}
 
-		public InputAction @Movement => m_Wrapper.m_Character_Movement;
-		public InputAction @Look => m_Wrapper.m_Character_Look;
-		public InputAction @Shoot => m_Wrapper.m_Character_Shoot;
-		public InputAction @Jump => m_Wrapper.m_Character_Jump;
-		public InputAction @Spawn => m_Wrapper.m_Character_Spawn;
-		public InputAction @ClearClones => m_Wrapper.m_Character_ClearClones;
-		public InputAction @IncreaseTimescale => m_Wrapper.m_Character_IncreaseTimescale;
-		public InputAction @DecreaseTimescale => m_Wrapper.m_Character_DecreaseTimescale;
-		public InputAction @Pause => m_Wrapper.m_Character_Pause;
-		public InputAction @SaveCharacterActions => m_Wrapper.m_Character_SaveCharacterActions;
-		public InputAction @LoadCharacterActions => m_Wrapper.m_Character_LoadCharacterActions;
-		public InputAction @ResetRound => m_Wrapper.m_Character_ResetRound;
-		public InputAction @ToggleCursor => m_Wrapper.m_Character_ToggleCursor;
-
-		public InputActionMap Get()
+		public void Dispose()
 		{
-			return m_Wrapper.m_Character;
+			UnityEngine.Object.Destroy(asset);
+		}
+
+		public InputBinding? bindingMask
+		{
+			get => asset.bindingMask;
+			set => asset.bindingMask = value;
+		}
+
+		public ReadOnlyArray<InputDevice>? devices
+		{
+			get => asset.devices;
+			set => asset.devices = value;
+		}
+
+		public ReadOnlyArray<InputControlScheme> controlSchemes => asset.controlSchemes;
+
+		public bool Contains(InputAction action)
+		{
+			return asset.Contains(action);
+		}
+
+		public IEnumerator<InputAction> GetEnumerator()
+		{
+			return asset.GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
 		}
 
 		public void Enable()
 		{
-			Get().Enable();
+			asset.Enable();
 		}
 
 		public void Disable()
 		{
-			Get().Disable();
+			asset.Disable();
 		}
 
-		public bool enabled => Get().enabled;
+		// Character
+		private readonly InputActionMap m_Character;
+		private ICharacterActions m_CharacterActionsCallbackInterface;
+		private readonly InputAction m_Character_Movement;
+		private readonly InputAction m_Character_Look;
+		private readonly InputAction m_Character_Shoot;
+		private readonly InputAction m_Character_Jump;
+		private readonly InputAction m_Character_Spawn;
+		private readonly InputAction m_Character_ClearClones;
+		private readonly InputAction m_Character_IncreaseTimescale;
+		private readonly InputAction m_Character_DecreaseTimescale;
+		private readonly InputAction m_Character_Pause;
+		private readonly InputAction m_Character_SaveCharacterActions;
+		private readonly InputAction m_Character_LoadCharacterActions;
+		private readonly InputAction m_Character_ResetRound;
+		private readonly InputAction m_Character_ToggleCursor;
 
-		public static implicit operator InputActionMap(CharacterActions set)
+		public struct CharacterActions
 		{
-			return set.Get();
-		}
+			private @PlayerActions m_Wrapper;
 
-		public void SetCallbacks(ICharacterActions instance)
-		{
-			if (m_Wrapper.m_CharacterActionsCallbackInterface != null)
+			public CharacterActions(@PlayerActions wrapper)
 			{
-				@Movement.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnMovement;
-				@Movement.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnMovement;
-				@Movement.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnMovement;
-				@Look.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnLook;
-				@Look.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnLook;
-				@Look.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnLook;
-				@Shoot.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnShoot;
-				@Shoot.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnShoot;
-				@Shoot.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnShoot;
-				@Jump.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnJump;
-				@Jump.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnJump;
-				@Jump.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnJump;
-				@Spawn.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnSpawn;
-				@Spawn.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnSpawn;
-				@Spawn.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnSpawn;
-				@ClearClones.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnClearClones;
-				@ClearClones.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnClearClones;
-				@ClearClones.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnClearClones;
-				@IncreaseTimescale.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnIncreaseTimescale;
-				@IncreaseTimescale.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnIncreaseTimescale;
-				@IncreaseTimescale.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnIncreaseTimescale;
-				@DecreaseTimescale.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnDecreaseTimescale;
-				@DecreaseTimescale.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnDecreaseTimescale;
-				@DecreaseTimescale.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnDecreaseTimescale;
-				@Pause.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnPause;
-				@Pause.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnPause;
-				@Pause.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnPause;
-				@SaveCharacterActions.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnSaveCharacterActions;
-				@SaveCharacterActions.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnSaveCharacterActions;
-				@SaveCharacterActions.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnSaveCharacterActions;
-				@LoadCharacterActions.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnLoadCharacterActions;
-				@LoadCharacterActions.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnLoadCharacterActions;
-				@LoadCharacterActions.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnLoadCharacterActions;
-				@ResetRound.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnResetRound;
-				@ResetRound.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnResetRound;
-				@ResetRound.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnResetRound;
-				@ToggleCursor.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnToggleCursor;
-				@ToggleCursor.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnToggleCursor;
-				@ToggleCursor.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnToggleCursor;
+				m_Wrapper = wrapper;
 			}
 
-			m_Wrapper.m_CharacterActionsCallbackInterface = instance;
-			if (instance != null)
+			public InputAction @Movement => m_Wrapper.m_Character_Movement;
+			public InputAction @Look => m_Wrapper.m_Character_Look;
+			public InputAction @Shoot => m_Wrapper.m_Character_Shoot;
+			public InputAction @Jump => m_Wrapper.m_Character_Jump;
+			public InputAction @Spawn => m_Wrapper.m_Character_Spawn;
+			public InputAction @ClearClones => m_Wrapper.m_Character_ClearClones;
+			public InputAction @IncreaseTimescale => m_Wrapper.m_Character_IncreaseTimescale;
+			public InputAction @DecreaseTimescale => m_Wrapper.m_Character_DecreaseTimescale;
+			public InputAction @Pause => m_Wrapper.m_Character_Pause;
+			public InputAction @SaveCharacterActions => m_Wrapper.m_Character_SaveCharacterActions;
+			public InputAction @LoadCharacterActions => m_Wrapper.m_Character_LoadCharacterActions;
+			public InputAction @ResetRound => m_Wrapper.m_Character_ResetRound;
+			public InputAction @ToggleCursor => m_Wrapper.m_Character_ToggleCursor;
+
+			public InputActionMap Get()
 			{
-				@Movement.started += instance.OnMovement;
-				@Movement.performed += instance.OnMovement;
-				@Movement.canceled += instance.OnMovement;
-				@Look.started += instance.OnLook;
-				@Look.performed += instance.OnLook;
-				@Look.canceled += instance.OnLook;
-				@Shoot.started += instance.OnShoot;
-				@Shoot.performed += instance.OnShoot;
-				@Shoot.canceled += instance.OnShoot;
-				@Jump.started += instance.OnJump;
-				@Jump.performed += instance.OnJump;
-				@Jump.canceled += instance.OnJump;
-				@Spawn.started += instance.OnSpawn;
-				@Spawn.performed += instance.OnSpawn;
-				@Spawn.canceled += instance.OnSpawn;
-				@ClearClones.started += instance.OnClearClones;
-				@ClearClones.performed += instance.OnClearClones;
-				@ClearClones.canceled += instance.OnClearClones;
-				@IncreaseTimescale.started += instance.OnIncreaseTimescale;
-				@IncreaseTimescale.performed += instance.OnIncreaseTimescale;
-				@IncreaseTimescale.canceled += instance.OnIncreaseTimescale;
-				@DecreaseTimescale.started += instance.OnDecreaseTimescale;
-				@DecreaseTimescale.performed += instance.OnDecreaseTimescale;
-				@DecreaseTimescale.canceled += instance.OnDecreaseTimescale;
-				@Pause.started += instance.OnPause;
-				@Pause.performed += instance.OnPause;
-				@Pause.canceled += instance.OnPause;
-				@SaveCharacterActions.started += instance.OnSaveCharacterActions;
-				@SaveCharacterActions.performed += instance.OnSaveCharacterActions;
-				@SaveCharacterActions.canceled += instance.OnSaveCharacterActions;
-				@LoadCharacterActions.started += instance.OnLoadCharacterActions;
-				@LoadCharacterActions.performed += instance.OnLoadCharacterActions;
-				@LoadCharacterActions.canceled += instance.OnLoadCharacterActions;
-				@ResetRound.started += instance.OnResetRound;
-				@ResetRound.performed += instance.OnResetRound;
-				@ResetRound.canceled += instance.OnResetRound;
-				@ToggleCursor.started += instance.OnToggleCursor;
-				@ToggleCursor.performed += instance.OnToggleCursor;
-				@ToggleCursor.canceled += instance.OnToggleCursor;
+				return m_Wrapper.m_Character;
+			}
+
+			public void Enable()
+			{
+				Get().Enable();
+			}
+
+			public void Disable()
+			{
+				Get().Disable();
+			}
+
+			public bool enabled => Get().enabled;
+
+			public static implicit operator InputActionMap(CharacterActions set)
+			{
+				return set.Get();
+			}
+
+			public void SetCallbacks(ICharacterActions instance)
+			{
+				if (m_Wrapper.m_CharacterActionsCallbackInterface != null)
+				{
+					@Movement.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnMovement;
+					@Movement.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnMovement;
+					@Movement.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnMovement;
+					@Look.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnLook;
+					@Look.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnLook;
+					@Look.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnLook;
+					@Shoot.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnShoot;
+					@Shoot.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnShoot;
+					@Shoot.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnShoot;
+					@Jump.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnJump;
+					@Jump.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnJump;
+					@Jump.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnJump;
+					@Spawn.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnSpawn;
+					@Spawn.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnSpawn;
+					@Spawn.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnSpawn;
+					@ClearClones.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnClearClones;
+					@ClearClones.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnClearClones;
+					@ClearClones.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnClearClones;
+					@IncreaseTimescale.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnIncreaseTimescale;
+					@IncreaseTimescale.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnIncreaseTimescale;
+					@IncreaseTimescale.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnIncreaseTimescale;
+					@DecreaseTimescale.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnDecreaseTimescale;
+					@DecreaseTimescale.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnDecreaseTimescale;
+					@DecreaseTimescale.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnDecreaseTimescale;
+					@Pause.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnPause;
+					@Pause.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnPause;
+					@Pause.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnPause;
+					@SaveCharacterActions.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnSaveCharacterActions;
+					@SaveCharacterActions.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnSaveCharacterActions;
+					@SaveCharacterActions.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnSaveCharacterActions;
+					@LoadCharacterActions.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnLoadCharacterActions;
+					@LoadCharacterActions.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnLoadCharacterActions;
+					@LoadCharacterActions.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnLoadCharacterActions;
+					@ResetRound.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnResetRound;
+					@ResetRound.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnResetRound;
+					@ResetRound.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnResetRound;
+					@ToggleCursor.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnToggleCursor;
+					@ToggleCursor.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnToggleCursor;
+					@ToggleCursor.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnToggleCursor;
+				}
+
+				m_Wrapper.m_CharacterActionsCallbackInterface = instance;
+				if (instance != null)
+				{
+					@Movement.started += instance.OnMovement;
+					@Movement.performed += instance.OnMovement;
+					@Movement.canceled += instance.OnMovement;
+					@Look.started += instance.OnLook;
+					@Look.performed += instance.OnLook;
+					@Look.canceled += instance.OnLook;
+					@Shoot.started += instance.OnShoot;
+					@Shoot.performed += instance.OnShoot;
+					@Shoot.canceled += instance.OnShoot;
+					@Jump.started += instance.OnJump;
+					@Jump.performed += instance.OnJump;
+					@Jump.canceled += instance.OnJump;
+					@Spawn.started += instance.OnSpawn;
+					@Spawn.performed += instance.OnSpawn;
+					@Spawn.canceled += instance.OnSpawn;
+					@ClearClones.started += instance.OnClearClones;
+					@ClearClones.performed += instance.OnClearClones;
+					@ClearClones.canceled += instance.OnClearClones;
+					@IncreaseTimescale.started += instance.OnIncreaseTimescale;
+					@IncreaseTimescale.performed += instance.OnIncreaseTimescale;
+					@IncreaseTimescale.canceled += instance.OnIncreaseTimescale;
+					@DecreaseTimescale.started += instance.OnDecreaseTimescale;
+					@DecreaseTimescale.performed += instance.OnDecreaseTimescale;
+					@DecreaseTimescale.canceled += instance.OnDecreaseTimescale;
+					@Pause.started += instance.OnPause;
+					@Pause.performed += instance.OnPause;
+					@Pause.canceled += instance.OnPause;
+					@SaveCharacterActions.started += instance.OnSaveCharacterActions;
+					@SaveCharacterActions.performed += instance.OnSaveCharacterActions;
+					@SaveCharacterActions.canceled += instance.OnSaveCharacterActions;
+					@LoadCharacterActions.started += instance.OnLoadCharacterActions;
+					@LoadCharacterActions.performed += instance.OnLoadCharacterActions;
+					@LoadCharacterActions.canceled += instance.OnLoadCharacterActions;
+					@ResetRound.started += instance.OnResetRound;
+					@ResetRound.performed += instance.OnResetRound;
+					@ResetRound.canceled += instance.OnResetRound;
+					@ToggleCursor.started += instance.OnToggleCursor;
+					@ToggleCursor.performed += instance.OnToggleCursor;
+					@ToggleCursor.canceled += instance.OnToggleCursor;
+				}
 			}
 		}
-	}
 
-	public CharacterActions @Character => new CharacterActions(this);
-	private int m_KBMSchemeIndex = -1;
+		public CharacterActions @Character => new CharacterActions(this);
+		private int m_KBMSchemeIndex = -1;
 
-	public InputControlScheme KBMScheme
-	{
-		get
+		public InputControlScheme KBMScheme
 		{
-			if (m_KBMSchemeIndex == -1) m_KBMSchemeIndex = asset.FindControlSchemeIndex("KB&M");
-			return asset.controlSchemes[m_KBMSchemeIndex];
+			get
+			{
+				if (m_KBMSchemeIndex == -1) m_KBMSchemeIndex = asset.FindControlSchemeIndex("KB&M");
+				return asset.controlSchemes[m_KBMSchemeIndex];
+			}
 		}
-	}
 
-	private int m_GamepadSchemeIndex = -1;
+		private int m_GamepadSchemeIndex = -1;
 
-	public InputControlScheme GamepadScheme
-	{
-		get
+		public InputControlScheme GamepadScheme
 		{
-			if (m_GamepadSchemeIndex == -1) m_GamepadSchemeIndex = asset.FindControlSchemeIndex("Gamepad");
-			return asset.controlSchemes[m_GamepadSchemeIndex];
+			get
+			{
+				if (m_GamepadSchemeIndex == -1) m_GamepadSchemeIndex = asset.FindControlSchemeIndex("Gamepad");
+				return asset.controlSchemes[m_GamepadSchemeIndex];
+			}
 		}
-	}
 
-	public interface ICharacterActions
-	{
-		void OnMovement(InputAction.CallbackContext context);
-		void OnLook(InputAction.CallbackContext context);
-		void OnShoot(InputAction.CallbackContext context);
-		void OnJump(InputAction.CallbackContext context);
-		void OnSpawn(InputAction.CallbackContext context);
-		void OnClearClones(InputAction.CallbackContext context);
-		void OnIncreaseTimescale(InputAction.CallbackContext context);
-		void OnDecreaseTimescale(InputAction.CallbackContext context);
-		void OnPause(InputAction.CallbackContext context);
-		void OnSaveCharacterActions(InputAction.CallbackContext context);
-		void OnLoadCharacterActions(InputAction.CallbackContext context);
-		void OnResetRound(InputAction.CallbackContext context);
-		void OnToggleCursor(InputAction.CallbackContext context);
+		public interface ICharacterActions
+		{
+			void OnMovement(InputAction.CallbackContext context);
+			void OnLook(InputAction.CallbackContext context);
+			void OnShoot(InputAction.CallbackContext context);
+			void OnJump(InputAction.CallbackContext context);
+			void OnSpawn(InputAction.CallbackContext context);
+			void OnClearClones(InputAction.CallbackContext context);
+			void OnIncreaseTimescale(InputAction.CallbackContext context);
+			void OnDecreaseTimescale(InputAction.CallbackContext context);
+			void OnPause(InputAction.CallbackContext context);
+			void OnSaveCharacterActions(InputAction.CallbackContext context);
+			void OnLoadCharacterActions(InputAction.CallbackContext context);
+			void OnResetRound(InputAction.CallbackContext context);
+			void OnToggleCursor(InputAction.CallbackContext context);
+		}
 	}
 }

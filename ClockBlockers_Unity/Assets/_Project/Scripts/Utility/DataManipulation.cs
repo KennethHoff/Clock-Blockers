@@ -8,7 +8,6 @@ using System.Runtime.Serialization.Formatters.Binary;
 using ClockBlockers.Actions;
 
 
-
 namespace ClockBlockers.Utility
 {
 	public static class DataManipulation

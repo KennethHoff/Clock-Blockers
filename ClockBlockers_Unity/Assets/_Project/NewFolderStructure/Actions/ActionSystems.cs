@@ -4,7 +4,6 @@ using ClockBlockers.GameControllers;
 using UnityEngine;
 
 
-
 namespace ClockBlockers.Actions
 {
 	public class ActionSystems : MonoBehaviour
@@ -16,7 +15,7 @@ namespace ClockBlockers.Actions
 
 		public static GameObject SpawnClone(GameObject prefab, Vector3 position, Quaternion rotation, CharacterAction[] actions)
 		{
-			GameObject newClone = Instantiate(prefab, position, rotation, GameController.Instance.CloneParent);
+			GameObject newClone = Instantiate(prefab, position, rotation, GameController.instance.CloneParent);
 
 			var newCloneController = newClone.GetComponent<CloneController>();
 

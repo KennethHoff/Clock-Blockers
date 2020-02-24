@@ -1,7 +1,6 @@
 ﻿using UnityEngine.SceneManagement;
 
 
-
 namespace ClockBlockers.UI
 {
 	public class MainMenu : BaseGameMenu

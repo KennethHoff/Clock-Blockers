@@ -12,7 +12,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 
-
 namespace ClockBlockers.Characters
 {
 	public partial class PlayerController : BaseController
@@ -23,13 +22,20 @@ namespace ClockBlockers.Characters
 			CurrentFrameActions = new LinkedList<Tuple<Actions.Actions, float[]>>();
 		}
 
-		protected override void FixedUpdate()
+		// protected override void FixedUpdate()
+		// {
+		// 	MoveCharacterByInput();
+		//
+		// 	SaveActionsThisFrame();
+		//
+		// 	base.FixedUpdate();
+		// }
+
+
+		protected void FixedUpdate()
 		{
 			MoveCharacterByInput();
-
 			SaveActionsThisFrame();
-
-			base.FixedUpdate();
 		}
 
 		private void Update()
@@ -46,7 +52,7 @@ namespace ClockBlockers.Characters
 			{
 				var newAction = new CharacterAction
 				{
-					action = actions, parameter = parameter, time = Time.fixedTime - SpawnTime
+					action = actions, parameter = parameter, time = Time.fixedTime - spawnTime
 				};
 				actionStorage.AddActionToUpdatableList(newAction);
 			}
@@ -79,7 +85,7 @@ namespace ClockBlockers.Characters
 		{
 			if (Mathf.Abs(rotation) < MinInputValue) return;
 
-			float roundedFloat = rotation.Round(GameController.Instance.FloatingPointPrecision);
+			float roundedFloat = rotation.Round(GameController.instance.FloatingPointPrecision);
 
 			SaveAction(Actions.Actions.RotateCharacter, roundedFloat);
 			base.RotateCharacter(roundedFloat);
@@ -89,7 +95,7 @@ namespace ClockBlockers.Characters
 		{
 			if (Mathf.Abs(rotation) < MinInputValue) return;
 
-			float roundedFloat = rotation.Round(GameController.Instance.FloatingPointPrecision);
+			float roundedFloat = rotation.Round(GameController.instance.FloatingPointPrecision);
 
 			SaveAction(Actions.Actions.RotateCamera, roundedFloat);
 			base.RotateCamera(roundedFloat);
@@ -106,7 +112,7 @@ namespace ClockBlockers.Characters
 
 		protected override void MoveCharacterForward(float[] vector)
 		{
-			float[] roundedScaledVector = vector.Round().Scale(GameController.Instance.FloatingPointPrecision);
+			float[] roundedScaledVector = vector.Round().Scale(GameController.instance.FloatingPointPrecision);
 
 			SaveAction(Actions.Actions.Move, roundedScaledVector);
 			base.MoveCharacterForward(roundedScaledVector);
@@ -136,10 +142,7 @@ namespace ClockBlockers.Characters
 
 		private void SpawnMultipleReplays()
 		{
-			actionStorage.GameActions.ForEach(action =>
-			{
-				SpawnReplay(action);
-			});
+			actionStorage.GameActions.ForEach(action => { SpawnReplay(action); });
 		}
 
 		private void ResetCharacter()
@@ -152,8 +155,11 @@ namespace ClockBlockers.Characters
 
 			actionStorage.ResetUpdatableList();
 
-			SpawnTime = Time.fixedTime;
+			spawnTime = Time.fixedTime;
+
+			characterController.enabled = false;
 			transform.SetPositionAndRotation(StartPos, StartRot);
+			characterController.enabled = true;
 		}
 
 		private void StartNewRound()
@@ -192,6 +198,8 @@ namespace ClockBlockers.Characters
 
 		[field: Header("Setup Variables")]
 		private Vector2 MovementInput { get; set; }
+
+		public bool HoldingMouseButton { get; set; }
 
 		private float UpDowncameraRotation { get; set; }
 		private float SideToSideCharacterRotation { get; set; }
@@ -243,7 +251,7 @@ namespace ClockBlockers.Characters
 		[UsedImplicitly]
 		private void OnShoot(InputValue ctx)
 		{
-			if (ctx.isPressed) StartCoroutine(Co_AttemptToShoot());
+			StartCoroutine(Co_AttemptToShoot());
 		}
 
 		[UsedImplicitly]

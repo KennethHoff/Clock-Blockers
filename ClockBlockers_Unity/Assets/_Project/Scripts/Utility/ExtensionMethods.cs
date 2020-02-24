@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 
 
-
 namespace ClockBlockers.Utility
 {
 	static partial class ExtensionMethods

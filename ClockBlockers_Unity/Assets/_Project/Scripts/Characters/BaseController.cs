@@ -1,43 +1,62 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections;
+using System.Linq;
 
 using ClockBlockers.Actions;
 using ClockBlockers.Components;
 using ClockBlockers.DataStructures;
 using ClockBlockers.GameControllers;
+using ClockBlockers.Targetting;
 using ClockBlockers.Utility;
 
 using UnityEngine;
-
 
 
 namespace ClockBlockers.Characters
 {
 	// TODO: Add a simple "Aim towards the middle of a character" AI for weapons.
 	// TODO: Add Dot Product aiming, as opposed to RayCast aiming, for better-feeling aiming
-	public abstract class BaseController : MonoBehaviour, IInteractable
+
+
+	[RequireComponent(typeof(IRayProvider))]
+	[RequireComponent(typeof(ITargeter))]
+	public abstract partial class BaseController : MonoBehaviour, IInteractable
 	{
 		internal Camera Cam { get; private set; }
 
-		private CharacterController Controller { get; set; }
+		protected CharacterController characterController;
 
 		internal ActionStorage actionStorage;
 
+		internal ActionRunner actionRunner;
 
-		protected float SpawnTime { get; set; }
+		internal CharacterBody body;
 
+		internal Renderer bodyRenderer;
+
+		[SerializeField]
+		private IRayProvider rayProvider;
+
+		[SerializeField]
+		private ITargeter targeter;
+
+		protected float spawnTime;
+
+		private float _diedTime;
+
+/*
 		protected float TimeAlive
 		{
 			get => Time.fixedTime - SpawnTime;
 		}
+*/
 
 		protected Vector3 StartPos { get; private set; }
 
 		protected Quaternion StartRot { get; private set; }
 
 
-		internal Vector3 moveVector;
-
-		private float CurrHealth { get; set; }
+		protected Vector3 moveVector;
 
 
 		#region Set in inspector
@@ -51,13 +70,17 @@ namespace ClockBlockers.Characters
 		private float MoveSpd
 		{
 			get => moveSpd;
+/*
 			set => moveSpd = value;
+*/
 		}
 
 		private float JumpVelocity
 		{
 			get => jumpVelocity;
+/*
 			set => jumpVelocity = value;
+*/
 		}
 
 		private float MinCamAngle
@@ -80,11 +103,20 @@ namespace ClockBlockers.Characters
 			get => enableRecursiveReplays;
 		}
 
+		private float Health
+		{
+			get => _health;
+			set => _health = Mathf.Clamp(value, 0, maxHealth);
+		}
+
+		private float _health;
 
 		private float MaxHealth
 		{
 			get => maxHealth;
+/*
 			set => maxHealth = value;
+*/
 		}
 
 
@@ -98,20 +130,23 @@ namespace ClockBlockers.Characters
 			get => shielding;
 		}
 
+/*
 		private bool IsAlive { get; set; }
+*/
 
 
+/*
 		private GameObject ClonePrefab
 		{
 			get => clonePrefab;
 		}
+*/
 
 
 		private GunController Gun
 		{
 			get => gun;
 		}
-
 
 		[SerializeField]
 		[Header("Setup Variables")]
@@ -159,9 +194,18 @@ namespace ClockBlockers.Characters
 		protected virtual void Awake()
 		{
 			actionStorage = actionStorage ?? new ActionStorage();
+			actionRunner = actionRunner ? actionRunner : gameObject.AddComponent<ActionRunner>();
 			Cam = GetComponentInChildren<Camera>();
-			Controller = GetComponent<CharacterController>();
+			characterController = GetComponent<CharacterController>();
 			Gun.Holder = this;
+			AssignDelegates();
+
+			body = GetComponentInChildren<CharacterBody>();
+			bodyRenderer = body.GetComponent<Renderer>();
+
+
+			targeter = GetComponent<ITargeter>();
+			rayProvider = GetComponent<IRayProvider>();
 		}
 
 		protected virtual void Start()
@@ -170,19 +214,19 @@ namespace ClockBlockers.Characters
 			StartPos = transform1.position;
 			StartRot = transform1.rotation;
 
-			SpawnTime = Time.fixedTime;
+			spawnTime = Time.fixedTime;
 		}
 
-		protected virtual void FixedUpdate()
-		{
-			//AffectGravity();
-			//characterController.Move(moveVector);
-		}
+		// protected virtual void FixedUpdate()
+		// {
+		// 	//AffectGravity();
+		// 	//characterController.Move(moveVector);
+		// }
+
 
 		protected void AffectGravity()
 		{
-			//if (characterController.velocity.y == 0) moveVector.y = 0;
-			if (Controller.isGrounded)
+			if (characterController.isGrounded)
 			{
 				Vector3 tempGravity = Physics.gravity * 0.1f;
 				if (moveVector.y < tempGravity.y) moveVector = tempGravity;
@@ -195,7 +239,7 @@ namespace ClockBlockers.Characters
 
 		protected virtual void AttemptToJump()
 		{
-			if (Controller.isGrounded)
+			if (characterController.isGrounded)
 			{
 				ExecuteJump();
 			}
@@ -240,28 +284,30 @@ namespace ClockBlockers.Characters
 
 			Vector3 prelimMove = (forward * vector[1]) + (right * vector[0]);
 			Vector3 move = prelimMove * MoveSpd;
-			Vector3 roundedVector = move.Round(GameController.Instance.FloatingPointPrecision);
+			Vector3 roundedVector = move.Round(GameController.instance.FloatingPointPrecision);
 
 			MoveCharacter(roundedVector);
 		}
 
 		protected void MoveCharacter(Vector3 vector)
 		{
-			Controller.Move(vector);
-
-			// transform.position += vector;
+			characterController.Move(vector);
 		}
 
 		protected virtual void AttemptToShoot()
 		{
 			// TODO: Add Ammo checks etc..
-			Gun.PullTrigger();
+
+			if (gun.CanShoot)
+			{
+				Gun.PullTrigger();
+			}
 		}
 
 
 		protected void HealToFull()
 		{
-			CurrHealth = MaxHealth;
+			Health = MaxHealth;
 		}
 
 		private void AttemptDealDamage(DamagePacket damagePacket)
@@ -269,15 +315,26 @@ namespace ClockBlockers.Characters
 			DealDamage(damagePacket);
 		}
 
-		/// <summary>
-		///     Deal Damage means the entity in question is dealing damage, not dealing damage to other entities.
-		///     ie: This deals damage to itself.
-		/// </summary>
 		private void DealDamage(DamagePacket damagePacket)
 		{
 			float finalDamage = damagePacket.damage - Armor;
-			CurrHealth -= finalDamage;
-			if (CurrHealth <= 0)
+			float remainingDamage = finalDamage;
+
+			if (Shielding > 0)
+			{
+				if (shielding >= remainingDamage)
+				{
+					shielding -= remainingDamage;
+				}
+				else
+				{
+					remainingDamage -= shielding;
+					shielding = 0;
+				}
+			}
+
+			Health -= remainingDamage;
+			if (Health <= 0)
 			{
 				AttemptKill();
 			}
@@ -290,11 +347,20 @@ namespace ClockBlockers.Characters
 
 		private void Kill()
 		{
-			GetComponentInChildren<CharacterBody>().GetComponent<Renderer>().material =
-				GameController.Instance.DeadMaterial;
+			bodyRenderer.material = GameController.instance.DeadMaterial;
 
-			StopAllCoroutines();
-			Destroy(gameObject, 1.25f);
+			float removalTime = 1.25f;
+
+			// StopAllCoroutines();
+
+			// Man, that felt satisfying to replace.
+			// I never wanted to call StopAllCoroutines() on this class in the first place, because:
+			// I knew that, if I wanted to do other non-action related Coroutines in the future, I'd have to find another way to only stop the action ones.
+			actionRunner.StopAllCoroutines();
+
+			Destroy(gameObject, removalTime);
+
+			StartCoroutine(Co_FallThroughFloor(removalTime));
 		}
 
 
@@ -323,7 +389,6 @@ namespace ClockBlockers.Characters
 			GameObject clone = ActionSystems.SpawnReplay(clonePrefab, StartPos, StartRot, actions);
 			var cloneController = clone.GetComponent<CloneController>();
 
-
 			cloneController.moveSpd = moveSpd;
 		}
 
@@ -332,10 +397,95 @@ namespace ClockBlockers.Characters
 			AttemptDealDamage(damagePacket);
 		}
 
-		[ContextMenu("Move forward 10")]
-		public void MoveForward10()
+		private Ray CreateRay()
 		{
-			MoveCharacterForward(new[] {0f, 10f});
+			return rayProvider.CreateRay(Cam);
+		}
+
+		public Tuple<IInteractable, RaycastHit> GetTarget()
+		{
+			return targeter.GetInteractableFromRay(CreateRay());
+		}
+	}
+
+
+	public abstract partial class BaseController
+	{
+		protected virtual void AssignDelegates()
+		{
+			actionRunner.moveAction = Action_MoveCharacter;
+			actionRunner.rotateCharacterAction = Action_RotateCharacter;
+			actionRunner.rotateCameraAction = Action_RotateCamera;
+			actionRunner.jumpAction = Action_AttemptToJump;
+			actionRunner.shootAction = Action_AttemptToShoot;
+			actionRunner.spawnReplayAction = Action_SpawnReplay;
+			actionRunner.completedAllActions = Action_CompletedAll;
+		}
+
+		protected virtual void Action_MoveCharacter(float[] value)
+		{
+			float[] move = {value[0], value[1]};
+			MoveCharacterForward(move);
+		}
+
+		protected virtual void Action_RotateCharacter(float[] value)
+		{
+			float rotation = value[0];
+			RotateCharacter(rotation);
+		}
+
+		protected virtual void Action_RotateCamera(float[] value)
+		{
+			float rotation = value[0];
+			RotateCamera(rotation);
+		}
+
+		protected virtual void Action_AttemptToJump(float[] value)
+		{
+			AttemptToJump();
+		}
+
+		protected virtual void Action_AttemptToShoot(float[] value)
+		{
+			AttemptToShoot();
+		}
+
+		protected virtual void Action_SpawnReplay(float[] value)
+		{
+			SpawnReplay();
+		}
+
+		protected virtual void Action_CompletedAll()
+		{
+			const float removalTime = 5f;
+
+			Destroy(gameObject, removalTime);
+			_diedTime = Time.fixedDeltaTime;
+
+			StartCoroutine(Co_FallThroughFloor(removalTime));
+		}
+
+		private IEnumerator Co_FallThroughFloor(float removalTime)
+		{
+			var yieldInstruction = new WaitForFixedUpdate();
+
+			// Get the height of the body.
+			float height = body.GetComponent<MeshFilter>().mesh.bounds.extents.y;
+
+			// Multiply it by 2 (not sure why; I think the 'base height' is half, either that or it's radius or something
+			const int heightMultiplier = 2;
+			float multipliedHeight = height * heightMultiplier;
+
+			// Get the position in order to know how far to fall; Fall until under y=0
+			float startPos = transform.position.y;
+			float totalDistance = startPos + multipliedHeight;
+
+			while (_diedTime + removalTime >= Time.fixedDeltaTime)
+			{
+				float fallDistance = (totalDistance / removalTime) * Time.fixedDeltaTime;
+				transform.position -= new Vector3(0, fallDistance, 0);
+				yield return yieldInstruction;
+			}
 		}
 	}
 }

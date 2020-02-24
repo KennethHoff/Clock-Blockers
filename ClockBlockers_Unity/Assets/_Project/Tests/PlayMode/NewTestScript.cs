@@ -1,7 +1,6 @@
 ﻿using NUnit.Framework;
 
 
-
 namespace ClockBlockers.Tests.PlayMode
 {
 	public class NewTestScript

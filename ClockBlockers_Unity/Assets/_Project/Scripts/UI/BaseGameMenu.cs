@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 
 
-
 namespace ClockBlockers.UI
 {
 	public abstract class BaseGameMenu : MonoBehaviour

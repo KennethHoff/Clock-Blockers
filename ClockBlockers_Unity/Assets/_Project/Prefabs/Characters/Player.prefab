@@ -177,6 +177,8 @@ GameObject:
   - component: {fileID: 7289278812408454231}
   - component: {fileID: 7289278812408454229}
   - component: {fileID: 7289278812408454232}
+  - component: {fileID: 1973507293139834464}
+  - component: {fileID: 4612198076220346063}
   m_Layer: 10
   m_Name: Player
   m_TagString: Untagged
@@ -222,6 +224,8 @@ MonoBehaviour:
   armor: 0
   shielding: 0
   debugLogEveryAction: 0
+  moveSpd: 0
+  jumpVelocity: 0
   verticalMouseSensitivity: 5
   horizontalMouseSensitivity: 5
 --- !u!143 &7289278812408454229
@@ -296,6 +300,30 @@ MonoBehaviour:
   m_DefaultActionMap: Character
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 1193440956921473679}
+--- !u!114 &1973507293139834464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7289278812408454228}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 735f27f0e13d42ac898f503eef706df3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4612198076220346063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7289278812408454228}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03639f48dcf04ebf845625e44009e8bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7289278813572341669
 GameObject:
   m_ObjectHideFlags: 0

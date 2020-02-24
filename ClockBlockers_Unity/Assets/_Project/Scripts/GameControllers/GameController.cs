@@ -4,18 +4,12 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 
-
 namespace ClockBlockers.GameControllers
 {
 	[RequireComponent(typeof(Transform))]
 	public class GameController : MonoBehaviour
 	{
-		private string FirstScene
-		{
-			get => firstScene;
-		}
-
-		public static GameController Instance { get; private set; }
+		public static GameController instance;
 
 		public Transform CloneParent
 		{
@@ -27,11 +21,15 @@ namespace ClockBlockers.GameControllers
 			get => deadMaterial;
 		}
 
+		public Material CompletedMaterial
+		{
+			get => completedMaterial;
+		}
+
 		public GameObject[] BulletHoles
 		{
 			get => bulletHoles;
 		}
-
 
 		public int FloatingPointPrecision
 		{
@@ -54,13 +52,16 @@ namespace ClockBlockers.GameControllers
 		[SerializeField]
 		private GameObject[] bulletHoles;
 
+		[SerializeField]
+		private Material completedMaterial;
+
 		private void Awake()
 		{
-			SceneManager.LoadScene(FirstScene, LoadSceneMode.Additive);
-			Instance = this;
+			SceneManager.LoadScene(firstScene, LoadSceneMode.Additive);
+			instance = this;
 		}
 
-		public static void SetCursorMode(bool locked)
+		private static void SetCursorMode(bool locked)
 		{
 			Cursor.lockState = locked
 				? CursorLockMode.Locked
@@ -75,9 +76,9 @@ namespace ClockBlockers.GameControllers
 		public static void ClearClones()
 		{
 			Logging.Log("Clearing children");
-			for (var i = 0; i < GameController.Instance.CloneParent.childCount; i++)
+			for (var i = 0; i < GameController.instance.CloneParent.childCount; i++)
 			{
-				Destroy(GameController.Instance.CloneParent.GetChild(i).gameObject);
+				Destroy(GameController.instance.CloneParent.GetChild(i).gameObject);
 			}
 		}
 	}

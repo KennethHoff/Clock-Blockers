@@ -1,6 +1,9 @@
-﻿using ClockBlockers.Characters;
+﻿using System;
+
+using ClockBlockers.Characters;
 using ClockBlockers.DataStructures;
 using ClockBlockers.GameControllers;
+using ClockBlockers.Utility;
 
 using JetBrains.Annotations;
 
@@ -9,37 +12,15 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 
 
-
 namespace ClockBlockers.Components
 {
 	public class GunController : MonoBehaviour
 	{
-		private GameObject CasingPrefab
-		{
-			get => casingPrefab;
-		}
+		private AudioSource _audioSource;
 
-		private GameObject MuzzleFlashPrefab
-		{
-			get => muzzleFlashPrefab;
-		}
+		private Animator _animator;
 
-		private Transform BarrelLocation
-		{
-			get => barrelLocation;
-			set => barrelLocation = value;
-		}
-
-		private Transform CasingExitLocation
-		{
-			get => casingExitLocation;
-		}
-
-		private AudioSource Source { get; set; }
-
-		private Animator Animator1 { get; set; }
-
-		private float Range
+		public float Range
 		{
 			get => range;
 		}
@@ -52,12 +33,6 @@ namespace ClockBlockers.Components
 		private Enums.DamageType DamageType
 		{
 			get => damageType;
-		}
-
-		private bool CanShoot
-		{
-			get => canShoot;
-			set => canShoot = value;
 		}
 
 		public BaseController Holder
@@ -90,51 +65,45 @@ namespace ClockBlockers.Components
 		[SerializeField]
 		private Enums.DamageType damageType;
 
-		[SerializeField]
-		private bool canShoot;
+		public bool CanShoot { get; private set; }
 
 		private static int AnimationShootTrigger { get; } = Animator.StringToHash("Shoot");
 
 
 		private void Start()
 		{
-			if (BarrelLocation == null)
-			{
-				BarrelLocation = transform;
-			}
+			_animator = GetComponent<Animator>();
 
-			Animator1 = GetComponent<Animator>();
-
-			Source = GetComponent<AudioSource>();
+			_audioSource = GetComponent<AudioSource>();
 
 			CanShoot = true;
 		}
 
 		internal void PullTrigger()
 		{
-			if (Animator1.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
+			if (_animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
 			{
-				Animator1.SetTrigger(AnimationShootTrigger);
+				_animator.SetTrigger(AnimationShootTrigger);
 			}
 		}
 
 		[UsedImplicitly]
 		private void Shoot()
 		{
-			GameObject tempFlash = Instantiate(MuzzleFlashPrefab, BarrelLocation.position, BarrelLocation.rotation);
+			GameObject tempFlash = Instantiate(muzzleFlashPrefab, barrelLocation.position, barrelLocation.rotation);
 
 			Destroy(tempFlash, 0.5f);
-			Source.Play();
+			_audioSource.Play();
 			ShootRayCast();
 		}
 
 		[UsedImplicitly]
 		private void ReleaseCasing()
 		{
-			Vector3 position = CasingExitLocation.position;
-			GameObject casing = Instantiate(CasingPrefab, position, CasingExitLocation.rotation);
+			Vector3 position = casingExitLocation.position;
+			GameObject casing = Instantiate(casingPrefab, position, casingExitLocation.rotation);
 			casing.GetComponent<Rigidbody>().AddExplosionForce(550f,
-				position - CasingExitLocation.right * 0.3f - CasingExitLocation.up * 0.6f, 1f);
+				position - (casingExitLocation.right * 0.3f) - (casingExitLocation.up * 0.6f), 1f);
 			casing.GetComponent<Rigidbody>()
 				.AddTorque(new Vector3(0, Random.Range(100f, 500f), Random.Range(10f, 1000f)), ForceMode.Impulse);
 
@@ -143,12 +112,12 @@ namespace ClockBlockers.Components
 
 		private DamagePacket CreateDamagePacket()
 		{
-			return new DamagePacket(DamageType, Damage, this.gameObject);
+			return new DamagePacket(DamageType, Damage, gameObject);
 		}
 
 		private static void CreateBulletHole(Vector3 position, Quaternion rotation, Transform parentObject)
 		{
-			GameObject bulletHolePrefab = GameController.Instance.BulletHoles[0];
+			GameObject bulletHolePrefab = GameController.instance.BulletHoles[0];
 
 			Vector3 bulletHoleScale = bulletHolePrefab.transform.localScale;
 			Vector3 parentObjectScale = parentObject.lossyScale;
@@ -164,12 +133,16 @@ namespace ClockBlockers.Components
 
 		private void ShootRayCast()
 		{
-			Transform transform1 = Holder.Cam.transform;
-			bool didHit = Physics.Raycast(transform1.position, transform1.forward, out var hit, Range);
+			Tuple<IInteractable, RaycastHit> target = holder.GetTarget();
+			
+			if (target == null) return;
 
-			if (!didHit) return;
+			IInteractable interactable = target.Item1;
+			RaycastHit hit = target.Item2;
 
-			hit.transform.GetComponent<IInteractable>().OnHit(CreateDamagePacket(), hit.point);
+			if (hit.distance > range) return;
+			
+			interactable.OnHit(CreateDamagePacket(), hit.point);
 
 			CreateBulletHole(hit.point, Quaternion.FromToRotation(Vector3.up, hit.normal), hit.transform);
 		}

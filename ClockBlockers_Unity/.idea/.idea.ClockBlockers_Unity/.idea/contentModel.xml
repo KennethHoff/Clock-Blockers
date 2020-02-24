@@ -11,9 +11,20 @@
           <e p="Main.asmdef" t="Include" />
           <e p="NewFolderStructure" t="Include">
             <e p="Actions" t="Include">
+              <e p="ActionRunner.cs" t="Include" />
               <e p="ActionStorage.cs" t="Include" />
               <e p="ActionSystems.cs" t="Include" />
               <e p="CharacterAction.cs" t="Include" />
+            </e>
+            <e p="Input" t="Include">
+              <e p="InputController.cs" t="Include" />
+            </e>
+            <e p="Targetting" t="Include">
+              <e p="CameraForwardRayProvider.cs" t="Include" />
+              <e p="IRayProvider.cs" t="Include" />
+              <e p="ITargeter.cs" t="Include" />
+              <e p="RayCastBasedTargeter.cs" t="Include" />
+              <e p="ResponsiveTargeter.cs" t="Include" />
             </e>
           </e>
           <e p="Scripts" t="Include">
