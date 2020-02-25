@@ -8,79 +8,61 @@
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
       <e p="Assets" t="Include">
         <e p="_Project" t="Include">
-          <e p="Main.asmdef" t="Include" />
-          <e p="NewFolderStructure" t="Include">
-            <e p="Input" t="Include">
-              <e p="InputController.cs" t="Include" />
-            </e>
-            <e p="NewReplaySystem" t="Include">
-              <e p="CharacterAction.cs" t="Include" />
-              <e p="ReplayRunner" t="Include">
-                <e p="ActionReplayRunner.cs" t="Include" />
-                <e p="IReplayRunner.cs" t="Include" />
-              </e>
-              <e p="ReplaySaver" t="Include">
-                <e p="ActionReplaySaver.cs" t="Include" />
-                <e p="IntervalReplaySaver.cs" t="Include" />
-                <e p="IReplaySaver.cs" t="Include" />
-              </e>
-              <e p="ReplaySpawner" t="Include">
-                <e p="ActionReplaySpawner.cs" t="Include" />
-                <e p="IReplaySpawner.cs" t="Include" />
-              </e>
-              <e p="ReplayStorage" t="Include">
-                <e p="ActionReplayStorage.cs" t="Include" />
-                <e p="IntervalReplayStorage.cs" t="Include" />
-                <e p="IReplayStorage.cs" t="Include" />
-              </e>
-              <e p="Translation.cs" t="Include" />
-            </e>
-            <e p="Targetting" t="Include">
-              <e p="CameraForwardRayProvider.cs" t="Include" />
-              <e p="DotProductConeTargeter.cs" t="Include" />
-              <e p="IRayProvider.cs" t="Include" />
-              <e p="ITargeter.cs" t="Include" />
-              <e p="RayCastBasedTargeter.cs" t="Include" />
-            </e>
-          </e>
-          <e p="Scripts" t="Include">
-            <e p="Characters" t="Include">
+          <e p="Characters" t="Include">
+            <e p="Scripts" t="Include">
               <e p="Character.cs" t="Include" />
+              <e p="CharacterBody.cs" t="Include" />
               <e p="Clone.cs" t="Include" />
               <e p="Player.cs" t="Include" />
             </e>
-            <e p="Components" t="Include">
-              <e p="CharacterBody.cs" t="Include" />
-              <e p="Gun.cs" t="Include" />
-            </e>
-            <e p="DataStructures" t="Include">
-              <e p="DamagePacket.cs" t="Include" />
-              <e p="Enums.cs" t="Include" />
-              <e p="IInteractable.cs" t="Include" />
-            </e>
-            <e p="Environment" t="Include">
-              <e p="Crate1.cs" t="Include" />
+          </e>
+          <e p="DataStructures" t="Include">
+            <e p="DamagePacket.cs" t="Include" />
+            <e p="Enums.cs" t="Include" />
+            <e p="IInteractable.cs" t="Include" />
+          </e>
+          <e p="Environment" t="Include">
+            <e p="Scripts" t="Include">
               <e p="Plane1.cs" t="Include" />
               <e p="Platform1.cs" t="Include" />
               <e p="ShootingTarget1.cs" t="Include" />
             </e>
-            <e p="GameControllers" t="Include">
-              <e p="GameController.cs" t="Include" />
-              <e p="PlayerManagement.cs" t="Include" />
+          </e>
+          <e p="GameControllers" t="Include">
+            <e p="GameController.cs" t="Include" />
+          </e>
+          <e p="Input" t="Include">
+            <e p="InputController.cs" t="Include" />
+          </e>
+          <e p="Main.asmdef" t="Include" />
+          <e p="NewReplaySystem" t="Include">
+            <e p="CharacterAction.cs" t="Include" />
+            <e p="ReplayRunner" t="Include">
+              <e p="ActionReplayRunner.cs" t="Include" />
+              <e p="IReplayRunner.cs" t="Include" />
             </e>
-            <e p="InputSystem" t="Include">
-              <e p="PlayerActions.cs" t="Include" />
+            <e p="ReplaySaver" t="Include">
+              <e p="ActionReplaySaver.cs" t="Include" />
+              <e p="IntervalReplaySaver.cs" t="Include" />
+              <e p="IReplaySaver.cs" t="Include" />
             </e>
-            <e p="UI" t="Include">
-              <e p="BaseGameMenu.cs" t="Include" />
-              <e p="MainMenu.cs" t="Include" />
-              <e p="OptionsMenu.cs" t="Include" />
+            <e p="ReplaySpawner" t="Include">
+              <e p="ActionReplaySpawner.cs" t="Include" />
+              <e p="IReplaySpawner.cs" t="Include" />
             </e>
-            <e p="Utility" t="Include">
-              <e p="DataManipulation.cs" t="Include" />
-              <e p="ExtensionMethods.cs" t="Include" />
-              <e p="Logging.cs" t="Include" />
+            <e p="ReplayStorage" t="Include">
+              <e p="ActionReplayStorage.cs" t="Include" />
+              <e p="IntervalReplayStorage.cs" t="Include" />
+              <e p="IReplayStorage.cs" t="Include" />
             </e>
+            <e p="Translation.cs" t="Include" />
+          </e>
+          <e p="Targetting" t="Include">
+            <e p="CameraForwardRayProvider.cs" t="Include" />
+            <e p="DotProductConeTargeter.cs" t="Include" />
+            <e p="IRayProvider.cs" t="Include" />
+            <e p="ITargeter.cs" t="Include" />
+            <e p="RayCastBasedTargeter.cs" t="Include" />
           </e>
           <e p="Tests" t="Include">
             <e p="EditMode" t="Include">
@@ -91,6 +73,23 @@
               <e p="NewTestScript.cs" t="Include" />
               <e p="PlayModeTests.asmdef" t="Include" />
             </e>
+          </e>
+          <e p="UI" t="Include">
+            <e p="Main Menu" t="Include">
+              <e p="Scripts" t="Include">
+                <e p="BaseGameMenu.cs" t="Include" />
+                <e p="MainMenu.cs" t="Include" />
+                <e p="OptionsMenu.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+          <e p="Utility" t="Include">
+            <e p="DataManipulation.cs" t="Include" />
+            <e p="ExtensionMethods.cs" t="Include" />
+            <e p="Logging.cs" t="Include" />
+          </e>
+          <e p="Weapons" t="Include">
+            <e p="Gun.cs" t="Include" />
           </e>
         </e>
       </e>
