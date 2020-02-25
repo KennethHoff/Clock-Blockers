@@ -1,6 +1,6 @@
 ﻿namespace ClockBlockers.Characters
 {
-	public class CloneController : BaseController
+	public class Clone : Character
 	{
 		protected override void Start()
 		{
@@ -10,7 +10,13 @@
 
 		private void EngageAllActions()
 		{
-			actionRunner.EngageAllActions(actionStorage.ReplayActions);
+			replayRunner.StartRunning();
+		}
+
+		protected override void OnActEnded()
+		{
+			base.OnActEnded();
+			Destroy(gameObject);
 		}
 	}
 }

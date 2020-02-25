@@ -1,4 +1,8 @@
-﻿using ClockBlockers.Utility;
+﻿using System;
+using System.Collections.Generic;
+
+using ClockBlockers.Characters;
+using ClockBlockers.Utility;
 
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -6,10 +10,23 @@ using UnityEngine.SceneManagement;
 
 namespace ClockBlockers.GameControllers
 {
-	[RequireComponent(typeof(Transform))]
+	// TODO: Completely remove this Script. What the fuck is a "Game Controller" - this entire thing is a game..
+
 	public class GameController : MonoBehaviour
 	{
-		public static GameController instance;
+		[HideInInspector]
+		public Action newActStarted;
+
+		[HideInInspector]
+		public Action actEnded;
+
+		public float TimeWhenActStarted { get; private set; }
+		public int currentAct;
+
+		private List<Player> _players;
+
+		[SerializeField]
+		private Player playerPrefab;
 
 		public Transform CloneParent
 		{
@@ -37,7 +54,7 @@ namespace ClockBlockers.GameControllers
 		}
 
 		[SerializeField]
-		private string firstScene;
+		private string battleArena;
 
 		[SerializeField]
 		private Transform cloneParent;
@@ -57,8 +74,16 @@ namespace ClockBlockers.GameControllers
 
 		private void Awake()
 		{
-			SceneManager.LoadScene(firstScene, LoadSceneMode.Additive);
-			instance = this;
+			SceneManager.LoadScene(battleArena, LoadSceneMode.Additive);
+			_players = new List<Player>();
+			CreateNewPlayer();
+		}
+
+		private void CreateNewPlayer()
+		{
+			Player newPlayer = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
+			newPlayer.gameController = this;
+			_players.Add(newPlayer);
 		}
 
 		private static void SetCursorMode(bool locked)
@@ -73,13 +98,35 @@ namespace ClockBlockers.GameControllers
 			SetCursorMode(Cursor.lockState != CursorLockMode.Locked);
 		}
 
-		public static void ClearClones()
+		public void ClearClones()
 		{
 			Logging.Log("Clearing children");
-			for (var i = 0; i < GameController.instance.CloneParent.childCount; i++)
+			for (var i = 0; i < CloneParent.childCount; i++)
 			{
-				Destroy(GameController.instance.CloneParent.GetChild(i).gameObject);
+				Destroy(CloneParent.GetChild(i).gameObject);
 			}
+		}
+
+		public void EndCurrentAct()
+		{
+			actEnded();
+		}
+
+		public void StartNewAct()
+		{
+			newActStarted();
+			TimeWhenActStarted = Time.time;
+			currentAct++;
+		}
+
+		public void ResetAllPlayer()
+		{
+			_players.ForEach(controller => controller.ResetCharacter());
+		}
+
+		public Character SpawnCharacter(Character character, Vector3 position, Quaternion rotation)
+		{
+			return Instantiate(character, position, rotation);
 		}
 	}
 }

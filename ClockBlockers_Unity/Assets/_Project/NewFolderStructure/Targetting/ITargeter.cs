@@ -1,4 +1,6 @@
-﻿using ClockBlockers.DataStructures;
+﻿using System;
+
+using ClockBlockers.DataStructures;
 
 using UnityEngine;
 
@@ -7,6 +9,6 @@ namespace ClockBlockers.Targetting
 {
 	internal interface ITargeter
 	{
-		IInteractable GetInteractableFromRay(Ray ray);
+		Tuple<IInteractable, RaycastHit> GetInteractableFromRay(Ray ray, float range);
 	}
 }

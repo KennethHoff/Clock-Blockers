@@ -10,32 +10,48 @@
         <e p="_Project" t="Include">
           <e p="Main.asmdef" t="Include" />
           <e p="NewFolderStructure" t="Include">
-            <e p="Actions" t="Include">
-              <e p="ActionRunner.cs" t="Include" />
-              <e p="ActionStorage.cs" t="Include" />
-              <e p="ActionSystems.cs" t="Include" />
-              <e p="CharacterAction.cs" t="Include" />
-            </e>
             <e p="Input" t="Include">
               <e p="InputController.cs" t="Include" />
             </e>
+            <e p="NewReplaySystem" t="Include">
+              <e p="CharacterAction.cs" t="Include" />
+              <e p="ReplayRunner" t="Include">
+                <e p="ActionReplayRunner.cs" t="Include" />
+                <e p="IReplayRunner.cs" t="Include" />
+              </e>
+              <e p="ReplaySaver" t="Include">
+                <e p="ActionReplaySaver.cs" t="Include" />
+                <e p="IntervalReplaySaver.cs" t="Include" />
+                <e p="IReplaySaver.cs" t="Include" />
+              </e>
+              <e p="ReplaySpawner" t="Include">
+                <e p="ActionReplaySpawner.cs" t="Include" />
+                <e p="IReplaySpawner.cs" t="Include" />
+              </e>
+              <e p="ReplayStorage" t="Include">
+                <e p="ActionReplayStorage.cs" t="Include" />
+                <e p="IntervalReplayStorage.cs" t="Include" />
+                <e p="IReplayStorage.cs" t="Include" />
+              </e>
+              <e p="Translation.cs" t="Include" />
+            </e>
             <e p="Targetting" t="Include">
               <e p="CameraForwardRayProvider.cs" t="Include" />
+              <e p="DotProductConeTargeter.cs" t="Include" />
               <e p="IRayProvider.cs" t="Include" />
               <e p="ITargeter.cs" t="Include" />
               <e p="RayCastBasedTargeter.cs" t="Include" />
-              <e p="ResponsiveTargeter.cs" t="Include" />
             </e>
           </e>
           <e p="Scripts" t="Include">
             <e p="Characters" t="Include">
-              <e p="BaseController.cs" t="Include" />
-              <e p="CloneController.cs" t="Include" />
-              <e p="PlayerController.cs" t="Include" />
+              <e p="Character.cs" t="Include" />
+              <e p="Clone.cs" t="Include" />
+              <e p="Player.cs" t="Include" />
             </e>
             <e p="Components" t="Include">
               <e p="CharacterBody.cs" t="Include" />
-              <e p="GunController.cs" t="Include" />
+              <e p="Gun.cs" t="Include" />
             </e>
             <e p="DataStructures" t="Include">
               <e p="DamagePacket.cs" t="Include" />
@@ -75,38 +91,6 @@
               <e p="NewTestScript.cs" t="Include" />
               <e p="PlayModeTests.asmdef" t="Include" />
             </e>
-          </e>
-        </e>
-        <e p="Editor" t="Include">
-          <e p="ReadOnlyDrawer.cs" t="Include" />
-        </e>
-        <e p="ReadOnlyAttribute.cs" t="Include" />
-        <e p="TextMesh Pro" t="Include">
-          <e p="Fonts" t="Include">
-            <e p="LiberationSans - OFL.txt" t="Include" />
-          </e>
-          <e p="Resources" t="Include">
-            <e p="LineBreaking Following Characters.txt" t="Include" />
-            <e p="LineBreaking Leading Characters.txt" t="Include" />
-            <e p="Shaders" t="Include">
-              <e p="TMP_Bitmap-Custom-Atlas.shader" t="Include" />
-              <e p="TMP_Bitmap-Mobile.shader" t="Include" />
-              <e p="TMP_Bitmap.shader" t="Include" />
-              <e p="TMP_SDF Overlay.shader" t="Include" />
-              <e p="TMP_SDF-Mobile Masking.shader" t="Include" />
-              <e p="TMP_SDF-Mobile Overlay.shader" t="Include" />
-              <e p="TMP_SDF-Mobile.shader" t="Include" />
-              <e p="TMP_SDF-Surface-Mobile.shader" t="Include" />
-              <e p="TMP_SDF-Surface.shader" t="Include" />
-              <e p="TMP_SDF.shader" t="Include" />
-              <e p="TMP_Sprite.shader" t="Include" />
-              <e p="TMPro.cginc" t="Include" />
-              <e p="TMPro_Properties.cginc" t="Include" />
-              <e p="TMPro_Surface.cginc" t="Include" />
-            </e>
-          </e>
-          <e p="Sprites" t="Include">
-            <e p="EmojiOne Attribution.txt" t="Include" />
           </e>
         </e>
       </e>

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections;
-using System.Linq;
 
-using ClockBlockers.Actions;
 using ClockBlockers.Components;
 using ClockBlockers.DataStructures;
 using ClockBlockers.GameControllers;
+using ClockBlockers.NewReplaySystem.ReplayRunner;
+using ClockBlockers.NewReplaySystem.ReplaySpawner;
+using ClockBlockers.NewReplaySystem.ReplayStorage;
 using ClockBlockers.Targetting;
 using ClockBlockers.Utility;
 
@@ -18,69 +19,46 @@ namespace ClockBlockers.Characters
 	// TODO: Add Dot Product aiming, as opposed to RayCast aiming, for better-feeling aiming
 
 
-	[RequireComponent(typeof(IRayProvider))]
-	[RequireComponent(typeof(ITargeter))]
-	public abstract partial class BaseController : MonoBehaviour, IInteractable
+	public abstract partial class Character : MonoBehaviour, IInteractable
 	{
+		protected WaitForFixedUpdate waitForFixedFrame;
+
 		internal Camera Cam { get; private set; }
 
 		protected CharacterController characterController;
 
-		internal ActionStorage actionStorage;
+		internal IReplayStorage replayStorage;
 
-		internal ActionRunner actionRunner;
+		internal IReplaySpawner replaySpawner;
 
-		internal CharacterBody body;
+		
+		// There's a fundamental difference in architecture; They can't mix.
+		internal ActionReplayRunner replayRunner;
 
-		internal Renderer bodyRenderer;
 
-		[SerializeField]
-		private IRayProvider rayProvider;
+		private CharacterBody _body;
 
-		[SerializeField]
-		private ITargeter targeter;
+		private Renderer _bodyRenderer;
 
-		protected float spawnTime;
+		private IRayProvider _rayProvider;
+
+		private ITargeter _targeter;
 
 		private float _diedTime;
 
-/*
-		protected float TimeAlive
-		{
-			get => Time.fixedTime - SpawnTime;
-		}
-*/
+		protected Vector3 startPos;
+		protected Quaternion startRot;
 
-		protected Vector3 StartPos { get; private set; }
-
-		protected Quaternion StartRot { get; private set; }
-
-
+		protected Vector3 camStartPos;
+		protected Quaternion camStartRot;
 		protected Vector3 moveVector;
 
 
 		#region Set in inspector
 
-		protected bool DebugLogEveryAction
-		{
-			get => debugLogEveryAction;
-		}
-
-
 		private float MoveSpd
 		{
 			get => moveSpd;
-/*
-			set => moveSpd = value;
-*/
-		}
-
-		private float JumpVelocity
-		{
-			get => jumpVelocity;
-/*
-			set => jumpVelocity = value;
-*/
 		}
 
 		private float MinCamAngle
@@ -91,11 +69,6 @@ namespace ClockBlockers.Characters
 		private float MaxCamAngle
 		{
 			get => maxCamAngle;
-		}
-
-		protected bool RecordActions
-		{
-			get => recordActions;
 		}
 
 		protected bool EnableRecursiveReplays
@@ -111,15 +84,6 @@ namespace ClockBlockers.Characters
 
 		private float _health;
 
-		private float MaxHealth
-		{
-			get => maxHealth;
-/*
-			set => maxHealth = value;
-*/
-		}
-
-
 		private float Armor
 		{
 			get => armor;
@@ -130,39 +94,19 @@ namespace ClockBlockers.Characters
 			get => shielding;
 		}
 
-/*
-		private bool IsAlive { get; set; }
-*/
-
-
-/*
-		private GameObject ClonePrefab
-		{
-			get => clonePrefab;
-		}
-*/
-
-
-		private GunController Gun
+		private Gun Gun
 		{
 			get => gun;
 		}
 
 		[SerializeField]
-		[Header("Setup Variables")]
-		private GameObject clonePrefab;
-
-		[SerializeField]
-		private GunController gun;
+		private Gun gun;
 
 		[SerializeField]
 		private float minCamAngle;
 
 		[SerializeField]
 		private float maxCamAngle;
-
-		[SerializeField]
-		private bool recordActions;
 
 		[SerializeField]
 		private bool enableRecursiveReplays;
@@ -178,78 +122,61 @@ namespace ClockBlockers.Characters
 		private float shielding;
 
 		[SerializeField]
-		[Header("Debug Variables")]
-		private bool debugLogEveryAction;
-
-		[SerializeField]
 		[Header("Character Variables")]
 		private float moveSpd;
-
-		[SerializeField]
-		private float jumpVelocity;
 
 		#endregion
 
 
+		public GameController gameController;
+
 		protected virtual void Awake()
 		{
-			actionStorage = actionStorage ?? new ActionStorage();
-			actionRunner = actionRunner ? actionRunner : gameObject.AddComponent<ActionRunner>();
+			replayStorage = GetComponent<IReplayStorage>();
+			if (replayStorage == null)
+			{
+				Logging.LogWarning("No Replay Storage!");
+			}
+
+			replaySpawner = GetComponent<IReplaySpawner>();
+			if (replaySpawner == null)
+			{
+				Debug.LogWarning("No Replay Spawner!");
+			}
+
+
+			replayRunner = GetComponent<IReplayRunner>();
+			if (replayRunner == null)
+			{
+				Debug.LogWarning("No Replay Runner!");
+			}
+
 			Cam = GetComponentInChildren<Camera>();
 			characterController = GetComponent<CharacterController>();
 			Gun.Holder = this;
-			AssignDelegates();
 
-			body = GetComponentInChildren<CharacterBody>();
-			bodyRenderer = body.GetComponent<Renderer>();
+			_body = GetComponentInChildren<CharacterBody>();
+			_bodyRenderer = _body.GetComponent<Renderer>();
 
-
-			targeter = GetComponent<ITargeter>();
-			rayProvider = GetComponent<IRayProvider>();
+			_targeter = GetComponent<ITargeter>();
+			_rayProvider = GetComponent<IRayProvider>();
 		}
 
 		protected virtual void Start()
 		{
-			Transform transform1 = transform;
-			StartPos = transform1.position;
-			StartRot = transform1.rotation;
+			if (gameController == null) Logging.LogIncorrectInstantiation("GameController", this);
 
-			spawnTime = Time.fixedTime;
-		}
+			AssignDelegates();
 
-		// protected virtual void FixedUpdate()
-		// {
-		// 	//AffectGravity();
-		// 	//characterController.Move(moveVector);
-		// }
+			Transform camTransform = Cam.transform;
 
+			Transform charTransform = transform;
 
-		protected void AffectGravity()
-		{
-			if (characterController.isGrounded)
-			{
-				Vector3 tempGravity = Physics.gravity * 0.1f;
-				if (moveVector.y < tempGravity.y) moveVector = tempGravity;
-				return;
-			}
+			startPos = charTransform.position;
+			startRot = charTransform.rotation;
 
-			moveVector += Physics.gravity * Time.fixedDeltaTime;
-		}
-
-
-		protected virtual void AttemptToJump()
-		{
-			if (characterController.isGrounded)
-			{
-				ExecuteJump();
-			}
-		}
-
-		protected virtual void ExecuteJump()
-		{
-			moveVector = Vector3.up * JumpVelocity;
-
-			//Logging.Log("Jumped!");
+			camStartPos = camTransform.position;
+			camStartRot = camTransform.rotation;
 		}
 
 		protected virtual void RotateCharacter(float yRotation)
@@ -284,7 +211,7 @@ namespace ClockBlockers.Characters
 
 			Vector3 prelimMove = (forward * vector[1]) + (right * vector[0]);
 			Vector3 move = prelimMove * MoveSpd;
-			Vector3 roundedVector = move.Round(GameController.instance.FloatingPointPrecision);
+			Vector3 roundedVector = move.Round(gameController.FloatingPointPrecision);
 
 			MoveCharacter(roundedVector);
 		}
@@ -304,12 +231,6 @@ namespace ClockBlockers.Characters
 			}
 		}
 
-
-		protected void HealToFull()
-		{
-			Health = MaxHealth;
-		}
-
 		private void AttemptDealDamage(DamagePacket damagePacket)
 		{
 			DealDamage(damagePacket);
@@ -319,6 +240,7 @@ namespace ClockBlockers.Characters
 		{
 			float finalDamage = damagePacket.damage - Armor;
 			float remainingDamage = finalDamage;
+			if (remainingDamage <= 0) return;
 
 			if (Shielding > 0)
 			{
@@ -347,50 +269,54 @@ namespace ClockBlockers.Characters
 
 		private void Kill()
 		{
-			bodyRenderer.material = GameController.instance.DeadMaterial;
+			_bodyRenderer.material = gameController.DeadMaterial;
 
-			float removalTime = 1.25f;
+			var removalTime = 1.25f;
 
 			// StopAllCoroutines();
 
 			// Man, that felt satisfying to replace.
 			// I never wanted to call StopAllCoroutines() on this class in the first place, because:
 			// I knew that, if I wanted to do other non-action related Coroutines in the future, I'd have to find another way to only stop the action ones.
-			actionRunner.StopAllCoroutines();
+			replayRunner.StopRunning();
 
 			Destroy(gameObject, removalTime);
 
 			StartCoroutine(Co_FallThroughFloor(removalTime));
 		}
 
-
 		protected virtual void SpawnReplay()
 		{
-			CharacterAction[] actions;
-
-			// On the off-chance that both the characterActions *and* actionArray have values, take the values from the characterActions.
-			if (actionStorage.NewlyAddedActions.Count > 0 || actionStorage.ReplayActions.Length > 0)
-			{
-				actions = actionStorage.NewlyAddedActions.Count > 0
-					? actionStorage.NewlyAddedActions.ToArray()
-					: actionStorage.ReplayActions;
-			}
-			else
-			{
-				actions = new CharacterAction[0];
-				Logging.LogWarning("No actionArray or characterAction", this);
-			}
-
-			SpawnReplay(actions);
+			replaySpawner.SpawnLatestReplay();
 		}
 
-		protected virtual void SpawnReplay(CharacterAction[] actions)
-		{
-			GameObject clone = ActionSystems.SpawnReplay(clonePrefab, StartPos, StartRot, actions);
-			var cloneController = clone.GetComponent<CloneController>();
-
-			cloneController.moveSpd = moveSpd;
-		}
+		//
+		// protected virtual void SpawnReplay()
+		// {
+		// 	CharacterAction[] actions;
+		//
+		// 	// On the off-chance that both the characterActions *and* actionArray have values, take the values from the characterActions.
+		// 	if (actionReplayStorage.CurrentActPlayerActions.Count > 0 || actionReplayStorage.ActActions.Length > 0)
+		// 	{
+		// 		actions = actionReplayStorage.CurrentActPlayerActions.Count > 0
+		// 			? actionReplayStorage.CurrentActPlayerActions.ToArray()
+		// 			: actionReplayStorage.ActActions;
+		// 	}
+		// 	else
+		// 	{
+		// 		actions = new CharacterAction[0];
+		// 		Logging.LogWarning("No actionArray or characterAction", this);
+		// 	}
+		//
+		// 	SpawnReplay(actions);
+		// }
+		//
+		// protected virtual void SpawnReplay(CharacterAction[] actions)
+		// {
+		// 	Character cloneController = replaySpawner.SpawnReplay(clonePrefab, startPos, startRot, actions);
+		//
+		// 	cloneController.moveSpd = moveSpd;
+		// }
 
 		public void OnHit(DamagePacket damagePacket, Vector3 hitPosition)
 		{
@@ -399,28 +325,31 @@ namespace ClockBlockers.Characters
 
 		private Ray CreateRay()
 		{
-			return rayProvider.CreateRay(Cam);
+			return _rayProvider.CreateRay();
 		}
 
-		public Tuple<IInteractable, RaycastHit> GetTarget()
+		public Tuple<IInteractable, RaycastHit> GetTarget(float range)
 		{
-			return targeter.GetInteractableFromRay(CreateRay());
+			return _targeter.GetInteractableFromRay(CreateRay(), range);
 		}
 	}
 
 
-	public abstract partial class BaseController
+	public abstract partial class Character
 	{
 		protected virtual void AssignDelegates()
 		{
-			actionRunner.moveAction = Action_MoveCharacter;
-			actionRunner.rotateCharacterAction = Action_RotateCharacter;
-			actionRunner.rotateCameraAction = Action_RotateCamera;
-			actionRunner.jumpAction = Action_AttemptToJump;
-			actionRunner.shootAction = Action_AttemptToShoot;
-			actionRunner.spawnReplayAction = Action_SpawnReplay;
-			actionRunner.completedAllActions = Action_CompletedAll;
+			replayRunner.moveAction = Action_MoveCharacter;
+			replayRunner.rotateCharacterAction = Action_RotateCharacter;
+			replayRunner.rotateCameraAction = Action_RotateCamera;
+			replayRunner.shootAction = Action_AttemptToShoot;
+			replayRunner.spawnReplayAction = Action_SpawnReplay;
+			replayRunner.completedAllActions = Action_CompletedAll;
+
+			gameController.newActStarted += OnNewActStart;
+			gameController.actEnded += OnActEnded;
 		}
+
 
 		protected virtual void Action_MoveCharacter(float[] value)
 		{
@@ -438,11 +367,6 @@ namespace ClockBlockers.Characters
 		{
 			float rotation = value[0];
 			RotateCamera(rotation);
-		}
-
-		protected virtual void Action_AttemptToJump(float[] value)
-		{
-			AttemptToJump();
 		}
 
 		protected virtual void Action_AttemptToShoot(float[] value)
@@ -467,25 +391,27 @@ namespace ClockBlockers.Characters
 
 		private IEnumerator Co_FallThroughFloor(float removalTime)
 		{
-			var yieldInstruction = new WaitForFixedUpdate();
-
 			// Get the height of the body.
-			float height = body.GetComponent<MeshFilter>().mesh.bounds.extents.y;
+			float height = _body.GetComponent<MeshFilter>().mesh.bounds.extents.y;
 
 			// Multiply it by 2 (not sure why; I think the 'base height' is half, either that or it's radius or something
 			const int heightMultiplier = 2;
 			float multipliedHeight = height * heightMultiplier;
 
 			// Get the position in order to know how far to fall; Fall until under y=0
-			float startPos = transform.position.y;
-			float totalDistance = startPos + multipliedHeight;
+			float deathHeight = transform.position.y;
+			float totalDistance = deathHeight + (multipliedHeight * -1);
 
 			while (_diedTime + removalTime >= Time.fixedDeltaTime)
 			{
 				float fallDistance = (totalDistance / removalTime) * Time.fixedDeltaTime;
 				transform.position -= new Vector3(0, fallDistance, 0);
-				yield return yieldInstruction;
+				yield return waitForFixedFrame;
 			}
 		}
+
+		protected virtual void OnNewActStart() { }
+
+		protected virtual void OnActEnded() { }
 	}
 }

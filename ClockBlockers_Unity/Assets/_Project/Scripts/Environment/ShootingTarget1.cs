@@ -13,7 +13,7 @@ namespace ClockBlockers.Environment
 {
 	public class ShootingTarget1 : MonoBehaviour, IInteractable
 	{
-		private List<Tuple<Vector3, BaseController>> HitList { get; set; }
+		private List<Tuple<Vector3, Character>> HitList { get; set; }
 
 		public void OnHit(DamagePacket damagePacket, Vector3 hitPosition)
 		{
@@ -28,11 +28,11 @@ namespace ClockBlockers.Environment
 			//           " | " + damagePacket.source.name);
 
 
-			BaseController controller = damagePacket.source.transform.GetComponent<GunController>().Holder;
+			Character controller = damagePacket.source.transform.GetComponent<Gun>().Holder;
 
 			if (HitList == null)
 			{
-				HitList = new List<Tuple<Vector3, BaseController>>();
+				HitList = new List<Tuple<Vector3, Character>>();
 			}
 
 			var sameAsPreviousShot = true;
@@ -40,7 +40,7 @@ namespace ClockBlockers.Environment
 
 			float tupleDiff = 0;
 
-			foreach ((Vector3 position, BaseController character) in HitList)
+			foreach ((Vector3 position, Character character) in HitList)
 			{
 				if (character.GetInstanceID() == controller.GetInstanceID())
 				{
@@ -63,7 +63,7 @@ namespace ClockBlockers.Environment
 
 			if (HitList.Count < 1)
 			{
-				HitList.Add(new Tuple<Vector3, BaseController>(hitPosition, controller));
+				HitList.Add(new Tuple<Vector3, Character>(hitPosition, controller));
 			}
 
 			if (sameAsPreviousShot)

@@ -9,12 +9,11 @@ namespace ClockBlockers.Targetting
 {
 	internal class RayCastBasedTargeter : MonoBehaviour, ITargeter
 	{
-		public Tuple<IInteractable, RaycastHit> GetInteractableFromRay(Ray ray)
+		public Tuple<IInteractable, RaycastHit> GetInteractableFromRay(Ray ray, float range)
 		{
-			if (!Physics.Raycast(ray, out RaycastHit hit)) return null;
+			if (!Physics.Raycast(ray, out RaycastHit hit, range)) return null;
 			var interactable = hit.transform.GetComponent<IInteractable>();
-			if (interactable == null) return null;
-			return new Tuple<IInteractable, RaycastHit>(interactable, hit);
+			return interactable == null ? null : new Tuple<IInteractable, RaycastHit>(interactable, hit);
 		}
 	}
 }

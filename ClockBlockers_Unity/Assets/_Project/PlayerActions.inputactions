@@ -78,23 +78,7 @@
                     "interactions": ""
                 },
                 {
-                    "name": "SaveCharacterActions",
-                    "type": "Button",
-                    "id": "46eb3060-8583-4cdd-990a-362c1e156ab4",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
-                    "name": "LoadCharacterActions",
-                    "type": "Button",
-                    "id": "49e2be10-190a-4f7d-a9b8-0c0ad602ff32",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
-                    "name": "ResetRound",
+                    "name": "StartNewAct",
                     "type": "Button",
                     "id": "ba7f09f9-5c35-47cd-97f3-ac759692732b",
                     "expectedControlType": "",
@@ -333,34 +317,12 @@
                 },
                 {
                     "name": "",
-                    "id": "4dfabc1f-0d0a-4296-a799-a5c0dee1d38c",
-                    "path": "<Keyboard>/f5",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "KB&M",
-                    "action": "SaveCharacterActions",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "906f3ab5-eff8-4715-9f8e-78baaaefae52",
-                    "path": "<Keyboard>/f9",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "KB&M",
-                    "action": "LoadCharacterActions",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "984d5f39-a92c-41ac-92e1-8451a3e7e081",
                     "path": "<Keyboard>/r",
                     "interactions": "",
                     "processors": "",
                     "groups": "KB&M",
-                    "action": "ResetRound",
+                    "action": "StartNewAct",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

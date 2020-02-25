@@ -4,9 +4,9 @@ using System.Collections;
 using UnityEngine;
 
 
-namespace ClockBlockers.Actions
+namespace ClockBlockers.NewReplaySystem.ReplayRunner
 {
-	public class ActionRunner : MonoBehaviour
+	public class ActionReplayRunner : MonoBehaviour, IReplayRunner
 	{
 		internal delegate void ActionDelegate(float[] value);
 
@@ -20,6 +20,7 @@ namespace ClockBlockers.Actions
 		internal ActionDelegate spawnReplayAction;
 
 		internal Action completedAllActions;
+
 
 		private void RunAction(CharacterAction characterAction)
 		{
@@ -87,6 +88,16 @@ namespace ClockBlockers.Actions
 			yield return new WaitForSeconds(characterAction.time - Time.fixedDeltaTime);
 			yield return new WaitForFixedUpdate();
 			RunAction(characterAction);
+		}
+
+		public void StopRunning()
+		{
+			StopAllCoroutines();
+		}
+
+		public void StartRunning()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

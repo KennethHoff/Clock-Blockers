@@ -5,7 +5,7 @@ using UnityEngine;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-using ClockBlockers.Actions;
+using ClockBlockers.NewReplaySystem;
 
 
 namespace ClockBlockers.Utility

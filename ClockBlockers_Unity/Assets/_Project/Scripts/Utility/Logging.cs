@@ -1,4 +1,8 @@
-﻿using UnityEngine;
+﻿using System;
+
+using UnityEngine;
+
+using Object = UnityEngine.Object;
 
 
 // ReSharper disable Unity.PerformanceCriticalCodeInvocation
@@ -35,6 +39,11 @@ namespace ClockBlockers.Utility
 		public static void LogError(object message)
 		{
 			Debug.LogError(message);
+		}
+
+		public static void LogIncorrectInstantiation(String typeStr, Object context)
+		{
+			Logging.LogWarning("Created incorrectly. Missing " + typeStr + ".", context);
 		}
 	}
 }

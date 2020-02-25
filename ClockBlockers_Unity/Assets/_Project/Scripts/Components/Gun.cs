@@ -2,8 +2,6 @@
 
 using ClockBlockers.Characters;
 using ClockBlockers.DataStructures;
-using ClockBlockers.GameControllers;
-using ClockBlockers.Utility;
 
 using JetBrains.Annotations;
 
@@ -14,7 +12,7 @@ using Random = UnityEngine.Random;
 
 namespace ClockBlockers.Components
 {
-	public class GunController : MonoBehaviour
+	public class Gun : MonoBehaviour
 	{
 		private AudioSource _audioSource;
 
@@ -35,7 +33,7 @@ namespace ClockBlockers.Components
 			get => damageType;
 		}
 
-		public BaseController Holder
+		public Character Holder
 		{
 			get => holder;
 			set => holder = value;
@@ -54,7 +52,7 @@ namespace ClockBlockers.Components
 		private Transform casingExitLocation;
 
 		[SerializeField]
-		private BaseController holder;
+		private Character holder;
 
 		[SerializeField]
 		private float range;
@@ -115,33 +113,29 @@ namespace ClockBlockers.Components
 			return new DamagePacket(DamageType, Damage, gameObject);
 		}
 
-		private static void CreateBulletHole(Vector3 position, Quaternion rotation, Transform parentObject)
+		// ReSharper disable once UnusedParameter.Local
+		private void CreateBulletHole(Vector3 position, Quaternion rotation, Transform target)
 		{
-			GameObject bulletHolePrefab = GameController.instance.BulletHoles[0];
+			const float bulletholeLifeTime = 5f;
 
-			Vector3 bulletHoleScale = bulletHolePrefab.transform.localScale;
-			Vector3 parentObjectScale = parentObject.lossyScale;
+			GameObject bulletHolePrefab = holder.gameController.BulletHoles[0];
 
+			GameObject bulletHole = Instantiate(bulletHolePrefab, position, rotation);
 
-			var correctedScale = new Vector3(bulletHoleScale.x / parentObjectScale.x,
-				bulletHoleScale.y / parentObjectScale.y, bulletHoleScale.z / parentObjectScale.z);
-			GameObject bulletHole = Instantiate(bulletHolePrefab, position, rotation, parentObject);
-			bulletHole.transform.localScale = correctedScale;
+			Destroy(bulletHole, bulletholeLifeTime);
 
-			Destroy(bulletHole, 5);
+			// bulletHole.transform.SetParent(target, true);
 		}
 
 		private void ShootRayCast()
 		{
-			Tuple<IInteractable, RaycastHit> target = holder.GetTarget();
-			
+			Tuple<IInteractable, RaycastHit> target = holder.GetTarget(range);
+
 			if (target == null) return;
 
 			IInteractable interactable = target.Item1;
 			RaycastHit hit = target.Item2;
 
-			if (hit.distance > range) return;
-			
 			interactable.OnHit(CreateDamagePacket(), hit.point);
 
 			CreateBulletHole(hit.point, Quaternion.FromToRotation(Vector3.up, hit.normal), hit.transform);
