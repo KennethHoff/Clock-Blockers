@@ -207,7 +207,7 @@ namespace Sisus
 				// the issue only seems to occur when entering play mode
 				if(Application.isPlaying)
 				{
-					if(OdinEditorIsReadyTime == 0d)
+					if(OdinEditorIsReadyTime <= 0d)
 					{
 						OdinEditorIsReadyTime = EditorApplication.timeSinceStartup + 0.5d;
 						return false;

@@ -12,15 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8182cd265883fd54d8d2ba9255c3634d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gun: {fileID: 2197370540395308499}
-  minCamAngle: -90
-  maxCamAngle: 90
-  enableRecursiveReplays: 0
-  maxHealth: 25
-  armor: 0
-  shielding: 0
-  moveSpd: 3
-  gameController: {fileID: 0}
 --- !u!1001 &8266837681266467731
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -83,7 +74,7 @@ PrefabInstance:
     - target: {fileID: 7296298113206164910, guid: 67d00b1d2b3cb5e499d32550ea99e5e9, type: 3}
       propertyPath: clonePrefab
       value: 
-      objectReference: {fileID: 6242586902188705239}
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 67d00b1d2b3cb5e499d32550ea99e5e9, type: 3}
 --- !u!1 &7926008950823779502 stripped
@@ -91,14 +82,3 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 2253878130908946237, guid: 67d00b1d2b3cb5e499d32550ea99e5e9, type: 3}
   m_PrefabInstance: {fileID: 8266837681266467731}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2197370540395308499 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7838257655458563648, guid: 67d00b1d2b3cb5e499d32550ea99e5e9, type: 3}
-  m_PrefabInstance: {fileID: 8266837681266467731}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6be84e4d7829855419c06b94e56bd135, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

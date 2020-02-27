@@ -1,8 +1,8 @@
 ﻿#define SAFE_MODE
 
-//#define DEBUG_SET_INSPECTOR
-//#define DEBUG_SET_INSPECTOR_PART
-//#define DEBUG_SET_SELECTABLE
+#define DEBUG_SET_INSPECTOR
+#define DEBUG_SET_INSPECTOR_PART
+#define DEBUG_SET_SELECTABLE
 //#define DEBUG_CLEAR
 
 using JetBrains.Annotations;

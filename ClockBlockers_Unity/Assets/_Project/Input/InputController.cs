@@ -1,4 +1,7 @@
-﻿using ClockBlockers.GameControllers;
+﻿using System;
+
+using ClockBlockers.DataStructures;
+using ClockBlockers.GameControllers;
 using ClockBlockers.Utility;
 
 using JetBrains.Annotations;
@@ -11,14 +14,26 @@ namespace ClockBlockers.Input
 {
 	internal class InputController : MonoBehaviour
 	{
-		[HideInInspector]
-		public GameController gameController;
+		[NonSerialized]
+		internal GameController gameController;
+
+
+		private float VerticalMouseSensitivity
+		{
+			get => verticalMouseSensitivity.Value;
+		}
+
+
+		private float HorizontalMouseSensitivity
+		{
+			get => horizontalMouseSensitivity.Value;
+		}
 
 		[SerializeField]
-		private float verticalMouseSensitivity;
+		private FloatReference verticalMouseSensitivity;
 
 		[SerializeField]
-		private float horizontalMouseSensitivity;
+		private FloatReference horizontalMouseSensitivity;
 
 		public float UpDownCameraRotation { get; set; }
 
@@ -29,8 +44,8 @@ namespace ClockBlockers.Input
 		{
 			var value = ctx.Get<Vector2>();
 
-			SideToSideCharacterRotation = value.x * horizontalMouseSensitivity * Time.deltaTime;
-			UpDownCameraRotation = value.y * verticalMouseSensitivity * Time.deltaTime;
+			SideToSideCharacterRotation = value.x * HorizontalMouseSensitivity * Time.fixedDeltaTime;
+			UpDownCameraRotation = value.y * VerticalMouseSensitivity * Time.fixedDeltaTime;
 		}
 
 
@@ -46,35 +61,49 @@ namespace ClockBlockers.Input
 		private void OnIncreaseTimescale()
 		{
 			Time.timeScale += 1;
-			Logging.Log("Increasing timescale. Now at: " + Time.timeScale);
+			Logging.instance.Log("Increasing timescale. Now at: " + Time.timeScale);
 		}
 
 		[UsedImplicitly]
 		private void OnDecreaseTimescale()
 		{
 			Time.timeScale -= 1;
-			Logging.Log("Decreasing timescale. Now at: " + Time.timeScale);
+			Logging.instance.Log("Decreasing timescale. Now at: " + Time.timeScale);
 		}
 
 
 		[UsedImplicitly]
 		private void OnToggleCursor()
 		{
-			GameController.ToggleCursorMode();
+			ToggleCursorMode();
 		}
 
 
-		[UsedImplicitly]
-		private void OnStartNewAct()
-		{
-			gameController.EndCurrentAct();
-			gameController.StartNewAct();
-		}
+		// [UsedImplicitly]
+		// private void OnStartNewAct()
+		// {
+		// 	gameController.EndCurrentAct();
+		// 	gameController.StartNewAct();
+		// }
 
 		public void Reset()
 		{
 			UpDownCameraRotation = 0;
 			SideToSideCharacterRotation = 0;
 		}
+		
+
+		private static void SetCursorMode(bool locked)
+		{
+			Cursor.lockState = locked
+				? CursorLockMode.Locked
+				: CursorLockMode.None;
+		}
+
+		public static void ToggleCursorMode()
+		{
+			SetCursorMode(Cursor.lockState != CursorLockMode.Locked);
+		}
+
 	}
 }

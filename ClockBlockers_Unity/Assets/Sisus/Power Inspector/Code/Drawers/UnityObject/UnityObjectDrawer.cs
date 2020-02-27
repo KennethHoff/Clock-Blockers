@@ -1623,7 +1623,7 @@ namespace Sisus
 			if(inspector.Preferences.drawDisabledGreyedOut == GreyOut.HeaderOnly)
 			{
 				GUI.color = guiColorWas;
-			}			
+			}
 
 			if(MembersAreVisible)
 			{

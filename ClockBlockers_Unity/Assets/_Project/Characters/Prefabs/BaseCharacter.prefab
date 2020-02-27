@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2253878129744993473}
   - component: {fileID: 249699079160168272}
   - component: {fileID: 3777047833848028174}
-  m_Layer: 10
+  m_Layer: 9
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -125,7 +125,10 @@ GameObject:
   - component: {fileID: 1559212068962868957}
   - component: {fileID: 7296298113206164910}
   - component: {fileID: 1717475553881432958}
-  m_Layer: 10
+  - component: {fileID: 5512178965925809720}
+  - component: {fileID: 6401269965137308291}
+  - component: {fileID: 8577686613341367911}
+  m_Layer: 9
   m_Name: BaseCharacter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -204,6 +207,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9a31e60cb2d5f34587a442a88b845ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  logEveryAction: 0
+  saveActions: 0
 --- !u!114 &7296298113206164910
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -216,7 +221,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c55782a3f7729f74aa203e832258e1a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clonePrefab: {fileID: 6242586902188705239, guid: a57b5b8cea45a1f45ba89fac26e6b5c9, type: 3}
+  clonePrefab: {fileID: 0}
 --- !u!114 &1717475553881432958
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -229,6 +234,88 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d171afd6cf3a4654b39d19b827367596, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &5512178965925809720
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2253878130908946237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8611c89e8b04058ba6c360e7c68a141, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  event: {fileID: 11400000, guid: 6dcee6de2f557104cb07ff8ce8aea493, type: 2}
+  response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6401269965137308291}
+        m_TargetAssemblyTypeName: ClockBlockers.Characters.Scripts.Character, Main
+        m_MethodName: RemoveFromGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &6401269965137308291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2253878130908946237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa1c99279ea1e984fafd1a46132a7aae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characterController: {fileID: 2253878130908946236}
+  gun: {fileID: 0}
+  minCamAngle:
+    useConstant: 1
+    constantValue: -90
+    variable: {fileID: 0}
+  maxCamAngle:
+    useConstant: 1
+    constantValue: 90
+    variable: {fileID: 0}
+  moveSpd:
+    useConstant: 0
+    constantValue: 3
+    variable: {fileID: 11400000, guid: 7db4c056203764648bba4e86a02de3fc, type: 2}
+--- !u!114 &8577686613341367911
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2253878130908946237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63182630a78c42e59b78795f6d422578, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  armor:
+    useConstant: 1
+    constantValue: 0
+    variable: {fileID: 0}
+  shielding:
+    useConstant: 1
+    constantValue: 0
+    variable: {fileID: 0}
+  maxHealth:
+    useConstant: 1
+    constantValue: 0
+    variable: {fileID: 0}
+  health:
+    useConstant: 1
+    constantValue: 0
+    variable: {fileID: 0}
 --- !u!1 &2299630059997168694
 GameObject:
   m_ObjectHideFlags: 0
@@ -240,7 +327,7 @@ GameObject:
   - component: {fileID: 8699249477889878628}
   - component: {fileID: 6169858760621486063}
   - component: {fileID: 8161855789496874778}
-  m_Layer: 10
+  m_Layer: 9
   m_Name: Right Eye
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -321,7 +408,7 @@ GameObject:
   - component: {fileID: 97194504203076033}
   - component: {fileID: 4392791265214799460}
   - component: {fileID: 5116235674774246161}
-  m_Layer: 10
+  m_Layer: 9
   m_Name: Left Eye
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -402,7 +489,7 @@ GameObject:
   - component: {fileID: 7633921190499009810}
   - component: {fileID: 7701206457547401702}
   - component: {fileID: 3991463265982174366}
-  m_Layer: 10
+  m_Layer: 9
   m_Name: Character Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -482,9 +569,49 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7633921190499009810}
     m_Modifications:
+    - target: {fileID: 1004121968769932, guid: fc89912481daf614d9ffef21aa6cfbac, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1024608944010790, guid: fc89912481daf614d9ffef21aa6cfbac, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1258458664956200, guid: fc89912481daf614d9ffef21aa6cfbac, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1261984688224918, guid: fc89912481daf614d9ffef21aa6cfbac, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1378009337189726, guid: fc89912481daf614d9ffef21aa6cfbac, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1454111307577624, guid: fc89912481daf614d9ffef21aa6cfbac, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1549165772444504, guid: fc89912481daf614d9ffef21aa6cfbac, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 1569160750861012, guid: fc89912481daf614d9ffef21aa6cfbac, type: 3}
       propertyPath: m_Name
       value: Handgun_M1911A_Steel (WithScript)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1569160750861012, guid: fc89912481daf614d9ffef21aa6cfbac, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1607888903376170, guid: fc89912481daf614d9ffef21aa6cfbac, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1807998472534870, guid: fc89912481daf614d9ffef21aa6cfbac, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 4086005174234542, guid: fc89912481daf614d9ffef21aa6cfbac, type: 3}
       propertyPath: m_LocalPosition.x

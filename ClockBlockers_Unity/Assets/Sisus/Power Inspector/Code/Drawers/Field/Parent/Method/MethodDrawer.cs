@@ -61,7 +61,9 @@ namespace Sisus
 
 		private MonoBehaviour monoBehaviour;
 
+		#if DEV_MODE
 		private bool nowInvoking = false;
+		#endif
 
 		private bool drawInSingleRow = true;
 
@@ -1058,6 +1060,10 @@ namespace Sisus
 		/// <param name="suppressMessages"> True if should display message to user about invoking or possible exceptions. </param>
 		private bool Invoke(out string error, bool suppressMessages)
 		{
+			#if DEV_MODE
+			if(nowInvoking) { Debug.LogWarning(ToString() + ".Invoke called with nowInvoking already true."); }
+			#endif
+
 			error = "";
 
 			// UPDATE: Temporarily lock the view, so that this drawer won't be disposed even if invoked methods e.g. change the selected objects?
@@ -1065,8 +1071,10 @@ namespace Sisus
 			var viewWasLocked = inspectorState.ViewIsLocked;
 			inspectorState.ViewIsLocked = true;
 
-			// UPDATE: Mark method as invoking, and don't allow disposing if invoking is still in progress
+			#if DEV_MODE
 			nowInvoking = true;
+			#endif
+
 			bool abort = false;
 
 			if(hasParameters)
@@ -1155,7 +1163,9 @@ namespace Sisus
 				}
 			}
 
+			#if DEV_MODE
 			nowInvoking = false;
+			#endif
 
 			UpdateDrawInSingleRow();
 
@@ -1218,11 +1228,9 @@ namespace Sisus
 		{
 			drawInSingleRow = true;
 
-			// Update: don't pool MethodDrawer if nowInvoking is true, to avoid problems?
-			if(nowInvoking)
-			{
-				Debug.LogError(ToString() + ".Dispose called with nowInvoking true!");
-			}
+			#if DEV_MODE
+			if(nowInvoking) { Debug.LogWarning(ToString() + ".Dispose called with nowInvoking true."); }
+			#endif
 
 			if(resultMemberHierarchy != null)
 			{

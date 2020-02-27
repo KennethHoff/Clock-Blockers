@@ -57,11 +57,17 @@ namespace Sisus
 		{
 			#if DEV_MODE && PI_ASSERTATIONS
 			Debug.Assert(skin != null, "InspectorStyles constructor called with null skin parameter.");
+			Debug.Assert(Event.current != null, "InspectorStyles constructor called with Event.current null.");
 			#endif
 
 			#if DEV_MODE && DEBUG_CREATE
 			Debug.Log("InspectorStyles("+skin.name+")...");
 			#endif
+
+			if(skin == null || Event.current == null)
+			{
+				return;
+			}
 
 			Blank = skin.GetStyle("IN Label");
 			Blank.margin.left = 0;

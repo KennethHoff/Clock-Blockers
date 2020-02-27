@@ -8,6 +8,7 @@ namespace Sisus
 	[Serializable, DrawerForAsset(typeof(UnityEditorInternal.AssemblyDefinitionAsset), false, true), DrawerForAsset(typeof(UnityEditorInternal.AssemblyDefinitionImporter), false, true)]
 	public class AssemblyDefinitionDrawer : CustomEditorAssetDrawer
 	{
+		#if UNITY_2018_1_OR_NEWER // Presets were added in Unity 2018.1
 		/// <inheritdoc />
 		protected override bool HasPresetIcon
 		{
@@ -16,6 +17,7 @@ namespace Sisus
 				return false;
 			}
 		}
+		#endif
 
 		/// <inheritdoc />
 		protected override bool HasReferenceIcon

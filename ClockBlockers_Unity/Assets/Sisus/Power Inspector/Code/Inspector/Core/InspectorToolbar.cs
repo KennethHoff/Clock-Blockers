@@ -1,7 +1,7 @@
-﻿//#define DEBUG_ON_SELECTED
+﻿#define DEBUG_ON_SELECTED
 //#define DEBUG_SELECT_NEXT_PART
-//#define DEBUG_SET_SELECTED_ITEM
-//#define DEBUG_KEYBOARD_INPUT
+#define DEBUG_SET_SELECTED_ITEM
+#define DEBUG_KEYBOARD_INPUT
 
 using JetBrains.Annotations;
 using System;
@@ -561,7 +561,7 @@ namespace Sisus
 				DrawGUI.DrawLine(lineRect, lineAboveColor);
 				lineRect.y = toolbarPosition.height - 1f;
 				DrawGUI.DrawLine(lineRect, lineBelowColor);
-				#endif				
+				#endif
 
 				if(selectedItemIndex != -1)
 				{

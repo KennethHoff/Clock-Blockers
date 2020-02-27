@@ -369,6 +369,10 @@ namespace Sisus
 				return;
 			}
 
+			#if DEV_MODE
+			Debug.Log("SelectionHistory.ShowCurrent with ViewIsLocked="+ inspector.State.ViewIsLocked);
+			#endif
+
 			if(inspector.State.ViewIsLocked)
 			{
 				inspector.OnNextLayout(()=>RebuildDrawerForCurrent(inspector));

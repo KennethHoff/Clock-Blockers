@@ -449,7 +449,8 @@ namespace Sisus
 							throw;
 						}
 						#if DEV_MODE
-						Debug.LogError(e);
+						if(e.InnerException == e) { Debug.LogError(e.Message); }
+						else { Debug.LogError(e); }
 						#endif
 
 						actualDrawnRect = position;

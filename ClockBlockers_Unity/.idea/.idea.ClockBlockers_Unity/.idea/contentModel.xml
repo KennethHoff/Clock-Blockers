@@ -4,7 +4,6 @@
     <e p="C:\Users\Modernkennnern\.Rider2019.3\system\extResources" t="IncludeRecursive" />
     <e p="C:\Users\Modernkennnern\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_ClockBlockers_Unity.-373306959.00" t="ExcludeRecursive" />
     <e p="E:\Development\Games\Clock-Blockers\ClockBlockers_Unity" t="IncludeRecursive">
-      <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
       <e p="Assets" t="Include">
         <e p="_Project" t="Include">
@@ -18,8 +17,16 @@
           </e>
           <e p="DataStructures" t="Include">
             <e p="DamagePacket.cs" t="Include" />
+            <e p="Editor" t="Include">
+              <e p="FloatReferenceDrawer.cs" t="Include" />
+              <e p="IntReferenceDrawer.cs" t="Include" />
+            </e>
             <e p="Enums.cs" t="Include" />
+            <e p="FloatReference.cs" t="Include" />
+            <e p="FloatVariable.cs" t="Include" />
             <e p="IInteractable.cs" t="Include" />
+            <e p="IntReference.cs" t="Include" />
+            <e p="IntVariable.cs" t="Include" />
           </e>
           <e p="Environment" t="Include">
             <e p="Scripts" t="Include">
@@ -28,27 +35,29 @@
               <e p="ShootingTarget1.cs" t="Include" />
             </e>
           </e>
+          <e p="Events" t="Include">
+            <e p="GameEvent.cs" t="Include" />
+            <e p="GameEventListener.cs" t="Include" />
+          </e>
           <e p="GameControllers" t="Include">
+            <e p="Act.cs" t="Include" />
+            <e p="CharacterSpawner.cs" t="Include" />
             <e p="GameController.cs" t="Include" />
+            <e p="Match.cs" t="Include" />
+            <e p="Round.cs" t="Include" />
           </e>
           <e p="Input" t="Include">
             <e p="InputController.cs" t="Include" />
           </e>
           <e p="Main.asmdef" t="Include" />
-          <e p="NewReplaySystem" t="Include">
+          <e p="ReplaySystem" t="Include">
             <e p="CharacterAction.cs" t="Include" />
             <e p="ReplayRunner" t="Include">
               <e p="ActionReplayRunner.cs" t="Include" />
               <e p="IReplayRunner.cs" t="Include" />
             </e>
-            <e p="ReplaySaver" t="Include">
-              <e p="ActionReplaySaver.cs" t="Include" />
-              <e p="IntervalReplaySaver.cs" t="Include" />
-              <e p="IReplaySaver.cs" t="Include" />
-            </e>
             <e p="ReplaySpawner" t="Include">
               <e p="ActionReplaySpawner.cs" t="Include" />
-              <e p="IReplaySpawner.cs" t="Include" />
             </e>
             <e p="ReplayStorage" t="Include">
               <e p="ActionReplayStorage.cs" t="Include" />
@@ -73,6 +82,9 @@
               <e p="NewTestScript.cs" t="Include" />
               <e p="PlayModeTests.asmdef" t="Include" />
             </e>
+          </e>
+          <e p="ToBeMoved" t="Include">
+            <e p="HealthComponent.cs" t="Include" />
           </e>
           <e p="UI" t="Include">
             <e p="Main Menu" t="Include">

@@ -24,21 +24,6 @@ namespace ClockBlockers.Utility
 			};
 		}
 
-		public static float[] Round(this float[] array, int decimalPlaces = 2)
-		{
-			// ReSharper disable once SuggestVarOrType_Elsewhere
-			float[] result = new float[array.Length];
-
-			for (var i = 0;
-				i < array.Length;
-				i++)
-			{
-				result[i] = array[i].Round(decimalPlaces);
-			}
-
-			return result;
-		}
-
 		public static float[] Scale(this float[] array, float scalar = 1)
 		{
 			// ReSharper disable once SuggestVarOrType_Elsewhere
@@ -57,9 +42,7 @@ namespace ClockBlockers.Utility
 		public static Vector3 Round(this Vector3 vector3, int decimalPlaces = 2)
 		{
 			float multiplier = 1;
-			for (var i = 0;
-				i < decimalPlaces;
-				i++)
+			for (var i = 0; i < decimalPlaces; i++)
 			{
 				multiplier *= 10f;
 			}
@@ -68,13 +51,6 @@ namespace ClockBlockers.Utility
 				Mathf.Round(vector3.x * multiplier) / multiplier,
 				Mathf.Round(vector3.y * multiplier) / multiplier,
 				Mathf.Round(vector3.z * multiplier) / multiplier);
-		}
-
-
-		public static float Round(this float f, int decimalPlaces = 2)
-		{
-			var stringedFloat = f.ToString("F" + decimalPlaces);
-			return float.Parse(stringedFloat);
 		}
 	}
 }

@@ -1,4 +1,5 @@
 ﻿//#define DEBUG_ENABLED
+#define DEBUG_SELECT
 
 using System;
 using UnityEditor;
@@ -37,6 +38,10 @@ namespace Sisus
 			UnityEngine.Debug.Assert(target == null || !(target is UnityEngine.Component));
 			#endif
 
+			#if DEV_MODE && DEBUG_SELECT
+			UnityEngine.Debug.Log("Select("+StringUtils.ToString(target)+")");
+			#endif
+
 			Selection.activeObject = target;
 		}
 
@@ -44,6 +49,10 @@ namespace Sisus
 		{
 			#if DEV_MODE && PI_ASSERTATIONS
 			foreach(var target in targets) { UnityEngine.Debug.Assert(target == null || !(target is UnityEngine.Component)); }
+			#endif
+
+			#if DEV_MODE && DEBUG_SELECT
+			UnityEngine.Debug.Log("Select("+StringUtils.ToString(targets)+")");
 			#endif
 
 			Selection.objects = targets;
@@ -78,6 +87,6 @@ namespace Sisus
 				onNextSelectionChanged = null;
 				callback(Selected);
 			}
-		}		
+		}
 	}
 }

@@ -435,6 +435,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1799141045}
   - component: {fileID: 1799141044}
+  - component: {fileID: 1799141046}
   m_Layer: 0
   m_Name: Main
   m_TagString: Untagged
@@ -454,13 +455,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05b05c92a65c57541af68f1f859323da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPrefab: {fileID: 3855822921990723772, guid: caf14e1fb2c53e34daa753cbdf75eb5a, type: 3}
+  logToFile: 1
+  playerPrefab: {fileID: 5935488854927015260, guid: caf14e1fb2c53e34daa753cbdf75eb5a, type: 3}
   battleArena: Arena_1
   cloneParent: {fileID: 0}
   deadMaterial: {fileID: 2100000, guid: d03db172b555d5f40990d1c63e684aec, type: 2}
-  floatingPointPrecision: 2
-  bulletHoles:
-  - {fileID: 6861612899070223048, guid: beb78ac985c98fb4d923b33565826f2e, type: 3}
 --- !u!4 &1799141045
 Transform:
   m_ObjectHideFlags: 0
@@ -475,3 +474,31 @@ Transform:
   m_Father: {fileID: 1073139606}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1799141046
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1799141043}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8611c89e8b04058ba6c360e7c68a141, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  event: {fileID: 11400000, guid: 4bf6b0bee7870dd4cace399e24e484c2, type: 2}
+  response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1799141044}
+        m_TargetAssemblyTypeName: ClockBlockers.GameControllers.GameController, Main
+        m_MethodName: CreateNewPlayer
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2

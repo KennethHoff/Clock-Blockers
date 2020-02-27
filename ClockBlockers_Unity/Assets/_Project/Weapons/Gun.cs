@@ -14,13 +14,18 @@ namespace ClockBlockers.Weapons
 {
 	public class Gun : MonoBehaviour
 	{
+		
+		
+		[SerializeField]
+		private GameObject[] bulletHoles;
+		
 		private AudioSource _audioSource;
 
 		private Animator _animator;
 
 		private float Damage
 		{
-			get => damage;
+			get => damage.Value;
 		}
 
 		public Character Holder
@@ -44,11 +49,17 @@ namespace ClockBlockers.Weapons
 		[SerializeField]
 		private Character holder;
 
-		[SerializeField]
-		private float range;
+
+		private float Range
+		{
+			get => range.Value;
+		}
 
 		[SerializeField]
-		private float damage;
+		private FloatReference damage;
+
+		[SerializeField]
+		private FloatReference range;
 
 		public bool CanShoot { get; private set; }
 
@@ -105,7 +116,7 @@ namespace ClockBlockers.Weapons
 		{
 			const float bulletHoleLifeTime = 5f;
 
-			GameObject bulletHolePrefab = holder.gameController.BulletHoles[0];
+			GameObject bulletHolePrefab = bulletHoles[0];
 
 			GameObject bulletHole = Instantiate(bulletHolePrefab, position, rotation);
 
@@ -116,7 +127,7 @@ namespace ClockBlockers.Weapons
 
 		private void ShootRayCast()
 		{
-			Tuple<IInteractable, RaycastHit> target = holder.GetTarget(range);
+			Tuple<IInteractable, RaycastHit> target = holder.GetTarget(Range);
 
 			if (target == null) return;
 

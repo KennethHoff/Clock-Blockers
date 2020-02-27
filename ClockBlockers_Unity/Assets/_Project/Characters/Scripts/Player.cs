@@ -1,8 +1,7 @@
 ﻿using System.Collections;
 
 using ClockBlockers.Input;
-using ClockBlockers.NewReplaySystem;
-using ClockBlockers.NewReplaySystem.ReplaySaver;
+using ClockBlockers.ReplaySystem;
 using ClockBlockers.Utility;
 
 using JetBrains.Annotations;
@@ -13,35 +12,29 @@ using UnityEngine.InputSystem;
 
 namespace ClockBlockers.Characters.Scripts
 {
-	public class Player : Character
+	[RequireComponent(typeof(Character))]
+	public class Player : MonoBehaviour
 	{
 		private static float MinInputValue { get; } = 0.001f;
 
-		private IReplaySaver _replaySaver;
 
+
+		private Character _character;
 		private InputController _inputController;
+		private WaitForFixedUpdate _waitForFixedFrame;
 
-		protected override void Awake()
+		protected void Awake()
 		{
-			base.Awake();
-
-			_replaySaver = GetComponent<IReplaySaver>();
-			if (_replaySaver == null)
-			{
-				// ActionReplaySaver relies on ActionReplayStorage, so I have to swap it out if I want to use that Saver.
-				Logging.LogWarning("No Replay Saver!");
-			}
+			_character = GetComponent<Character>();
 			_inputController = GetComponent<InputController>();
-			if (_inputController == null) Logging.LogWarning("No input controller on " + name, this);
-			_inputController.gameController = gameController;
+			if (_inputController == null) Logging.instance.LogWarning("No input controller on " + name, this);
 
-			waitForFixedFrame = new WaitForFixedUpdate();
+			_waitForFixedFrame = new WaitForFixedUpdate();
 		}
 
-		protected override void Start()
+		protected void Start()
 		{
-			base.Start();
-			_inputController.gameController = gameController;
+			_inputController.gameController = _character.gameController;
 		}
 
 
@@ -57,24 +50,20 @@ namespace ClockBlockers.Characters.Scripts
 		}
 
 
-		protected override void RotateCharacter(float rotation)
+		private void RotateCharacter(float rotation)
 		{
 			if (Mathf.Abs(rotation) < MinInputValue) return;
 
-			float roundedFloat = rotation.Round(gameController.FloatingPointPrecision);
-
-			_replaySaver.SaveAction(CreateCharacterAction(Actions.RotateCharacter, roundedFloat));
-			base.RotateCharacter(roundedFloat);
+			_character.replayStorage.SaveAction(Actions.RotateCharacter, rotation);
+			_character.RotateCharacter(rotation);
 		}
 
-		protected override void RotateCamera(float rotation)
+		private void RotateCamera(float rotation)
 		{
 			if (Mathf.Abs(rotation) < MinInputValue) return;
 
-			float roundedFloat = rotation.Round(gameController.FloatingPointPrecision);
-
-			_replaySaver.SaveAction(CreateCharacterAction(Actions.RotateCamera, roundedFloat));
-			base.RotateCamera(roundedFloat);
+			_character.replayStorage.SaveAction(Actions.RotateCamera, rotation);
+			_character.RotateCamera(rotation);
 		}
 
 		private void MoveCharacterByInput()
@@ -86,37 +75,23 @@ namespace ClockBlockers.Characters.Scripts
 			MoveCharacterForward(timeAdjustedInput.ToFloatArray());
 		}
 
-		private CharacterAction CreateCharacterAction(Actions action, float[] parameter)
-		{
-			return new CharacterAction(action, parameter, gameController.FixedTimeSinceActStarted);
-		}
-		private CharacterAction CreateCharacterAction(Actions action, float parameter)
-		{
-			return new CharacterAction(action, parameter, gameController.FixedTimeSinceActStarted);
-		}
-		private CharacterAction CreateCharacterAction(Actions action)
-		{
-			return new CharacterAction(action, gameController.FixedTimeSinceActStarted);
-		}
-		
-		protected override void MoveCharacterForward(float[] vector)
-		{
-			float[] roundedScaledVector = vector.Round().Scale(gameController.FloatingPointPrecision);
 
-			_replaySaver.SaveAction(CreateCharacterAction(Actions.Move, vector));
-			base.MoveCharacterForward(roundedScaledVector);
+		private void MoveCharacterForward(float[] vector)
+		{
+			_character.replayStorage.SaveAction(Actions.Move, vector);
+			_character.MoveCharacterForward(vector);
 		}
 
-		protected override void AttemptToShoot()
+		private void AttemptToShoot()
 		{
-			_replaySaver.SaveAction(CreateCharacterAction(Actions.Shoot));
-			base.AttemptToShoot();
+			_character.replayStorage.SaveAction(Actions.Shoot);
+			_character.AttemptToShoot();
 		}
 
-		protected override void SpawnReplay()
+		private void SpawnReplay()
 		{
-			_replaySaver.SaveAction(CreateCharacterAction(Actions.SpawnReplay));
-			base.SpawnReplay();
+			_character.replayStorage.SaveAction(Actions.SpawnReplay);
+			_character.SpawnReplay();
 		}
 
 		private void ResetCharacter()
@@ -126,24 +101,24 @@ namespace ClockBlockers.Characters.Scripts
 			_inputController.UpDownCameraRotation = 0;
 			_inputController.SideToSideCharacterRotation = 0;
 
-			Cam.transform.rotation = camStartRot;
+			_character.Cam.transform.rotation = _character.CamStartRot;
 
-			replayStorage.ClearStorageForThisAct();
+			_character.replayStorage.ClearStorageForThisAct();
 
-			characterController.enabled = false;
-			transform.SetPositionAndRotation(startPos, startRot);
-			characterController.enabled = true;
+			_character.characterController.enabled = false;
+			transform.SetPositionAndRotation(_character.StartPos, _character.StartRot);
+			_character.characterController.enabled = true;
 		}
 
 		private IEnumerator Co_AttemptToShoot()
 		{
-			yield return waitForFixedFrame;
+			yield return _waitForFixedFrame;
 			AttemptToShoot();
 		}
 
 		private IEnumerator Co_SpawnReplay()
 		{
-			yield return waitForFixedFrame;
+			yield return _waitForFixedFrame;
 
 			SpawnReplay();
 		}
@@ -160,27 +135,21 @@ namespace ClockBlockers.Characters.Scripts
 			StartCoroutine(Co_AttemptToShoot());
 		}
 
-		[UsedImplicitly]
-		private void OnClearClones()
-		{
-			gameController.ClearClones();
-		}
+		// protected override void OnActEnded()
+		// {
+		// 	base.OnActEnded();
+		//
+		// 	replayStorage.StoreActData();
+		// 	ResetCharacter();
+		//
+		// 	_inputController.Reset();
+		// }
 
-		protected override void OnActEnded()
-		{
-			base.OnActEnded();
-
-			_replaySaver.PushActDataToRound();
-			ResetCharacter();
-
-			_inputController.Reset();
-		}
-
-		protected override void OnNewActStart()
-		{
-			base.OnNewActStart();
-
-			replaySpawner.SpawnAllReplays();
-		}
+		// protected override void OnNewActStart()
+		// {
+		// 	base.OnNewActStart();
+		//
+		// 	replaySpawner.SpawnAllReplays();
+		// }
 	}
 }

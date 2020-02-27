@@ -6,7 +6,7 @@
 //when a settings item is selected anyways
 #define DONT_DISPLAY_SETTINGS
 
-//#define DEBUG_ON_MOUSE_DOWN
+#define DEBUG_ON_MOUSE_DOWN
 //#define DEBUG_REBUILD_DRAWERS
 //#define DEBUG_ABORT_REBUILD_DRAWERS
 #define DEBUG_ADD_COMPONENT
@@ -1655,7 +1655,7 @@ namespace Sisus
 			}
 		}
 
-		protected void OnCursorPositionOrLayoutChanged()
+		public void OnCursorPositionOrLayoutChanged()
 		{
 			#if DEV_MODE
 			//if(Manager.MouseDownInfo.IsDrag()) { Debug.Log(StringUtils.ToColorizedString("OnCursorPositionOrLayoutChanged with ViewportMouseovered=", ViewportMouseovered(), ", MouseoveredInspector=", Manager.MouseoveredInspector, ", MouseoveredInspectorPart=", Manager.MouseoveredInspectorPart, ", InspectorDrawer.MouseIsOver=", InspectorDrawer.MouseIsOver, ", MouseDownInfo.IsDrag()=", Manager.MouseDownInfo.IsDrag())); }

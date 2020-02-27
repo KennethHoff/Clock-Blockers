@@ -1,10 +1,12 @@
-﻿#define DESTROY_DISPOSED_EDITORS
+﻿//#define IGNORE_GAMEOBJECT_EDITOR_OVERRIDES
+
+#define DESTROY_DISPOSED_EDITORS
 //#define SKIP_DESTROY_GAME_OBJECT_INSPECTOR
 #define DESTROY_DISPOSED_EDITOR_SERIALIZED_OBJECTS
 //#define NEVER_CACHE_ANY_EDITORS
 
 //#define DEBUG_SERIALIZE
-//#define DEBUG_GET_EDITOR
+#define DEBUG_GET_EDITOR
 //#define DEBUG_DESTROYED_CACHED_EDITORS
 //#define DEBUG_DISPOSE
 //#define DEBUG_CLEAR
@@ -38,6 +40,8 @@ namespace Sisus
 		#if SKIP_DESTROY_GAME_OBJECT_INSPECTOR
 		private static Type gameObjectInspectorType;
 		private static Type prefabImporterEditorType;
+		#elif IGNORE_GAMEOBJECT_EDITOR_OVERRIDES || DEV_MODE
+		private static Type gameObjectInspectorType;
 		#endif
 
 		#if !NET_STANDARD_2_0
@@ -248,7 +252,7 @@ namespace Sisus
 			}
 		}
 
-		private void OnBecameActive(Editor editor)
+		public static void OnBecameActive(Editor editor)
 		{
 			editor.ReloadPreviewInstances();
 		}
@@ -266,6 +270,8 @@ namespace Sisus
 			#if SKIP_DESTROY_GAME_OBJECT_INSPECTOR
 			gameObjectInspectorType = Types.GetInternalEditorType("UnityEditor.GameObjectInspector");
 			prefabImporterEditorType = Types.GetInternalEditorType("UnityEditor.PrefabImporterEditor");
+			#elif IGNORE_GAMEOBJECT_EDITOR_OVERRIDES || DEV_MODE
+			gameObjectInspectorType = Types.GetInternalEditorType("UnityEditor.GameObjectInspector");
 			#endif
 		}
 
@@ -329,6 +335,16 @@ namespace Sisus
 				else { Debug.LogWarning("cachedEditors for target "+StringUtils.TypeToString(target)+ " and editorType " + StringUtils.ToString(editorType)+ " with EditorKey hashCode " + editorKey.GetHashCode()+ " contained a null value!\nCachedEditors:\n" + StringUtils.ToString(cachedEditors, "\n")); }
 				#endif
 			}
+
+			#if DEV_MODE || IGNORE_GAMEOBJECT_EDITOR_OVERRIDES
+			if(editorType == null)
+			{
+				if(target is GameObject)
+				{
+					editorType = gameObjectInspectorType;
+				}
+			}
+			#endif
 
 			editor = Editor.CreateEditorWithContext(ArrayPool<Object>.CreateWithContent(target), context, editorType);
 

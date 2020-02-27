@@ -486,15 +486,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6be84e4d7829855419c06b94e56bd135, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bulletHoles:
+  - {fileID: 6861612899070223048, guid: beb78ac985c98fb4d923b33565826f2e, type: 3}
   casingPrefab: {fileID: 1482960508195586, guid: 91dcfdffdc6d38e47916b9c549e26dac, type: 3}
   muzzleFlashPrefab: {fileID: 1782395880954752, guid: e802c9c5b472d2345a808aca4bc81014, type: 3}
   barrelLocation: {fileID: 4493519541437738}
   casingExitLocation: {fileID: 4123556266775812}
+  holder: {fileID: 0}
   range: 50
   damage: 18
-  damageType: 0
-  canShoot: 0
-  holder: {fileID: 0}
 --- !u!82 &2284063941557449652
 AudioSource:
   m_ObjectHideFlags: 0

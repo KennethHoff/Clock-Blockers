@@ -400,7 +400,7 @@ namespace Sisus
 
 				// Remove height of the add component button from selection rect (if it's visible)
 				if(count > 0 && visibleMembers[count - 1].GetType() == typeof(AddComponentButtonDrawer))
-				{				
+				{
 					pos.height -= visibleMembers[count - 1].Height;
 				}
 
@@ -4753,7 +4753,6 @@ namespace Sisus
 					}
 				}
 			}
-			
 
 			#if DEV_MODE && PI_ASSERTATIONS
 			Debug.Assert(inspector.State.ViewIsLocked);

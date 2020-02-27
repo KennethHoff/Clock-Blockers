@@ -28,6 +28,13 @@
 		public const string ViewInPowerInspector = "CONTEXT/Object/View In Power Inspector";
 		public const string PeekInPowerInspector = "CONTEXT/Object/Peek In Power Inspector";
 
+
+
+		public const string Peek = "Edit/Peek\tMMB";
+		public const string Reset = "Edit/Reset\tBackspace";
+
+
+
 		public const int NewWindowPriority = -102;
 		public const int NewTabPriority = -101;
 		public const int CloseTabPriority = -100;

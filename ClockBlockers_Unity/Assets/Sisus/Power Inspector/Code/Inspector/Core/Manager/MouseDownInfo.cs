@@ -306,7 +306,7 @@ namespace Sisus
 						CursorMovedAfterMouseDown = false;
 						MouseDownEventWasUsed = false;
 						DrawGUI.OnEventUsed += OnEventUsed;
-					}					
+					}
 					break;
 				case EventType.MouseUp:
 					InspectorUtility.ActiveManager.OnNextLayout(Clear);

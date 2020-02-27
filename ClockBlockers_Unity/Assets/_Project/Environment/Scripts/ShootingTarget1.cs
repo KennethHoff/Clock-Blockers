@@ -68,12 +68,12 @@ namespace ClockBlockers.Environment.Scripts
 
 			if (sameAsPreviousShot)
 			{
-				Logging.Log("Same as all previous shot on target: " + transform.parent.name);
+				Logging.instance.Log("Same as all previous shot on target: " + transform.parent.name);
 			}
 			else
 			{
-				Logging.Log("Not same as all previous shot on target: " + transform.parent.name + ". Off by: " +
-				            tupleDiff);
+				Logging.instance.Log("Not same as all previous shot on target: " + transform.parent.name + ". Off by: " +
+				                     tupleDiff);
 			}
 		}
 	}

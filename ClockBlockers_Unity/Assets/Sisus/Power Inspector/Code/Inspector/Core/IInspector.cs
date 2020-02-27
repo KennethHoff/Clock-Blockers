@@ -408,6 +408,8 @@ namespace Sisus
 		/// </summary>
 		void UpdateCachedValuesFromFields();
 
+		void OnCursorPositionOrLayoutChanged();
+
 		/// <summary>
 		/// Cached values are usually updated from fields and properties continuously when a certain number of
 		/// milliseconds has passed. Whenever values are updated, the timer for the next update should be reset

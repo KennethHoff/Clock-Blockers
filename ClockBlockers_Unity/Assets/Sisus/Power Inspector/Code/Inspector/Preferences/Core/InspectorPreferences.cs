@@ -190,6 +190,14 @@ namespace Sisus
 		[NonSerialized, HideInInspector]
 		private bool setupDone;
 
+		public bool SetupDone
+		{
+			get
+			{
+				return setupDone;
+			}
+		}
+
 		[Header("Categorized Components")]
 		public ComponentCategory[] componentCategories = new ComponentCategory[]
 		{
@@ -706,14 +714,21 @@ namespace Sisus
 				return;
 			}
 
-			if(Event.current != null)
+			if(Event.current == null)
+			{
+				#if DEV_MODE
+				Debug.LogWarning("InspectorPreferences.Setup called with Event.current null");
+				#endif
+
+				Styles = new InspectorStyles(null);
+			}
+			else
 			{
 				themes.Setup(DrawGUI.IsProSkin, GUI.skin);
+				Styles = new InspectorStyles(theme.guiSkin);
+				setupDone = true;
 			}
-			#if DEV_MODE
-			else { Debug.LogWarning("InspectorPreferences.Setup called with Event.current null"); }
-			#endif
-			
+
 			#if DEV_MODE && PI_ASSERTATIONS
 			Debug.Assert(theme != null, "InspectorPreferences.Setup - themes.Active was null. Event.current="+StringUtils.ToString(Event.current)+".");
 			#endif
@@ -751,10 +766,6 @@ namespace Sisus
 			converters.Add(new VersionConverter());
 			converters.Add(new GUIStyleConverter());
 			converters.Add(new DelegateJsonConverter());
-
-			Styles = new InspectorStyles(theme.guiSkin);
-
-			setupDone = true;
 		}
 
 		private void Set<T>(ref T subject, [NotNull]T value, string undoMessage)

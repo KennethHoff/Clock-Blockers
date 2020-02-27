@@ -199,7 +199,7 @@ namespace Sisus
 		}
 		
 		#if PI_ENABLE_MENU_RESET
-		[UsedImplicitly, MenuItem("Edit/Reset _Backspace", false, 105)]
+		[UsedImplicitly, MenuItem(PowerInspectorMenuItemPaths.Reset, false, 105)]
 		private static void Reset()
 		{
 			var e = new Event();
@@ -208,7 +208,7 @@ namespace Sisus
 			InspectorUtility.ActiveInspector.SendEvent(e);
 		}
 		
-		[UsedImplicitly, MenuItem("Edit/Reset _Backspace", true)]
+		[UsedImplicitly, MenuItem(PowerInspectorMenuItemPaths.Reset, true)]
 		private static bool ShouldDisplayReset()
 		{
 			var manager = InspectorUtility.ActiveManager;
@@ -228,7 +228,7 @@ namespace Sisus
 		#endif
 
 		#if PI_ENABLE_MENU_PEEK
-		[UsedImplicitly, MenuItem("Edit/Peek _MMB", false, 142)]
+		[UsedImplicitly, MenuItem(PowerInspectorMenuItemPaths.Peek, false, 142)]
 		private static void ShowInSplitView()
 		{
 			var selected = Selection.objects;
@@ -241,6 +241,12 @@ namespace Sisus
 			if(manager == null)
 			{
 				manager = InspectorManager.Instance();
+
+				if(!InspectorUtility.Preferences.SetupDone && Event.current == null)
+				{
+					DrawGUI.OnNextBeginOnGUI(ShowInSplitView, true);
+					return;
+				}
 			}
 
 			var inspector = manager.LastSelectedActiveOrDefaultInspector(selected[0].IsSceneObject() ? InspectorTargetingMode.Hierarchy : InspectorTargetingMode.Project, InspectorSplittability.IsSplittable);
@@ -248,25 +254,24 @@ namespace Sisus
 			ISplittableInspectorDrawer splittableDrawer;
 			if(inspector == null)
 			{
-				splittableDrawer = PowerInspectorWindow.CreateNew(ArrayPool<Object>.ZeroSizeArray, false, false);
+				splittableDrawer = PowerInspectorWindow.CreateNew(selected, true, false);
 			}
 			else
 			{
 				splittableDrawer = (ISplittableInspectorDrawer)inspector.InspectorDrawer;
+				splittableDrawer.ShowInSplitView(selected);
 
 				#if DEV_MODE && PI_ASSERTATIONS
 				Debug.Assert(splittableDrawer != null);
 				Debug.Assert(selected[0].IsSceneObject() ? splittableDrawer.InspectorTargetingMode != InspectorTargetingMode.Hierarchy : splittableDrawer.InspectorTargetingMode != InspectorTargetingMode.Project);
 				#endif
 			}
-			
-			splittableDrawer.ShowInSplitView(selected);
 		}
 
-		[UsedImplicitly, MenuItem("Edit/Peek _MMB", true)]
+		[UsedImplicitly, MenuItem(PowerInspectorMenuItemPaths.Peek, true)]
 		private static bool ShouldDisplayShowInSplitView()
 		{
-			if(Selection.objects.Length == 0)
+			if(Selection.objects.Length == 0) // || InspectorUtility.ActiveManager == null || InspectorUtility.ActiveManager.GetLastSelectedInspectorDrawer(typeof(ISplittableInspectorDrawer)) == null)
 			{
 				return false;
 			}

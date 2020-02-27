@@ -5,7 +5,9 @@ using UnityEngine;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-using ClockBlockers.NewReplaySystem;
+using ClockBlockers.ReplaySystem;
+
+
 // ReSharper disable UnusedType.Global
 // ReSharper disable UnusedMember.Global
 
@@ -49,7 +51,7 @@ namespace ClockBlockers.Utility
 			}
 			else
 			{
-				Logging.LogWarning("No save file!");
+				Logging.instance.LogWarning("No save file!");
 				return null;
 			}
 

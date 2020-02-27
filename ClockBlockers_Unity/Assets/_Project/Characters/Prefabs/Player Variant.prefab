@@ -13,16 +13,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gun: {fileID: 7371798284019175839}
-  minCamAngle: -90
-  maxCamAngle: 90
-  recordActions: 1
-  enableRecursiveReplays: 0
-  maxHealth: 25
-  armor: 0
-  shielding: 0
-  debugLogEveryAction: 0
-  moveSpd: 3
-  gameController: {fileID: 0}
+  minCamAngle:
+    UseConstant: 1
+    ConstantValue: -90
+    Variable: {fileID: 0}
+  maxCamAngle:
+    UseConstant: 1
+    ConstantValue: 90
+    Variable: {fileID: 0}
+  _moveSpd:
+    UseConstant: 0
+    ConstantValue: 0
+    Variable: {fileID: 11400000, guid: 7db4c056203764648bba4e86a02de3fc, type: 2}
 --- !u!114 &7165973146353909698
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -65,22 +67,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abfb00c7bac94734b5e2c4a8037be5ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameController: {fileID: 0}
-  verticalMouseSensitivity: 5
-  horizontalMouseSensitivity: 5
---- !u!114 &4064547006354900071
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1571075138580728034}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 281ec338404949d3b4c2a397e47267d4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  debugLogEveryAction: 0
+  verticalMouseSensitivity:
+    UseConstant: 1
+    ConstantValue: 0
+    Variable: {fileID: 0}
+  horizontalMouseSensitivity:
+    UseConstant: 1
+    ConstantValue: 0
+    Variable: {fileID: 0}
 --- !u!1001 &759690741484361695
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -88,6 +82,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1559212068962868957, guid: 67d00b1d2b3cb5e499d32550ea99e5e9, type: 3}
+      propertyPath: saveActions
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2253878130908946237, guid: 67d00b1d2b3cb5e499d32550ea99e5e9, type: 3}
       propertyPath: m_Name
       value: Player Variant
