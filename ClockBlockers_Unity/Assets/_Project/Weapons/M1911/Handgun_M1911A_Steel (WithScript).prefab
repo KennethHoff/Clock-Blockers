@@ -493,8 +493,14 @@ MonoBehaviour:
   barrelLocation: {fileID: 4493519541437738}
   casingExitLocation: {fileID: 4123556266775812}
   holder: {fileID: 0}
-  range: 50
-  damage: 18
+  damage:
+    useConstant: 1
+    constantValue: 18
+    variable: {fileID: 0}
+  range:
+    useConstant: 1
+    constantValue: 30
+    variable: {fileID: 0}
 --- !u!82 &2284063941557449652
 AudioSource:
   m_ObjectHideFlags: 0

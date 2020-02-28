@@ -9,7 +9,7 @@ namespace ClockBlockers.Tests.PlayMode
 		[Test]
 		public void NewTestScriptSimplePasses()
 		{
-			// Use the Assert class to test conditions
+			
 		}
 	}
 }

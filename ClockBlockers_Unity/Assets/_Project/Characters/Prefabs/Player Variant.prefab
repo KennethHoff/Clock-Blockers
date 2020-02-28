@@ -12,19 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c7ea7a2c40e73c4bbffaad91f7bbc37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gun: {fileID: 7371798284019175839}
-  minCamAngle:
-    UseConstant: 1
-    ConstantValue: -90
-    Variable: {fileID: 0}
-  maxCamAngle:
-    UseConstant: 1
-    ConstantValue: 90
-    Variable: {fileID: 0}
-  _moveSpd:
-    UseConstant: 0
-    ConstantValue: 0
-    Variable: {fileID: 11400000, guid: 7db4c056203764648bba4e86a02de3fc, type: 2}
 --- !u!114 &7165973146353909698
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -49,7 +36,63 @@ MonoBehaviour:
   m_ControlsChangedEvent:
     m_PersistentCalls:
       m_Calls: []
-  m_ActionEvents: []
+  m_ActionEvents:
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: d1df5305-4622-435e-8468-30e86c3d92c5
+    m_ActionName: Character/Movement[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d,/XInputControllerWindows/leftStick]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: e011e656-f6e8-4469-bfa9-e4031f599e34
+    m_ActionName: Character/Look[/Mouse/delta,/XInputControllerWindows/rightStick]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 0cd467c4-6c6b-42ef-8dd7-efc7e57e4401
+    m_ActionName: Character/Shoot[/Mouse/leftButton,/XInputControllerWindows/rightTrigger]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 60daafb2-1bbd-4a40-a470-59e12d23fae4
+    m_ActionName: Character/Jump[/Keyboard/space,/XInputControllerWindows/buttonSouth]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 25542b2e-fc3a-4122-8b48-f26141e42ee2
+    m_ActionName: Character/Spawn[/Keyboard/e,/XInputControllerWindows/buttonNorth]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 8210257b-56ab-44a3-8638-ce5a796c27c7
+    m_ActionName: Character/ClearClones[/Keyboard/c,/XInputControllerWindows/select]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 589b545d-6d4b-445b-be0f-2345ef733a81
+    m_ActionName: Character/IncreaseTimescale[/Keyboard/numpadPlus]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 335657d1-cbf6-46c2-9f68-9ae8cc7bf218
+    m_ActionName: Character/DecreaseTimescale[/Keyboard/numpadMinus]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 39a1958e-0deb-4588-82aa-f695472356f5
+    m_ActionName: Character/Pause[/Keyboard/escape,/XInputControllerWindows/start]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: ba7f09f9-5c35-47cd-97f3-ac759692732b
+    m_ActionName: Character/StartNewAct[/Keyboard/r]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 999cb916-1a4c-4f0d-bf6e-7b02916a080b
+    m_ActionName: Character/ToggleCursor[/Keyboard/leftAlt]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Character
@@ -67,14 +110,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abfb00c7bac94734b5e2c4a8037be5ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tempEvent_EndCurrentAct:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 6dcee6de2f557104cb07ff8ce8aea493, type: 2}
+        m_TargetAssemblyTypeName: ClockBlockers.Events.GameEvent, Main
+        m_MethodName: Raise
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  cameraController: {fileID: 1628430008802450133}
+  gun: {fileID: 7371798284019175839}
   verticalMouseSensitivity:
-    UseConstant: 1
-    ConstantValue: 0
-    Variable: {fileID: 0}
+    useConstant: 0
+    constantValue: 5
+    variable: {fileID: 11400000, guid: 5cbaadd71f62c6342af9e2f7aeb656a5, type: 2}
   horizontalMouseSensitivity:
-    UseConstant: 1
-    ConstantValue: 0
-    Variable: {fileID: 0}
+    useConstant: 0
+    constantValue: 5
+    variable: {fileID: 11400000, guid: 200b86ee37752df4985386a04e2664f9, type: 2}
 --- !u!1001 &759690741484361695
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -142,13 +202,37 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8069227891493354413, guid: 67d00b1d2b3cb5e499d32550ea99e5e9, type: 3}
+      propertyPath: response.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: ClockBlockers.Characters.Character, Main
+      objectReference: {fileID: 0}
+    - target: {fileID: 8069227891493354413, guid: 67d00b1d2b3cb5e499d32550ea99e5e9, type: 3}
+      propertyPath: response.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Kill
+      objectReference: {fileID: 0}
+    - target: {fileID: 8069227891493354413, guid: 67d00b1d2b3cb5e499d32550ea99e5e9, type: 3}
+      propertyPath: response.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 67d00b1d2b3cb5e499d32550ea99e5e9, type: 3}
 --- !u!1 &1571075138580728034 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2253878130908946237, guid: 67d00b1d2b3cb5e499d32550ea99e5e9, type: 3}
   m_PrefabInstance: {fileID: 759690741484361695}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1628430008802450133 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2023152811387489546, guid: 67d00b1d2b3cb5e499d32550ea99e5e9, type: 3}
+  m_PrefabInstance: {fileID: 759690741484361695}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4f3978553bb4ec79e660ffdabc69451, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &7371798284019175839 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7838257655458563648, guid: 67d00b1d2b3cb5e499d32550ea99e5e9, type: 3}

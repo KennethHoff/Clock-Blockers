@@ -1,9 +1,10 @@
-﻿using ClockBlockers.ReplaySystem.ReplayRunner;
-
-using UnityEngine;
+﻿using UnityEngine;
 
 
-namespace ClockBlockers.Characters.Scripts
+namespace ClockBlockers.Characters
 {
-	public class Clone : MonoBehaviour { }
+	public class Clone : MonoBehaviour
+	{
+		private AiInputController _aiInputController;
+	}
 }

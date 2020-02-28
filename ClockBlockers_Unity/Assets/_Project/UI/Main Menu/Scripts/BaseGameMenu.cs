@@ -1,17 +1,14 @@
 ﻿using UnityEngine;
 
 
-namespace ClockBlockers.UI.Main_Menu.Scripts
+namespace ClockBlockers.UI.Main_Menu
 {
 	public abstract class BaseGameMenu : MonoBehaviour
 	{
 		[SerializeField]
 		private BaseGameMenu[] connectedMenus;
 
-		protected BaseGameMenu[] ConnectedMenus
-		{
-			get => connectedMenus;
-		}
+		protected BaseGameMenu[] ConnectedMenus => connectedMenus;
 
 		protected void CloseMenu()
 		{

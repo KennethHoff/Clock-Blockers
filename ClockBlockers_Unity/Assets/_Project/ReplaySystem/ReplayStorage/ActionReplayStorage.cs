@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using ClockBlockers.DataStructures;
 using ClockBlockers.GameControllers;
 using ClockBlockers.Utility;
 
@@ -14,6 +13,8 @@ namespace ClockBlockers.ReplaySystem.ReplayStorage
 	// This Class's jobs are:
 	
 	// Store and retrieve CharacterActions (A combination of action, parameter for said action, and time when to execute said action)
+	
+	// TODO: Make this into a 'This act player action storage', rather than a total 'all acts all the time' storage.
 	
 	public class ActionReplayStorage : MonoBehaviour, IReplayStorage
 	{
@@ -27,17 +28,14 @@ namespace ClockBlockers.ReplaySystem.ReplayStorage
 
 		private List<CharacterAction> CurrentActPlayerActions { get; set; }
 
-		private List<CharacterAction[]> RoundActions { get; set; }
+		private List<CharacterAction[]> RoundActions { get; set; } // < Remove this
 
-		internal CharacterAction[] CurrentActNpcActions { get; private set; }
+		internal CharacterAction[] CurrentActNpcActions { get; private set; } // < Remove this, and create a separate file for AI actions
 
 		private List<Tuple<Actions, float[]>> _currentFrameCharacterActions;
 
 		private void Awake()
 		{
-			// DILEMMA: I do not want use "FindObjectOfType" on GameController, because I don't want the singleton pattern, but I also can't assign GameController via the Interface.
-			// This will hopefully be fixed by the time I refactor the GameController into smaller parts.
-			
 			CurrentActPlayerActions = new List<CharacterAction>();
 			RoundActions = new List<CharacterAction[]>();
 			CurrentActNpcActions = new CharacterAction[0];
@@ -46,7 +44,7 @@ namespace ClockBlockers.ReplaySystem.ReplayStorage
 
 		private void Start()
 		{
-			if (_gameController == null) Logging.instance.LogIncorrectInstantiation("Game Controller", this);
+			if (_gameController == null) Logging.LogIncorrectInstantiation("Game Controller", this);
 			_currentFrameCharacterActions = new List<Tuple<Actions, float[]>>();
 		}
 

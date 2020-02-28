@@ -51,7 +51,7 @@ namespace ClockBlockers.Utility
 			}
 			else
 			{
-				Logging.instance.LogWarning("No save file!");
+				Logging.LogWarning("No save file!");
 				return null;
 			}
 

@@ -9,24 +9,18 @@
         <e p="_Project" t="Include">
           <e p="Characters" t="Include">
             <e p="Scripts" t="Include">
+              <e p="AIInputController.cs" t="Include" />
               <e p="Character.cs" t="Include" />
               <e p="CharacterBody.cs" t="Include" />
+              <e p="CharacterMovement.cs" t="Include" />
               <e p="Clone.cs" t="Include" />
               <e p="Player.cs" t="Include" />
             </e>
           </e>
           <e p="DataStructures" t="Include">
             <e p="DamagePacket.cs" t="Include" />
-            <e p="Editor" t="Include">
-              <e p="FloatReferenceDrawer.cs" t="Include" />
-              <e p="IntReferenceDrawer.cs" t="Include" />
-            </e>
             <e p="Enums.cs" t="Include" />
-            <e p="FloatReference.cs" t="Include" />
-            <e p="FloatVariable.cs" t="Include" />
             <e p="IInteractable.cs" t="Include" />
-            <e p="IntReference.cs" t="Include" />
-            <e p="IntVariable.cs" t="Include" />
           </e>
           <e p="Environment" t="Include">
             <e p="Scripts" t="Include">
@@ -40,16 +34,18 @@
             <e p="GameEventListener.cs" t="Include" />
           </e>
           <e p="GameControllers" t="Include">
-            <e p="Act.cs" t="Include" />
             <e p="CharacterSpawner.cs" t="Include" />
             <e p="GameController.cs" t="Include" />
+          </e>
+          <e p="Input" t="Include">
+            <e p="PlayerInputController.cs" t="Include" />
+          </e>
+          <e p="Main.asmdef" t="Include" />
+          <e p="MatchData" t="Include">
+            <e p="Act.cs" t="Include" />
             <e p="Match.cs" t="Include" />
             <e p="Round.cs" t="Include" />
           </e>
-          <e p="Input" t="Include">
-            <e p="InputController.cs" t="Include" />
-          </e>
-          <e p="Main.asmdef" t="Include" />
           <e p="ReplaySystem" t="Include">
             <e p="CharacterAction.cs" t="Include" />
             <e p="ReplayRunner" t="Include">
@@ -58,6 +54,7 @@
             </e>
             <e p="ReplaySpawner" t="Include">
               <e p="ActionReplaySpawner.cs" t="Include" />
+              <e p="IReplaySpawner.cs" t="Include" />
             </e>
             <e p="ReplayStorage" t="Include">
               <e p="ActionReplayStorage.cs" t="Include" />
@@ -84,6 +81,8 @@
             </e>
           </e>
           <e p="ToBeMoved" t="Include">
+            <e p="CameraController.cs" t="Include" />
+            <e p="Gravity.cs" t="Include" />
             <e p="HealthComponent.cs" t="Include" />
           </e>
           <e p="UI" t="Include">
@@ -104,7 +103,22 @@
             <e p="Gun.cs" t="Include" />
           </e>
         </e>
+        <e p="Between Names" t="Include">
+          <e p="BetweenNames.asmdef" t="Include" />
+          <e p="Property References" t="Include">
+            <e p="Editor" t="Include">
+              <e p="FloatReferenceDrawer.cs" t="Include" />
+              <e p="IntReferenceDrawer.cs" t="Include" />
+            </e>
+            <e p="FloatReference.cs" t="Include" />
+            <e p="FloatVariable.cs" t="Include" />
+            <e p="IntReference.cs" t="Include" />
+            <e p="IntVariable.cs" t="Include" />
+            <e p="IPropertyReference.cs" t="Include" />
+          </e>
+        </e>
       </e>
+      <e p="BetweenNames.csproj" t="IncludeRecursive" />
       <e p="ClockBlockers_Unity.sln" t="IncludeFlat" />
       <e p="EditModeTests.csproj" t="IncludeRecursive" />
       <e p="Main.csproj" t="IncludeRecursive" />

@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c07ec5838f69c7458901d70987514dc, type: 3}
   m_Name: CharacterMovementSpeed
   m_EditorClassIdentifier: 
-  value: 0
+  value: 0.18

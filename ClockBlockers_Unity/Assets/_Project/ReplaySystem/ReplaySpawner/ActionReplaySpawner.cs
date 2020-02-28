@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 
-using ClockBlockers.Characters.Scripts;
-using ClockBlockers.GameControllers;
+using ClockBlockers.Characters;
 using ClockBlockers.ReplaySystem.ReplayStorage;
 
 using UnityEngine;
@@ -12,17 +11,8 @@ namespace ClockBlockers.ReplaySystem.ReplaySpawner {
 	{
 		private ActionReplayStorage _actionReplayStorage;
 		
-		private GameController _gameController;
-		
-		[SerializeField]
-		private Character clonePrefab;
-
 		private void Awake()
 		{
-			// DILEMMA: I do not want use "FindObjectOfType" on GameController, because I don't want the singleton pattern, but I also can't assign GameController via the Interface.
-			// This will hopefully be fixed by the time I refactor the GameController into smaller parts.
-
-			_gameController = FindObjectOfType<GameController>();
 			_actionReplayStorage = GetComponent<ActionReplayStorage>();
 		}
 		private void SpawnClone(Vector3 position, Quaternion rotation, CharacterAction[] actions)
@@ -55,11 +45,5 @@ namespace ClockBlockers.ReplaySystem.ReplaySpawner {
 			
 			allRounds.ForEach(SpawnReplay);
 		}
-	}
-
-	public interface IReplaySpawner {
-		// They all need to know what to spawn
-		void SpawnLatestReplay();
-		void SpawnAllReplays();
 	}
 }

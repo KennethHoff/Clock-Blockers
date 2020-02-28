@@ -3,7 +3,7 @@
 using UnityEngine;
 
 
-namespace ClockBlockers.Environment.Scripts
+namespace ClockBlockers.Environment
 {
 	public class Plane1 : MonoBehaviour, IInteractable
 	{

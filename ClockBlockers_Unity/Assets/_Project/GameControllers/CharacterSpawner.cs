@@ -1,7 +1,4 @@
-using System;
-
-using ClockBlockers.Characters.Scripts;
-using ClockBlockers.Events;
+using ClockBlockers.Characters;
 
 using UnityEngine;
 
@@ -9,24 +6,27 @@ using UnityEngine;
 namespace ClockBlockers.GameControllers {
 	public class CharacterSpawner : MonoBehaviour
 	{
+
 		[SerializeField]
 		private Character playerPrefab;
 
 		[SerializeField]
 		private Character clonePrefab;
-		private Character SpawnCharacter(Character character, Vector3 position, Quaternion rotation)
-		{
-			return Instantiate(character, position, rotation);
-		}
 		
-		public void SpawnPlayer()
+		public Player SpawnPlayer()
 		{
-			SpawnCharacter(playerPrefab, Vector3.one, Quaternion.identity);
+			return SpawnCharacter(playerPrefab).GetComponent<Player>();
 		}
 
 		public Clone SpawnClone()
 		{
-			return SpawnCharacter(clonePrefab, Vector3.one, Quaternion.identity).GetComponent<Clone>();
+			return SpawnCharacter(clonePrefab).GetComponent<Clone>();
+		}
+		
+		
+		private static Character SpawnCharacter(Character character)
+		{
+			return Instantiate(character);
 		}
 	}
 }

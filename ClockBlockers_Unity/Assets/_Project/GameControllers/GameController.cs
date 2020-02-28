@@ -1,10 +1,9 @@
-﻿using System;
+﻿using System.Collections.Generic;
 
-using ClockBlockers.Characters.Scripts;
+using ClockBlockers.MatchData;
 using ClockBlockers.Utility;
 
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 
 namespace ClockBlockers.GameControllers
@@ -45,21 +44,31 @@ namespace ClockBlockers.GameControllers
 	{
 		
 		[SerializeField]
+		private List<Match> allMatches;
+		
+		[SerializeField]
 		private bool logToFile;
 		
 		[SerializeField]
 		private Match matchPrefab;
-
+		
+		
 		private Match _currentMatch;
 		
 		private Logging _logging;
 
-
-
 		private void Awake()
 		{
 			_logging = new Logging("Logging", logToFile);
-			_currentMatch = Instantiate(matchPrefab);
+		}
+
+		private void Start()
+		{
+			Match newMatch = Instantiate(matchPrefab);
+			allMatches.Add(newMatch);
+			
+			newMatch.Setup();
+			newMatch.Begin();
 		}
 	}
 }

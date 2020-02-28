@@ -1,7 +1,7 @@
 using UnityEngine;
 
 
-namespace ClockBlockers.Characters.Scripts
+namespace ClockBlockers.Characters
 {
 	public class CharacterBody : MonoBehaviour { }
 }

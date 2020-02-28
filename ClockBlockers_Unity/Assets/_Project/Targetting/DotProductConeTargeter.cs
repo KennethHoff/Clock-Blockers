@@ -13,10 +13,7 @@ namespace ClockBlockers.Targetting
 		// ReSharper disable once IdentifierTypo
 		private static List<Transform> _interactables;
 
-		private float Threshold
-		{
-			get => threshold;
-		}
+		private float Threshold => threshold;
 
 		private Transform _self;
 

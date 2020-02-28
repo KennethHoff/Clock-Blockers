@@ -1,20 +1,16 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 
 using ClockBlockers.DataStructures;
-using ClockBlockers.GameControllers;
 using ClockBlockers.ReplaySystem.ReplayRunner;
 using ClockBlockers.ReplaySystem.ReplaySpawner;
 using ClockBlockers.ReplaySystem.ReplayStorage;
-using ClockBlockers.Targetting;
 using ClockBlockers.ToBeMoved;
 using ClockBlockers.Utility;
-using ClockBlockers.Weapons;
 
 using UnityEngine;
 
 
-namespace ClockBlockers.Characters.Scripts
+namespace ClockBlockers.Characters
 {
 	// TODO: Add a simple "Aim towards the middle of a character" AI for weapons.
 	// TODO: Add Dot Product aiming, as opposed to RayCast aiming, for better-feeling aiming
@@ -35,256 +31,177 @@ namespace ClockBlockers.Characters.Scripts
 	
 	// Fixed the following:
 	
-	// Store Health																				< NEW HealthComponent
+	// [25.02.2020]Store Health
+		// NEW Health
 
 	
 	[DisallowMultipleComponent]
-	public partial class Character : MonoBehaviour, IInteractable
+	[RequireComponent(typeof(IReplayStorage))]
+	[RequireComponent(typeof(IReplayRunner))]
+	[RequireComponent(typeof(IReplaySpawner))] 
+	[RequireComponent(typeof(HealthComponent))]
+	[RequireComponent(typeof(CharacterBody))]
+	
+	public class Character : MonoBehaviour, IInteractable
 	{
 		private WaitForFixedUpdate _waitForFixedFrame;
 
-		internal Camera Cam { get; private set; }
+		private IReplayStorage _replayStorage;
 
-		public CharacterController characterController;
-
-		internal IReplayStorage replayStorage;
-
-		internal IReplaySpawner replaySpawner;
+		private IReplaySpawner _replaySpawner;
+		
+		// There's a fundamental difference in architecture; They can't mix.
+		private ActionReplayRunner _replayRunner;
 
 		private HealthComponent _healthComponent;
 
+		private float _diedTime;
 		
-		// There's a fundamental difference in architecture; They can't mix.
-		internal ActionReplayRunner replayRunner;
-
-
 		private CharacterBody _body;
 
-		private IRayProvider _rayProvider;
-
-		private ITargeter _targeter;
-
-		private float _diedTime;
-
-		public Vector3 StartPos { get; set; }
-		public Quaternion StartRot { get; set; }
-
-		public Quaternion CamStartRot { get; private set; }
-
-
-		#region Set in inspector
-
-
-
-
-		private Gun Gun
-		{
-			get => gun;
-		}
-
-		[SerializeField]
-		private Gun gun;
-
+		private Renderer _bodyRenderer;
 		
-		#endregion
-
-
-		internal GameController gameController;
 		[SerializeField]
-		private FloatReference minCamAngle;
+		private Material deadMaterial;
 
-		[SerializeField]
-		private FloatReference maxCamAngle;
-
-		[SerializeField]
-		[Header("Character Variables")]
-		private FloatReference moveSpd;
 
 		protected virtual void Awake()
 		{
-			
-			replayStorage = GetComponent<IReplayStorage>();
-			if (replayStorage == null) Logging.instance.LogIncorrectInstantiation("Replay Storage", this);
+			_replayStorage = GetComponent<IReplayStorage>();
+			if (_replayStorage == null) Logging.LogIncorrectInstantiation("Replay Storage", this);
 
-			replaySpawner = GetComponent<IReplaySpawner>();
-			if (replaySpawner == null) Logging.instance.LogIncorrectInstantiation("Replay Spawner", this);
+			_replaySpawner = GetComponent<IReplaySpawner>();
+			if (_replaySpawner == null) Logging.LogIncorrectInstantiation("Replay Spawner", this);
 
-			replayRunner = GetComponent<ActionReplayRunner>();
-			if (replayRunner == null) Logging.instance.LogIncorrectInstantiation("Replay Runner", this);
+			_replayRunner = GetComponent<ActionReplayRunner>();
+			if (_replayRunner == null) Logging.LogIncorrectInstantiation("Replay Runner", this);
 
 			_healthComponent = GetComponent<HealthComponent>();
-			if (_healthComponent == null) Logging.instance.LogIncorrectInstantiation("Health Component", this);
-
-			Cam = GetComponentInChildren<Camera>();
-			characterController = GetComponent<CharacterController>();
-			Gun.Holder = this;
+			if (_healthComponent == null) Logging.LogIncorrectInstantiation("Health Component", this);
 
 			_body = GetComponentInChildren<CharacterBody>();
+			_bodyRenderer = _body.GetComponent<Renderer>();
 
-			_targeter = GetComponent<ITargeter>();
-			_rayProvider = GetComponent<IRayProvider>();
-			
-			
 			_waitForFixedFrame = new WaitForFixedUpdate(); 
 		}
 
-		protected virtual void Start()
-		{
-			if (gameController == null)
-			{
-				Logging.instance.LogIncorrectInstantiation("GameController", this);
-			}
+		// protected virtual void Start()
+		// {
+			// AssignDelegates();
 
-			AssignDelegates();
+			// Transform camTransform = Cam.transform;
 
-			Transform camTransform = Cam.transform;
+			// Transform charTransform = transform;
 
-			Transform charTransform = transform;
+			// StartPos = charTransform.position;
+			// StartRot = charTransform.rotation;
 
-			StartPos = charTransform.position;
-			StartRot = charTransform.rotation;
+			// CamStartRot = camTransform.rotation;
+		// }
 
-			CamStartRot = camTransform.rotation;
-		}
+		// public void RotateCharacter(float yRotation)
+		// {
+		// 	var angle = new Vector3(0, yRotation, 0);
+		// 	transform.Rotate(angle);
+		// }
 
-		public void RotateCharacter(float yRotation)
-		{
-			var angle = new Vector3(0, yRotation, 0);
-			transform.Rotate(angle);
-		}
+		// public void RotateCamera(float rotation)
+		// {
+		// 	Vector3 currentAngle = Cam.transform.rotation.eulerAngles;
+		//
+		// 	float newX = currentAngle.x - rotation;
+		//
+		// 	// ReSharper disable once IdentifierTypo
+		// 	float preclampedX = newX > 180 ? newX - 360 : newX;
+		// 	float clampedX = Mathf.Clamp(preclampedX, minCamAngle, maxCamAngle);
+		//
+		// 	var newAngle = new Vector3(clampedX, 0, 0);
+		//
+		// 	Cam.transform.localRotation = Quaternion.Euler(newAngle);
+		// }
 
-		public void RotateCamera(float rotation)
-		{
-			Vector3 currentAngle = Cam.transform.rotation.eulerAngles;
+		// public void AttemptToShoot()
+		// {
+		// 	// TODO: Add Ammo checks etc..
+		//
+		// 	if (gun.CanShoot)
+		// 	{
+		// 		Gun.PullTrigger();
+		// 	}
+		// }
 
-			float newX = currentAngle.x - rotation;
+		// public void SpawnReplay()
+		// {
+			// replaySpawner.SpawnLatestReplay();
+		// }
 
-			// ReSharper disable once IdentifierTypo
-			float preclampedX = newX > 180 ? newX - 360 : newX;
-			float clampedX = Mathf.Clamp(preclampedX, minCamAngle, maxCamAngle);
 
-			var newAngle = new Vector3(clampedX, 0, 0);
+		//	private void AssignDelegates()
+		// {
+		// 	replayRunner.MoveAction += Action_MoveCharacter;
+		// 	replayRunner.RotateCharacterAction += Action_RotateCharacter;
+		// 	replayRunner.RotateCameraAction += Action_RotateCamera;
+		// 	replayRunner.ShootAction += Action_AttemptToShoot;
+		// 	replayRunner.SpawnReplayAction += Action_SpawnReplay;
+		// 	replayRunner.CompletedAllActions += Action_CompletedAll;
+		// }
+		//
+		// private void UnassignDelegates()
+		// {
+		// 	replayRunner.MoveAction -= Action_MoveCharacter;
+		// 	replayRunner.RotateCharacterAction -= Action_RotateCharacter;
+		// 	replayRunner.RotateCameraAction -= Action_RotateCamera;
+		// 	replayRunner.ShootAction -= Action_AttemptToShoot;
+		// 	replayRunner.SpawnReplayAction -= Action_SpawnReplay;
+		// 	replayRunner.CompletedAllActions -= Action_CompletedAll;
+		//
+		// }
 
-			Cam.transform.localRotation = Quaternion.Euler(newAngle);
-		}
+		// private void OnDisable()
+		// {
+			// UnassignDelegates();
+		// }
 
-		public void MoveCharacterForward(float[] vector)
-		{
-			Transform transform1 = transform;
-			Vector3 forward = transform1.forward;
-			Vector3 right = transform1.right;
-			forward.y = 0;
-			right.y = 0;
-			forward.Normalize();
-			right.Normalize();
-
-			Vector3 prelimMove = (forward * vector[1]) + (right * vector[0]);
-			Vector3 move = prelimMove * moveSpd;
-
-			MoveCharacter(move);
-		}
-
-		private void MoveCharacter(Vector3 vector)
-		{
-			characterController.Move(vector);
-		}
-
-		public void AttemptToShoot()
-		{
-			// TODO: Add Ammo checks etc..
-
-			if (gun.CanShoot)
-			{
-				Gun.PullTrigger();
-			}
-		}
-
-		
-
-		public void SpawnReplay()
-		{
-			replaySpawner.SpawnLatestReplay();
-		}
-
-		public void OnHit(DamagePacket damagePacket, Vector3 hitPosition)
-		{
-			_healthComponent.DealDamage(damagePacket);
-		}
-
-		private Ray CreateRay()
-		{
-			return _rayProvider.CreateRay();
-		}
-
-		public Tuple<IInteractable, RaycastHit> GetTarget(float range)
-		{
-			return _targeter.GetInteractableFromRay(CreateRay(), range);
-		}
-				private void AssignDelegates()
-		{
-			replayRunner.MoveAction += Action_MoveCharacter;
-			replayRunner.RotateCharacterAction += Action_RotateCharacter;
-			replayRunner.RotateCameraAction += Action_RotateCamera;
-			replayRunner.ShootAction += Action_AttemptToShoot;
-			replayRunner.SpawnReplayAction += Action_SpawnReplay;
-			replayRunner.CompletedAllActions += Action_CompletedAll;
-		}
-
-		private void UnassignDelegates()
-		{
-			replayRunner.MoveAction -= Action_MoveCharacter;
-			replayRunner.RotateCharacterAction -= Action_RotateCharacter;
-			replayRunner.RotateCameraAction -= Action_RotateCamera;
-			replayRunner.ShootAction -= Action_AttemptToShoot;
-			replayRunner.SpawnReplayAction -= Action_SpawnReplay;
-			replayRunner.CompletedAllActions -= Action_CompletedAll;
-
-		}
-
-		private void OnDisable()
-		{
-			UnassignDelegates();
-		}
-
-		private void Action_MoveCharacter(float[] value)
-		{
-			MoveCharacterForward(value);
-		}
-
-		private void Action_RotateCharacter(float[] value)
-		{
-			float rotation = value[0];
-			RotateCharacter(rotation);
-		}
-
-		private void Action_RotateCamera(float[] value)
-		{
-			float rotation = value[0];
-			RotateCamera(rotation);
-		}
-
-		private void Action_AttemptToShoot(float[] value)
-		{
-			AttemptToShoot();
-		}
-
-		private void Action_SpawnReplay(float[] value)
-		{
-			SpawnReplay();
-		}
-
-		private void Action_CompletedAll()
-		{
-			const float removalTime = 5f;
-
-			Destroy(gameObject, removalTime);
-			_diedTime = Time.fixedDeltaTime;
-
-			StartCoroutine(Co_FallThroughFloor(removalTime));
-		}
+		// private void Action_MoveCharacter(float[] value)
+		// {
+		// 	MoveCharacterForward(value);
+		// }
+		//
+		// private void Action_RotateCharacter(float[] value)
+		// {
+		// 	float rotation = value[0];
+		// 	RotateCharacter(rotation);
+		// }
+		//
+		// private void Action_RotateCamera(float[] value)
+		// {
+		// 	float rotation = value[0];
+		// 	RotateCamera(rotation);
+		// }
+		//
+		// private void Action_AttemptToShoot(float[] value)
+		// {
+		// 	AttemptToShoot();
+		// }
+		//
+		// private void Action_SpawnReplay(float[] value)
+		// {
+		// 	SpawnReplay();
+		// }
+		//
+		// private void Action_CompletedAll()
+		// {
+		// 	const float removalTime = 5f;
+		//
+		// 	Destroy(gameObject, removalTime);
+		// 	_diedTime = Time.fixedDeltaTime;
+		//
+		// 	StartCoroutine(Co_FallThroughFloor(removalTime));
+		// }
 
 		private IEnumerator Co_FallThroughFloor(float removalTime)
 		{
+			_diedTime = Time.time;
 			// Get the height of the body.
 			float height = _body.GetComponent<MeshFilter>().mesh.bounds.extents.y;
 
@@ -296,17 +213,33 @@ namespace ClockBlockers.Characters.Scripts
 			float deathHeight = transform.position.y;
 			float totalDistance = deathHeight + (multipliedHeight * -1);
 
-			while (_diedTime + removalTime >= Time.fixedDeltaTime)
+			while (_diedTime + removalTime >= Time.time)
 			{
 				float fallDistance = (totalDistance / removalTime) * Time.fixedDeltaTime;
 				transform.position -= new Vector3(0, fallDistance, 0);
 				yield return _waitForFixedFrame;
 			}
+			
+			gameObject.SetActive(false);
 		}
-
-		public void RemoveFromGame()
+		
+		public void OnHit(DamagePacket damagePacket, Vector3 hitPosition)
 		{
-			Logging.instance.Log("Removed " + name, this);
+			_healthComponent.DealDamage(damagePacket);
+		}
+		
+		
+		public void Kill()
+		{
+			_bodyRenderer.material = deadMaterial;
+			
+			const float removalTime = 1.25f;
+			
+			_replayRunner.End();
+			
+			// Destroy(gameObject, removalTime);
+
+			StartCoroutine(Co_FallThroughFloor(removalTime));
 		}
 	}
 }

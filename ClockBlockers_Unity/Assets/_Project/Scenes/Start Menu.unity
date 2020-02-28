@@ -206,12 +206,25 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1351341046}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 1
-  m_WholeNumbers: 0
+  m_MaxValue: 100
+  m_WholeNumbers: 1
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2062028502}
+        m_TargetAssemblyTypeName: ClockBlockers.UI.Main_Menu.Scripts.OptionsMenu,
+          Main
+        m_MethodName: SetVerticalSensitivity
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &10472347
 GameObject:
   m_ObjectHideFlags: 0
@@ -653,12 +666,25 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1136612051}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 1
-  m_WholeNumbers: 0
+  m_MaxValue: 100
+  m_WholeNumbers: 1
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2062028502}
+        m_TargetAssemblyTypeName: ClockBlockers.UI.Main_Menu.Scripts.OptionsMenu,
+          Main
+        m_MethodName: SetHorizontalSensitivity
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &241563793
 GameObject:
   m_ObjectHideFlags: 0
@@ -718,7 +744,7 @@ GameObject:
   - component: {fileID: 264196123}
   - component: {fileID: 264196122}
   m_Layer: 5
-  m_Name: Text
+  m_Name: FieldName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2934,7 +2960,7 @@ GameObject:
   - component: {fileID: 1524576756}
   - component: {fileID: 1524576755}
   m_Layer: 5
-  m_Name: Text
+  m_Name: FieldName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4151,6 +4177,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   connectedMenus:
   - {fileID: 1921959114}
+  horizontalSensitivity:
+    useConstant: 0
+    constantValue: 0
+    variable: {fileID: 11400000, guid: 200b86ee37752df4985386a04e2664f9, type: 2}
+  verticalSensitivity:
+    useConstant: 0
+    constantValue: 0
+    variable: {fileID: 11400000, guid: 5cbaadd71f62c6342af9e2f7aeb656a5, type: 2}
+  horizontalSensitivityInputField: {fileID: 1508535645}
+  verticalSensitivityInputField: {fileID: 1297437265}
+  horizontalSensitivitySlider: {fileID: 225937850}
+  verticalSensitivitySlider: {fileID: 2925969}
 --- !u!1 &2075944861
 GameObject:
   m_ObjectHideFlags: 0

@@ -7,24 +7,26 @@ namespace ClockBlockers.Events {
 	[CreateAssetMenu]
 	public class GameEvent : ScriptableObject
 	{
-		private List<GameEventListener> listeners = new List<GameEventListener>();
+		private readonly List<GameEventListener> _listeners = new List<GameEventListener>();
 
 		public void Raise()
 		{
-			for (int i = listeners.Count; i >= 0; i++)
+			if (_listeners.Count == 0) return;
+			
+			for (int i = _listeners.Count-1; i >= 0; i--)
 			{
-				listeners[i].OnEventRaised();
+				_listeners[i].OnEventRaised();
 			}
 		}
 
 		public void RegisterListener(GameEventListener listener)
 		{
-			listeners.Add(listener);
+			_listeners.Add(listener);
 		}
 
 		public void UnregisterListener(GameEventListener listener)
 		{
-			listeners.Remove(listener);
+			_listeners.Remove(listener);
 		}
 	}
 }

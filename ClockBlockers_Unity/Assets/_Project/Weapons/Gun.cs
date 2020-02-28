@@ -1,7 +1,10 @@
 ﻿using System;
 
-using ClockBlockers.Characters.Scripts;
+using Between_Names.Property_References;
+
+using ClockBlockers.Characters;
 using ClockBlockers.DataStructures;
+using ClockBlockers.Targetting;
 
 using JetBrains.Annotations;
 
@@ -14,6 +17,9 @@ namespace ClockBlockers.Weapons
 {
 	public class Gun : MonoBehaviour
 	{
+		private IRayProvider _rayProvider;
+
+		private ITargeter _targeter;
 		
 		
 		[SerializeField]
@@ -23,16 +29,13 @@ namespace ClockBlockers.Weapons
 
 		private Animator _animator;
 
-		private float Damage
-		{
-			get => damage.Value;
-		}
+		private float Damage => damage.Value;
 
-		public Character Holder
-		{
-			get => holder;
-			set => holder = value;
-		}
+		// public Character Holder
+		// {
+		// 	get => holder;
+		// 	set => holder = value;
+		// }
 
 		[SerializeField]
 		private GameObject casingPrefab;
@@ -48,23 +51,23 @@ namespace ClockBlockers.Weapons
 
 		[SerializeField]
 		private Character holder;
-
-
-		private float Range
-		{
-			get => range.Value;
-		}
-
+		
 		[SerializeField]
 		private FloatReference damage;
 
 		[SerializeField]
 		private FloatReference range;
 
-		public bool CanShoot { get; private set; }
+		// public bool CanShoot { get; private set; }
 
 		private static int AnimationShootTrigger { get; } = Animator.StringToHash("Shoot");
 
+
+		private void Awake()
+		{
+			_rayProvider = GetComponent<IRayProvider>();
+			_targeter = GetComponent<ITargeter>();
+		}
 
 		private void Start()
 		{
@@ -72,7 +75,7 @@ namespace ClockBlockers.Weapons
 
 			_audioSource = GetComponent<AudioSource>();
 
-			CanShoot = true;
+			// CanShoot = true;
 		}
 
 		internal void PullTrigger()
@@ -111,7 +114,6 @@ namespace ClockBlockers.Weapons
 			return new DamagePacket(Damage, gameObject);
 		}
 
-		// ReSharper disable once UnusedParameter.Local
 		private void CreateBulletHole(Vector3 position, Quaternion rotation, Transform target)
 		{
 			const float bulletHoleLifeTime = 5f;
@@ -127,7 +129,7 @@ namespace ClockBlockers.Weapons
 
 		private void ShootRayCast()
 		{
-			Tuple<IInteractable, RaycastHit> target = holder.GetTarget(Range);
+			Tuple<IInteractable, RaycastHit> target = GetTarget();
 
 			if (target == null) return;
 
@@ -137,6 +139,16 @@ namespace ClockBlockers.Weapons
 			interactable.OnHit(CreateDamagePacket(), hit.point);
 
 			CreateBulletHole(hit.point, Quaternion.FromToRotation(Vector3.up, hit.normal), hit.transform);
+		}
+
+		private Ray CreateRay()
+		{
+			return _rayProvider.CreateRay();
+		}
+
+		private Tuple<IInteractable, RaycastHit> GetTarget()
+		{
+			return _targeter.GetInteractableFromRay(CreateRay(), range);
 		}
 	}
 }
