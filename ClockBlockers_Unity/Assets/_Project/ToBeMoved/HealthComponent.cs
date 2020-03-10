@@ -52,7 +52,12 @@ namespace ClockBlockers.ToBeMoved {
 			_character = GetComponent<Character>();
 		}
 
-		
+		private void Start()
+		{
+			health = maxHealth;
+		}
+
+
 		internal void DealDamage(DamagePacket damagePacket)
 		{
 			float finalDamage = damagePacket.damage - Armor;

@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &3855822921990723772
+--- !u!114 &1732737342861915471
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9,9 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1571075138580728034}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9c7ea7a2c40e73c4bbffaad91f7bbc37, type: 3}
+  m_Script: {fileID: 11500000, guid: 2a2311833d629c7469824023d590c5fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  actions: []
+  translationInterval:
+    useConstant: 0
+    constantValue: 0
+    variable: {fileID: 11400000, guid: 4a61bd20ce361284da74fa4a474ce93f, type: 2}
 --- !u!114 &7165973146353909698
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -110,21 +115,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abfb00c7bac94734b5e2c4a8037be5ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tempEvent_EndCurrentAct:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: 6dcee6de2f557104cb07ff8ce8aea493, type: 2}
-        m_TargetAssemblyTypeName: ClockBlockers.Events.GameEvent, Main
-        m_MethodName: Raise
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  _characterMovement: {fileID: 0}
   cameraController: {fileID: 1628430008802450133}
   gun: {fileID: 7371798284019175839}
   verticalMouseSensitivity:

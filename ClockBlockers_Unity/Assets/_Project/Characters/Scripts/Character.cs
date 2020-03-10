@@ -1,9 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 
 using ClockBlockers.DataStructures;
-using ClockBlockers.ReplaySystem.ReplayRunner;
-using ClockBlockers.ReplaySystem.ReplaySpawner;
-using ClockBlockers.ReplaySystem.ReplayStorage;
 using ClockBlockers.ToBeMoved;
 using ClockBlockers.Utility;
 
@@ -13,7 +11,9 @@ using UnityEngine;
 namespace ClockBlockers.Characters
 {
 	// TODO: Add a simple "Aim towards the middle of a character" AI for weapons.
-	// TODO: Add Dot Product aiming, as opposed to RayCast aiming, for better-feeling aiming
+	
+	// DONE: Add Dot Product aiming, as opposed to RayCast aiming, for better-feeling aiming
+		// I did this. Doesn't really work on non-spheres.
 
 
 	// This class's jobs are:
@@ -36,22 +36,11 @@ namespace ClockBlockers.Characters
 
 	
 	[DisallowMultipleComponent]
-	[RequireComponent(typeof(IReplayStorage))]
-	[RequireComponent(typeof(IReplayRunner))]
-	[RequireComponent(typeof(IReplaySpawner))] 
 	[RequireComponent(typeof(HealthComponent))]
-	[RequireComponent(typeof(CharacterBody))]
 	
 	public class Character : MonoBehaviour, IInteractable
 	{
 		private WaitForFixedUpdate _waitForFixedFrame;
-
-		private IReplayStorage _replayStorage;
-
-		private IReplaySpawner _replaySpawner;
-		
-		// There's a fundamental difference in architecture; They can't mix.
-		private ActionReplayRunner _replayRunner;
 
 		private HealthComponent _healthComponent;
 
@@ -64,18 +53,11 @@ namespace ClockBlockers.Characters
 		[SerializeField]
 		private Material deadMaterial;
 
+		internal Action onKilled;
+
 
 		protected virtual void Awake()
 		{
-			_replayStorage = GetComponent<IReplayStorage>();
-			if (_replayStorage == null) Logging.LogIncorrectInstantiation("Replay Storage", this);
-
-			_replaySpawner = GetComponent<IReplaySpawner>();
-			if (_replaySpawner == null) Logging.LogIncorrectInstantiation("Replay Spawner", this);
-
-			_replayRunner = GetComponent<ActionReplayRunner>();
-			if (_replayRunner == null) Logging.LogIncorrectInstantiation("Replay Runner", this);
-
 			_healthComponent = GetComponent<HealthComponent>();
 			if (_healthComponent == null) Logging.LogIncorrectInstantiation("Health Component", this);
 
@@ -229,15 +211,14 @@ namespace ClockBlockers.Characters
 		}
 		
 		
-		public void Kill()
+		public virtual void Kill()
 		{
 			_bodyRenderer.material = deadMaterial;
 			
 			const float removalTime = 1.25f;
 			
-			_replayRunner.End();
+			onKilled?.Invoke();
 			
-			// Destroy(gameObject, removalTime);
 
 			StartCoroutine(Co_FallThroughFloor(removalTime));
 		}

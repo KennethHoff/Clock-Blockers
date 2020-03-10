@@ -1,7 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
+
+using Between_Names.Property_References;
 
 using ClockBlockers.Characters;
+using ClockBlockers.ReplaySystem;
+using ClockBlockers.ReplaySystem.ReplayRunner;
+using ClockBlockers.ReplaySystem.ReplayStorage;
 using ClockBlockers.Utility;
+
+using Sisus.OdinSerializer.Utilities;
 
 using UnityEngine;
 using UnityEngine.Events;
@@ -31,10 +41,19 @@ namespace ClockBlockers.MatchData
 		[SerializeField]
 		private UnityEvent ActRemovedEvent;
 
-		private float _timeWhenActStarted;
-		public float TimeSinceActStarted => _timeWhenActStarted - Time.time;
+		private float actDuration;
 
+		[SerializeField]
+		private FloatReference timeWhenActStarted;
+		
+		
+		private List<Character> playerCharacters;
 
+		[NonSerialized]
+		public List<IntervalReplayStorage> replaysCreated;
+
+		public List<IntervalReplayStorage> replaysForThisAct;
+		
 		private bool _begun;
 
 		// private bool Ongoing => _begun && !_ended;
@@ -44,6 +63,8 @@ namespace ClockBlockers.MatchData
 
 		public void Setup()
 		{
+			
+			playerCharacters = new List<Character>();
 			SpawnAllCharacters();
 
 			_begun = false;
@@ -55,7 +76,7 @@ namespace ClockBlockers.MatchData
 
 		public void Begin()
 		{
-			_timeWhenActStarted = Time.time;
+			timeWhenActStarted.Value = Time.time;
 			_begun = true;
 
 
@@ -75,7 +96,10 @@ namespace ClockBlockers.MatchData
 		public void Remove()
 		{
 			gameObject.SetActive(false);
+			
+			replaysCreated = new List<IntervalReplayStorage>();
 
+			playerCharacters.ForEach(p => replaysCreated.Add(p.GetComponent<IntervalReplayStorage>()));
 
 			ActRemovedEvent.Invoke();
 		}
@@ -97,27 +121,43 @@ namespace ClockBlockers.MatchData
 
 		private void SpawnAllClones()
 		{
+			foreach (IntervalReplayStorage replayStorage in replaysForThisAct)
+			{
+				Character clone = SpawnNewClone();
+				// clone.GetComponent<IntervalReplayRunner>().replays = replayStorage.PlayerActions;
+
+				var cloneRunner = clone.GetComponent<IntervalReplayRunner>();
+				
+				cloneRunner.actions = replayStorage.actions;
+				cloneRunner.translations = replayStorage.translations;
+
+			}
+
 			// TODO: For each clone...
-			SpawnNewClone();
+			// SpawnNewClone();
 
 			Logging.Log("Spawned all clones on me!", this);
 		}
 
 
 		[ContextMenu("Spawn a new Player")]
-		private void SpawnNewPlayer()
+		public Character SpawnNewPlayer()
 		{
-			Player newPlayer = round.match.spawner.SpawnPlayer();
+			Character newPlayer = round.match.spawner.SpawnPlayer();
 
 			newPlayer.transform.SetParent(transform, true);
+			playerCharacters.Add(newPlayer);
+			return newPlayer;
 		}
 
 		[ContextMenu("Spawn a new Clone")]
-		private void SpawnNewClone()
+		public Character SpawnNewClone()
 		{
-			Clone newClone = round.match.spawner.SpawnClone();
+			Character newClone = round.match.spawner.SpawnClone();
 
 			newClone.transform.SetParent(transform, true);
+
+			return newClone;
 		}
 	}
 }

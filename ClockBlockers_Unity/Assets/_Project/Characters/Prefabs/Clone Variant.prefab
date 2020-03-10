@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &6242586902188705239
+--- !u!114 &1651983977633155462
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9,9 +9,94 @@ MonoBehaviour:
   m_GameObject: {fileID: 7926008950823779502}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8182cd265883fd54d8d2ba9255c3634d, type: 3}
+  m_Script: {fileID: 11500000, guid: f8611c89e8b04058ba6c360e7c68a141, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  event: {fileID: 11400000, guid: b2ec549ee3b467441917e31add8f3bf6, type: 2}
+  response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3199006382779731743}
+        m_TargetAssemblyTypeName: ClockBlockers.ReplaySystem.ReplayRunner.IntervalReplayRunner,
+          Main
+        m_MethodName: Begin
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &3083483670227847980
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7926008950823779502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8611c89e8b04058ba6c360e7c68a141, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  event: {fileID: 11400000, guid: 6dcee6de2f557104cb07ff8ce8aea493, type: 2}
+  response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3199006382779731743}
+        m_TargetAssemblyTypeName: ClockBlockers.ReplaySystem.ReplayRunner.IntervalReplayRunner,
+          Main
+        m_MethodName: End
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &3199006382779731743
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7926008950823779502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5b547cc5c66459e86714a1625396771, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cameraController: {fileID: 7974216674786553497}
+  translationInterval:
+    useConstant: 0
+    constantValue: 0
+    variable: {fileID: 11400000, guid: 4a61bd20ce361284da74fa4a474ce93f, type: 2}
+--- !u!195 &7406590415827336452
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7926008950823779502}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3500
+  m_Acceleration: 800
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1001 &8266837681266467731
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -82,3 +167,14 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 2253878130908946237, guid: 67d00b1d2b3cb5e499d32550ea99e5e9, type: 3}
   m_PrefabInstance: {fileID: 8266837681266467731}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7974216674786553497 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2023152811387489546, guid: 67d00b1d2b3cb5e499d32550ea99e5e9, type: 3}
+  m_PrefabInstance: {fileID: 8266837681266467731}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4f3978553bb4ec79e660ffdabc69451, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

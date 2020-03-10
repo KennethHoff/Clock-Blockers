@@ -33,7 +33,7 @@ namespace ClockBlockers.Characters
 			Move(moveVector);
 		}
 
-		private void Move(Vector3 moveVector)
+		public void Move(Vector3 moveVector)
 		{
 			_characterController.Move(moveVector);
 		}

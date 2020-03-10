@@ -1,70 +1,70 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Between_Names.Property_References;
+
+using ClockBlockers.Characters;
+
 using UnityEngine;
 
 
 namespace ClockBlockers.ReplaySystem.ReplayStorage
 {
-	public class IntervalReplayStorage : MonoBehaviour, IReplayStorage
+	public class IntervalReplayStorage : MonoBehaviour
 	{
-		private readonly LinkedList<Translation> _translations;
-		private readonly LinkedList<CharacterAction> _characterActions;
+		
+		public List<Translation> translations;
+		
+		public List<CharacterAction> actions;
 
-		public IntervalReplayStorage(LinkedList<Translation> translations, LinkedList<CharacterAction> characterActions)
+
+		private Character _character;
+		private Transform _transform;
+
+		[SerializeField]
+		private FloatReference translationInterval;
+
+		private float _timer;
+
+		private void Awake()
 		{
-			_characterActions = characterActions ?? new LinkedList<CharacterAction>();
-			_translations = translations ?? new LinkedList<Translation>();
+			_transform = GetComponent<Transform>();
+			_character = GetComponent<Character>();
+			
+			actions = new List<CharacterAction>();
+			translations = new List<Translation>();
 		}
 
-		public void SaveTranslationData(Translation translation)
+		private void FixedUpdate()
 		{
-			_translations.AddLast(translation);
+			_timer += Time.fixedDeltaTime;
+
+			if (_timer < translationInterval) return;
+			
+			_timer -= translationInterval;
+			
+			SaveTranslationData();
 		}
 
-		public void SaveCharacterAction(CharacterAction characterAction)
+		private void SaveTranslationData()
 		{
-			_characterActions.AddLast(characterAction);
+			var translation = new Translation(_transform.position, _transform.rotation);
+			translations.Add(translation);
 		}
-
-		public void ClearStorageForThisAct()
-		{
-			throw new NotImplementedException();
-		}
-
-		public CharacterAction[] GetNewestAct()
-		{
-			throw new NotImplementedException();
-		}
-
-		public CharacterAction[] GetCurrentAct()
-		{
-			throw new NotImplementedException();
-		}
-
-		public void SetActReplayData(CharacterAction[] actions)
-		{
-			throw new NotImplementedException();
-		}
-
+		
 		public void SaveAction(Actions action, float[] parameters)
 		{
-			throw new NotImplementedException();
+			// throw new NotImplementedException();
 		}
 
 		public void SaveAction(Actions action, float parameter)
 		{
-			throw new NotImplementedException();
+			// throw new NotImplementedException();
 		}
 
 		public void SaveAction(Actions action)
 		{
-			throw new NotImplementedException();
-		}
-
-		public void StoreActData()
-		{
-			throw new NotImplementedException();
+			// throw new NotImplementedException();
 		}
 	}
 }

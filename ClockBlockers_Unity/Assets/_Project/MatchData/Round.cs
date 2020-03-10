@@ -14,9 +14,6 @@ namespace ClockBlockers.MatchData {
 	public class Round : MonoBehaviour
 	{
 
-		public List<IReplayStorage> player1Storage;
-		
-		
 		[SerializeField]
 		private UnityEvent RoundCreatedEvent;
 		
@@ -37,7 +34,7 @@ namespace ClockBlockers.MatchData {
 
 
 		public Act CurrentAct => allActs.Last();
-		
+
 		public int ActNumber => allActs.Count;
 
 		[SerializeField]
@@ -51,8 +48,7 @@ namespace ClockBlockers.MatchData {
 		public void Setup()
 		{
 			StartNewAct();
-			
-			
+
 			RoundCreatedEvent.Invoke();
 		}
 
@@ -72,6 +68,10 @@ namespace ClockBlockers.MatchData {
 			RoundEndedEvent.Invoke();
 		}
 
+		private Act PreviousAct()
+		{
+			return allActs.Last();
+		}
 
 		public void Remove()
 		{
@@ -85,6 +85,12 @@ namespace ClockBlockers.MatchData {
 		{
 			Act newAct = Instantiate(actPrefab, transform, true);
 			newAct.round = this;
+
+			if (allActs.Count > 0)
+			{
+				newAct.replaysForThisAct = PreviousAct().replaysCreated;
+			}
+			
 			allActs.Add(newAct);
 			
 			newAct.Setup();

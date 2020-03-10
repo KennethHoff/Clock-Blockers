@@ -9,12 +9,9 @@
         <e p="_Project" t="Include">
           <e p="Characters" t="Include">
             <e p="Scripts" t="Include">
-              <e p="AIInputController.cs" t="Include" />
               <e p="Character.cs" t="Include" />
               <e p="CharacterBody.cs" t="Include" />
               <e p="CharacterMovement.cs" t="Include" />
-              <e p="Clone.cs" t="Include" />
-              <e p="Player.cs" t="Include" />
             </e>
           </e>
           <e p="DataStructures" t="Include">
@@ -50,16 +47,11 @@
             <e p="CharacterAction.cs" t="Include" />
             <e p="ReplayRunner" t="Include">
               <e p="ActionReplayRunner.cs" t="Include" />
-              <e p="IReplayRunner.cs" t="Include" />
-            </e>
-            <e p="ReplaySpawner" t="Include">
-              <e p="ActionReplaySpawner.cs" t="Include" />
-              <e p="IReplaySpawner.cs" t="Include" />
+              <e p="IntervalReplayRunner.cs" t="Include" />
             </e>
             <e p="ReplayStorage" t="Include">
               <e p="ActionReplayStorage.cs" t="Include" />
               <e p="IntervalReplayStorage.cs" t="Include" />
-              <e p="IReplayStorage.cs" t="Include" />
             </e>
             <e p="Translation.cs" t="Include" />
           </e>

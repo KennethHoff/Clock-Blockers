@@ -4,8 +4,11 @@ using Between_Names.Property_References;
 
 using ClockBlockers.Characters;
 using ClockBlockers.GameControllers;
+using ClockBlockers.MatchData;
+using ClockBlockers.ReplaySystem;
 using ClockBlockers.ReplaySystem.ReplayStorage;
 using ClockBlockers.ToBeMoved;
+using ClockBlockers.Utility;
 using ClockBlockers.Weapons;
 
 using JetBrains.Annotations;
@@ -17,15 +20,15 @@ using UnityEngine.InputSystem;
 
 namespace ClockBlockers.Input
 {
+	[RequireComponent(typeof(Character))]
+	[RequireComponent(typeof(CharacterMovement))]
 	internal class PlayerInputController : MonoBehaviour
 	{
-		[SerializeField]
-		private UnityEvent tempEvent_EndCurrentAct;
-
 		private CharacterMovement _characterMovement;
 
-		[SerializeField]
-		private IReplayStorage storage;
+		private Character _character;
+
+		private IntervalReplayStorage _replayStorage;
 
 		[SerializeField]
 		private CameraController cameraController;
@@ -44,6 +47,20 @@ namespace ClockBlockers.Input
 		private float _upDownCameraRotation;
 		private bool _inputEnabled;
 
+		
+		private void Awake()
+		{
+			_replayStorage = GetComponent<IntervalReplayStorage>();
+			_characterMovement = GetComponent<CharacterMovement>();
+			_character = GetComponent<Character>();
+
+			_character.onKilled += CharacterDied;
+		}
+
+		private void CharacterDied()
+		{
+			SetCursorActive(true);
+		}
 
 		private void Update()
 		{
@@ -58,14 +75,10 @@ namespace ClockBlockers.Input
 			_characterMovement.MoveForward(_moveInput);
 		}
 
-		private void Awake()
-		{
-			_characterMovement = GetComponent<CharacterMovement>();
-		}
 
 		private void OnEnable()
 		{
-			SetCursorActive(true);
+			SetCursorActive(false);
 		}
 
 		[UsedImplicitly]
@@ -81,6 +94,7 @@ namespace ClockBlockers.Input
 
 			_sideToSideCharacterRotation = value.x * horizontalMouseSensitivity * Time.deltaTime;
 			_upDownCameraRotation = value.y * verticalMouseSensitivity * Time.deltaTime;
+			
 		}
 
 
@@ -100,32 +114,36 @@ namespace ClockBlockers.Input
 		{
 			if (!_inputEnabled) return;
 			gun.PullTrigger();
+
+			_replayStorage.SaveAction(Actions.Shoot);
 		}
 
-		private void OnStartNewAct()
+		[UsedImplicitly]
+		private void OnStartNewAct() // Obviously a test feature
 		{
 			if (!_inputEnabled) return;
-			tempEvent_EndCurrentAct.Invoke();
+			FindObjectOfType<Act>().Remove();
 		}
 
-		private void OnSpawn()
+		[UsedImplicitly]
+		private void OnSpawn() // Obviously a test feature
 		{
-			Clone newClone = FindObjectOfType<CharacterSpawner>().SpawnClone(); // Really messy.
+			FindObjectOfType<Act>().SpawnNewClone(); // Really messy.
 		}
 
-		// [UsedImplicitly]
-		// private void OnIncreaseTimescale()
-		// {
-		// Time.timeScale += 1;
-		// Logging.instance.Log("Increasing timescale. Now at: " + Time.timeScale);
-		// }
+		[UsedImplicitly]
+		private void OnIncreaseTimescale() // Obviously a test feature
+		{
+			Time.timeScale += 1;
+			Logging.Log("Increasing timescale. Now at: " + Time.timeScale);
+		}
 
-		// [UsedImplicitly]
-		// private void OnDecreaseTimescale()
-		// {
-		// Time.timeScale -= 1;
-		// Logging.instance.Log("Decreasing timescale. Now at: " + Time.timeScale);
-		// }
+		[UsedImplicitly]
+		private void OnDecreaseTimescale() // Obviously a test feature
+		{
+			Time.timeScale -= 1;
+			Logging.Log("Decreasing timescale. Now at: " + Time.timeScale);
+		}
 
 		[UsedImplicitly]
 		private void OnToggleCursor()
@@ -140,9 +158,10 @@ namespace ClockBlockers.Input
 
 		private void SetCursorActive(bool toggle)
 		{
-			LockCursor(toggle);
-			_inputEnabled = toggle;
+			LockCursor(!toggle);
+			_inputEnabled = !toggle;
 		}
+
 
 		private static void LockCursor(bool locked)
 		{

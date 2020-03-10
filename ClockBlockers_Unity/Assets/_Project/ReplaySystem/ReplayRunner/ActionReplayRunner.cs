@@ -1,35 +1,37 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 
+using ClockBlockers.Characters;
 using ClockBlockers.ReplaySystem.ReplayStorage;
+using ClockBlockers.Weapons;
 
 using UnityEngine;
 
 
 namespace ClockBlockers.ReplaySystem.ReplayRunner
 {
-	public class ActionReplayRunner : MonoBehaviour, IReplayRunner
+	public class ActionReplayRunner : MonoBehaviour
 	{
+		private Character _character;
 
-		private ActionReplayStorage _actionReplayStorage;
-		internal delegate void ActionDelegate(float[] value);
-
+		[SerializeField]
+		private Gun gun;
+		
+		[NonSerialized]
+		public List<CharacterAction> replays;
+		
 		private int _remainingActions;
-
-		internal event ActionDelegate MoveAction;
-		internal event ActionDelegate RotateCharacterAction;
-		internal event ActionDelegate RotateCameraAction;
-		// internal ActionDelegate jumpAction;
-		internal event ActionDelegate ShootAction;
-		internal event ActionDelegate SpawnReplayAction;
-
-		internal event Action CompletedAllActions;
 
 		private void Awake()
 		{
-			_actionReplayStorage = GetComponent<ActionReplayStorage>();
+			_character = GetComponent<Character>();
+
+			_character.onKilled += End;
 		}
 
+
+		// This needs to be made more modular.
 		private void RunAction(CharacterAction characterAction)
 		{
 			_remainingActions--;
@@ -40,23 +42,24 @@ namespace ClockBlockers.ReplaySystem.ReplayRunner
 			switch (action)
 			{
 				case Actions.Move:
-					MoveAction?.Invoke(parameter);
+					// MoveAction?.Invoke(parameter);
 					break;
 
 				case Actions.RotateCharacter:
-					RotateCharacterAction?.Invoke(parameter);
+					// RotateCharacterAction?.Invoke(parameter);
 					break;
 
 				case Actions.RotateCamera:
-					RotateCameraAction?.Invoke(parameter);
+					// RotateCameraAction?.Invoke(parameter);
 					break;
 
 				case Actions.Shoot:
-					ShootAction?.Invoke(parameter);
+					gun.PullTrigger();
+					// ShootAction?.Invoke(parameter);
 					break;
 
 				case Actions.SpawnReplay:
-					SpawnReplayAction?.Invoke(parameter);
+					// SpawnReplayAction?.Invoke(parameter);
 					break;
 
 				default:
@@ -65,7 +68,7 @@ namespace ClockBlockers.ReplaySystem.ReplayRunner
 
 			if (_remainingActions == 0)
 			{
-				CompletedAllActions?.Invoke();
+				// CompletedAllActions?.Invoke();
 			}
 		}
 
@@ -81,12 +84,11 @@ namespace ClockBlockers.ReplaySystem.ReplayRunner
 
 		private void EngageAllActions()
 		{
-			foreach (CharacterAction characterAction in _actionReplayStorage.CurrentActNpcActions)
+			foreach (CharacterAction characterAction in replays)
 			{
 				EngageAction(characterAction);
 			}
-
-			_remainingActions += _actionReplayStorage.CurrentActNpcActions.Length;
+			_remainingActions += replays.Count;
 		}
 
 		private IEnumerator Co_Action(CharacterAction characterAction)

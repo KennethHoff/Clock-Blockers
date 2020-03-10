@@ -104,6 +104,11 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  timeWhenActStarted:
+    useConstant: 0
+    constantValue: 0
+    variable: {fileID: 11400000, guid: 81883ca71d285dc4ba3865e75d32d1a1, type: 2}
+  replaysForThisAct: []
 --- !u!114 &-5823938658535011357
 MonoBehaviour:
   m_ObjectHideFlags: 0

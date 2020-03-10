@@ -13,14 +13,14 @@ namespace ClockBlockers.GameControllers {
 		[SerializeField]
 		private Character clonePrefab;
 		
-		public Player SpawnPlayer()
+		public Character SpawnPlayer()
 		{
-			return SpawnCharacter(playerPrefab).GetComponent<Player>();
+			return SpawnCharacter(playerPrefab);
 		}
 
-		public Clone SpawnClone()
+		public Character SpawnClone()
 		{
-			return SpawnCharacter(clonePrefab).GetComponent<Clone>();
+			return SpawnCharacter(clonePrefab);
 		}
 		
 		
