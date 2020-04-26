@@ -41,17 +41,17 @@ namespace ClockBlockers.ReplaySystem.ReplayRunner
 
 			switch (action)
 			{
-				case Actions.Move:
-					// MoveAction?.Invoke(parameter);
-					break;
-
-				case Actions.RotateCharacter:
-					// RotateCharacterAction?.Invoke(parameter);
-					break;
-
-				case Actions.RotateCamera:
-					// RotateCameraAction?.Invoke(parameter);
-					break;
+				// case Actions.Move:
+				// 	// MoveAction?.Invoke(parameter);
+				// 	break;
+				//
+				// case Actions.RotateCharacter:
+				// 	// RotateCharacterAction?.Invoke(parameter);
+				// 	break;
+				//
+				// case Actions.RotateCamera:
+				// 	// RotateCameraAction?.Invoke(parameter);
+				// 	break;
 
 				case Actions.Shoot:
 					gun.PullTrigger();
