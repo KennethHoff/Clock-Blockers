@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\Modernkennnern\AppData\local\JetBrains\Rider2020.1\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\Modernkennnern\AppData\local\JetBrains\Rider2020.1\resharper-host\local\Transient\ReSharperHost\v201\SolutionCaches\_ClockBlockers_Unity.-373306959.00" t="ExcludeRecursive" />
+    <e p="E:\Development\Games\Clock-Blockers\ClockBlockers_Unity" t="IncludeRecursive">
+      <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
+      <e p="Assets" t="Include">
+        <e p="_Project" t="Include">
+          <e p="Characters" t="Include">
+            <e p="Scripts" t="Include">
+              <e p="Character.cs" t="Include" />
+              <e p="CharacterBodyTag.cs" t="Include" />
+              <e p="CharacterMovement.cs" t="Include" />
+            </e>
+          </e>
+          <e p="DataStructures" t="Include">
+            <e p="DamagePacket.cs" t="Include" />
+            <e p="Enums.cs" t="Include" />
+            <e p="IInteractable.cs" t="Include" />
+          </e>
+          <e p="Environment" t="Include">
+            <e p="Scripts" t="Include">
+              <e p="Plane1.cs" t="Include" />
+              <e p="Platform1.cs" t="Include" />
+              <e p="ShootingTarget1.cs" t="Include" />
+            </e>
+          </e>
+          <e p="Events" t="Include">
+            <e p="GameEvent.cs" t="Include" />
+            <e p="GameEventListener.cs" t="Include" />
+          </e>
+          <e p="GameControllers" t="Include">
+            <e p="CharacterSpawner.cs" t="Include" />
+            <e p="GameController.cs" t="Include" />
+          </e>
+          <e p="Input" t="Include">
+            <e p="PlayerInputController.cs" t="Include" />
+          </e>
+          <e p="Main.asmdef" t="Include" />
+          <e p="MatchData" t="Include">
+            <e p="Act.cs" t="Include" />
+            <e p="Match.cs" t="Include" />
+            <e p="Round.cs" t="Include" />
+          </e>
+          <e p="ReplaySystem" t="Include">
+            <e p="CharacterAction.cs" t="Include" />
+            <e p="ReplayRunner" t="Include">
+              <e p="ActionReplayRunner.cs" t="Include" />
+              <e p="IntervalReplayRunner.cs" t="Include" />
+            </e>
+            <e p="ReplayStorage" t="Include">
+              <e p="ActionReplayStorage.cs" t="Include" />
+              <e p="IntervalReplayStorage.cs" t="Include" />
+            </e>
+            <e p="Translation.cs" t="Include" />
+          </e>
+          <e p="Targetting" t="Include">
+            <e p="CameraForwardRayProvider.cs" t="Include" />
+            <e p="DotProductConeTargeter.cs" t="Include" />
+            <e p="IRayProvider.cs" t="Include" />
+            <e p="ITargeter.cs" t="Include" />
+            <e p="RayCastBasedTargeter.cs" t="Include" />
+          </e>
+          <e p="Tests" t="Include">
+            <e p="EditMode" t="Include">
+              <e p="EditModeTests.asmdef" t="Include" />
+              <e p="NewTestScript.cs" t="Include" />
+            </e>
+            <e p="PlayMode" t="Include">
+              <e p="NewTestScript.cs" t="Include" />
+              <e p="PlayModeTests.asmdef" t="Include" />
+            </e>
+          </e>
+          <e p="ToBeMoved" t="Include">
+            <e p="CameraController.cs" t="Include" />
+            <e p="Gravity.cs" t="Include" />
+            <e p="HealthComponent.cs" t="Include" />
+          </e>
+          <e p="UI" t="Include">
+            <e p="Main Menu" t="Include">
+              <e p="Scripts" t="Include">
+                <e p="BaseGameMenu.cs" t="Include" />
+                <e p="MainMenu.cs" t="Include" />
+                <e p="OptionsMenu.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+          <e p="Utility" t="Include">
+            <e p="DataManipulation.cs" t="Include" />
+            <e p="ExtensionMethods.cs" t="Include" />
+            <e p="Logging.cs" t="Include" />
+          </e>
+          <e p="Weapons" t="Include">
+            <e p="Gun.cs" t="Include" />
+          </e>
+        </e>
+        <e p="Between Names" t="Include">
+          <e p="BetweenNames.asmdef" t="Include" />
+          <e p="Property References" t="Include">
+            <e p="Editor" t="Include">
+              <e p="FloatReferenceDrawer.cs" t="Include" />
+              <e p="IntReferenceDrawer.cs" t="Include" />
+            </e>
+            <e p="FloatReference.cs" t="Include" />
+            <e p="FloatVariable.cs" t="Include" />
+            <e p="IntReference.cs" t="Include" />
+            <e p="IntVariable.cs" t="Include" />
+            <e p="IPropertyReference.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="BetweenNames.csproj" t="IncludeRecursive" />
+      <e p="ClockBlockers_Unity.sln" t="IncludeFlat" />
+      <e p="EditModeTests.csproj" t="IncludeRecursive" />
+      <e p="Main.csproj" t="IncludeRecursive" />
+      <e p="obj" t="ExcludeRecursive" />
+      <e p="Packages" t="ExcludeRecursive" />
+      <e p="PlayModeTests.csproj" t="IncludeRecursive" />
+      <e p="PowerInspector.Demo.csproj" t="IncludeRecursive" />
+      <e p="PowerInspector.Demo.Drawers.csproj" t="IncludeRecursive" />
+      <e p="PowerInspector.Editor.csproj" t="IncludeRecursive" />
+      <e p="PowerInspector.Runtime.csproj" t="IncludeRecursive" />
+      <e p="Sisus.Attributes.csproj" t="IncludeRecursive" />
+      <e p="Sisus.CreateScriptWizard.csproj" t="IncludeRecursive" />
+      <e p="Sisus.FastReflection.csproj" t="IncludeRecursive" />
+      <e p="Sisus.WebView.csproj" t="IncludeRecursive" />
+      <e p="Temp\bin" t="ExcludeRecursive" />
+    </e>
+  </component>
+</project>

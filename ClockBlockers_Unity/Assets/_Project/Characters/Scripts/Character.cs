@@ -1,0 +1,128 @@
+﻿using System;
+using System.Collections;
+
+using ClockBlockers.DataStructures;
+using ClockBlockers.ToBeMoved;
+using ClockBlockers.Utility;
+
+using UnityEngine;
+
+
+namespace ClockBlockers.Characters
+{
+	// TODO: Add a simple "Aim towards the middle of a character" AI for weapons.
+	
+	// DONE: Add Dot Product aiming, as opposed to RayCast aiming, for better-feeling aiming
+		// I did this. Doesn't really work on non-spheres.
+
+
+	// This class needs to be removed entirely.
+	
+	
+	// This class's jobs are:
+	
+	// Move Camera																				< NEW CameraController
+	// Shoot, Jump, Crouch etc..																< ??
+	
+	
+	// That's clearly way too many jobs.
+	
+	
+	// Fixed the following:
+	
+	// [25.02.2020]Store Health
+		// NEW Health
+		
+	// >> The following were altered some time between 25.02 and 25.04 <<
+		
+	//  Reset IReplayStorage data on new round.	
+		// No longer a task. The character is no longer reset, and instead is stored within the act object.
+		
+	// Replay Translations and actions
+		// IReplayRunner
+		
+	// Deal Damage
+		// Gun
+		
+	// Move Character
+		// NEW CharacterMovement
+
+
+
+
+
+	[DisallowMultipleComponent]
+	[RequireComponent(typeof(HealthComponent))]
+	
+	public class Character : MonoBehaviour, IInteractable
+	{
+		private WaitForFixedUpdate _waitForFixedFrame;
+
+		private HealthComponent _healthComponent;
+
+		private float _diedTime;
+		
+		private CharacterBodyTag _body;
+
+		private Renderer _bodyRenderer;
+		
+		[SerializeField]
+		private Material deadMaterial;
+
+		internal Action onKilled;
+
+
+		protected virtual void Awake()
+		{
+			_healthComponent = GetComponent<HealthComponent>();
+			if (_healthComponent == null) Logging.LogIncorrectInstantiation("Health Component", this);
+
+			_body = GetComponentInChildren<CharacterBodyTag>();
+			_bodyRenderer = _body.GetComponent<Renderer>();
+
+			_waitForFixedFrame = new WaitForFixedUpdate(); 
+		}
+
+		private IEnumerator Co_FallThroughFloor(float removalTime)
+		{
+			_diedTime = Time.time;
+			// Get the height of the body.
+			float height = _body.GetComponent<MeshFilter>().mesh.bounds.extents.y;
+
+			// Multiply it by 2 (not sure why; I think the 'base height' is half, either that or it's radius or something
+			const int heightMultiplier = 2;
+			float multipliedHeight = height * heightMultiplier;
+
+			// Get the position in order to know how far to fall; Fall until under y=0
+			float deathHeight = transform.position.y;
+			float totalDistance = deathHeight + (multipliedHeight * -1);
+
+			while (_diedTime + removalTime >= Time.time)
+			{
+				float fallDistance = (totalDistance / removalTime) * Time.fixedDeltaTime;
+				transform.position -= new Vector3(0, fallDistance, 0);
+				yield return _waitForFixedFrame;
+			}
+			
+			gameObject.SetActive(false);
+		}
+		
+		public void OnHit(DamagePacket damagePacket, Vector3 hitPosition)
+		{
+			_healthComponent.DealDamage(damagePacket);
+		}
+		
+		
+		public virtual void Kill()
+		{
+			_bodyRenderer.material = deadMaterial;
+			
+			const float removalTime = 1.25f;
+			
+			onKilled?.Invoke();
+			
+
+			StartCoroutine(Co_FallThroughFloor(removalTime));
+		}
+	}
+}
