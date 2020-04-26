@@ -42,7 +42,7 @@ namespace ClockBlockers.ReplaySystem.ReplayStorage
 
 		private void Start()
 		{
-			if (_gameController == null) Logging.LogIncorrectInstantiation("Game Controller", this);
+			Logging.CheckIfCorrectMonoBehaviourInstantiation(ref _gameController, this, "Game Controller");
 			_currentFrameCharacterActions = new List<Tuple<Actions, float[]>>();
 		}
 

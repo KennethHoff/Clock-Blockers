@@ -4,9 +4,8 @@ using Between_Names.Property_References;
 
 using ClockBlockers.Characters;
 using ClockBlockers.Events;
-using ClockBlockers.GameControllers;
-using ClockBlockers.MatchData;
 using ClockBlockers.ReplaySystem;
+using ClockBlockers.ReplaySystem.ReplayRunner;
 using ClockBlockers.ReplaySystem.ReplayStorage;
 using ClockBlockers.ToBeMoved;
 using ClockBlockers.Utility;
@@ -17,12 +16,11 @@ using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-
 namespace ClockBlockers.Input
 {
 	[RequireComponent(typeof(Character))]
 	[RequireComponent(typeof(CharacterMovement))]
-	internal class PlayerInputController : MonoBehaviour
+	public class PlayerInputController : MonoBehaviour
 	{
 		private CharacterMovement _characterMovement;
 
@@ -36,6 +34,8 @@ namespace ClockBlockers.Input
 		[SerializeField]
 		private Gun gun;
 
+		private AiPathfinder testing;
+
 		[SerializeField]
 		private FloatReference verticalMouseSensitivity;
 
@@ -47,16 +47,19 @@ namespace ClockBlockers.Input
 		private float _upDownCameraRotation;
 		private bool _inputEnabled;
 
-
 		[SerializeField]
 		private GameEvent endActEvent;
-
 		
 		private void Awake()
 		{
 			_replayStorage = GetComponent<IntervalReplayStorage>();
+			Logging.CheckIfCorrectMonoBehaviourInstantiation(ref _replayStorage, this, "Replay Storage");
+
 			_characterMovement = GetComponent<CharacterMovement>();
+			Logging.CheckIfCorrectMonoBehaviourInstantiation(ref _characterMovement, this, "Character Movement");
+
 			_character = GetComponent<Character>();
+			Logging.CheckIfCorrectMonoBehaviourInstantiation(ref _character, this, "Character");
 
 			_character.onKilled += CharacterDied;
 		}

@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace ClockBlockers.GameControllers
 {
-	// TODO: Completely remove this Script. What the fuck is a "Game Controller" - this entire thing is a game..
+	// TODO: Completely remove this Class. What the fuck is a "Game Controller" - this entire thing is a game..
 
 	// This class' jobs are: [as of 27.02.2020]
 	

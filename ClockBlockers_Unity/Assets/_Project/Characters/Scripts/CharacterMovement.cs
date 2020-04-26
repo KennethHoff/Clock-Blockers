@@ -15,18 +15,15 @@ namespace ClockBlockers.Characters
 		
 		[SerializeField]
 		private FloatReference moveSpd;
-
+		
 		[SerializeField]
 		private FloatReference jumpHeight;
 
-		// private CharacterController _characterController;
-		[SerializeField]
+		[SerializeField] 
 		private Vector3 velocity;
-
 
 		[SerializeField]
 		private float divFactMulti;
-
 
 		public bool isGrounded;
 
@@ -254,6 +251,12 @@ namespace ClockBlockers.Characters
 			Velocity += moveVector;
 		}
 
+
+		public void AddForwardVelocity()
+		{
+			AddForwardVelocity(Vector2.up);
+		}
+
 		// public void SetForwardVelocity(Vector2 magnitudeVector)
 		// {
 		// 	velocity.x = magnitudeVector.x;
@@ -281,6 +284,11 @@ namespace ClockBlockers.Characters
 		{
 			if (!isGrounded) return;
 			velocity.y += jumpHeight;
+		}
+
+		public void MoveForward()
+		{
+			
 		}
 	}
 }

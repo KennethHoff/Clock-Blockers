@@ -10,13 +10,14 @@ using UnityEngine;
 
 namespace ClockBlockers.Characters
 {
+	// TODO: Completely remove this class.
+
 	// TODO: Add a simple "Aim towards the middle of a character" AI for weapons.
 	
 	// DONE: Add Dot Product aiming, as opposed to RayCast aiming, for better-feeling aiming
 		// I did this. Doesn't really work on non-spheres.
 
 
-	// This class needs to be removed entirely.
 	
 	
 	// This class's jobs are:
@@ -75,10 +76,13 @@ namespace ClockBlockers.Characters
 		protected virtual void Awake()
 		{
 			_healthComponent = GetComponent<HealthComponent>();
-			if (_healthComponent == null) Logging.LogIncorrectInstantiation("Health Component", this);
+			Logging.CheckIfCorrectMonoBehaviourInstantiation(ref _healthComponent, this, "Health Component");
 
 			_body = GetComponentInChildren<CharacterBodyTag>();
+			Logging.CheckIfCorrectMonoBehaviourInstantiation(ref _body, this, "Character Body Tag");
+
 			_bodyRenderer = _body.GetComponent<Renderer>();
+			Logging.CheckIfCorrectComponentInstantiation(ref _bodyRenderer, this, "Renderer");
 
 			_waitForFixedFrame = new WaitForFixedUpdate(); 
 		}

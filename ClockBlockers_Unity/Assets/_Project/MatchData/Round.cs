@@ -40,7 +40,7 @@ namespace ClockBlockers.MatchData {
 
 		private void Awake()
 		{
-			if (actPrefab == null) Logging.LogIncorrectInstantiation("Act Prefab", this);
+			Logging.CheckIfCorrectMonoBehaviourInstantiation(ref actPrefab, this, "Act Prefab");
 		}
 
 		public void Setup()

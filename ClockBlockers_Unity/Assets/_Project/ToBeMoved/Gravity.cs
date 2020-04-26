@@ -18,9 +18,9 @@ namespace ClockBlockers.ToBeMoved
         private void Awake()
         {
             _characterMovement = GetComponent<CharacterMovement>();
-            if (_characterMovement == null)
+
+            if (!Logging.CheckIfCorrectMonoBehaviourInstantiation(ref _characterMovement, this, "Character Movement"))
             {
-                Logging.LogIncorrectInstantiation("Character Movement", this);
                 enabled = false;
             }
         }

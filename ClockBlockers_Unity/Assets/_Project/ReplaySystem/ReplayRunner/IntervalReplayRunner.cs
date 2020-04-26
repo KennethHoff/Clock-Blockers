@@ -4,11 +4,9 @@ using System.Collections.Generic;
 using Between_Names.Property_References;
 
 using ClockBlockers.Characters;
-using ClockBlockers.ToBeMoved;
 using ClockBlockers.Utility;
 
 using UnityEngine;
-using UnityEngine.AI;
 
 
 namespace ClockBlockers.ReplaySystem.ReplayRunner
@@ -16,7 +14,6 @@ namespace ClockBlockers.ReplaySystem.ReplayRunner
 	public class IntervalReplayRunner : MonoBehaviour
 	{
 
-		private CharacterMovement _characterMovement;
 
 		[NonSerialized]
 		public List<Translation> translations;
@@ -25,32 +22,31 @@ namespace ClockBlockers.ReplaySystem.ReplayRunner
 		
 		[NonSerialized]
 		public List<CharacterAction> actions;
-		
-		
-		private Character _character;
-		private Transform _transform;
 
-		[SerializeField]
-		private CameraController cameraController;
+		private Character _character;
+
 
 		[SerializeField]
 		private FloatReference translationInterval;
 
 		private Translation _nextTranslation;
 
-		public Vector3 currVelocity = Vector3.zero;
 		
 
 
 		private float _timer;
+		private AiPathfinder aiPathfinder;
 
 		private float TimeLeftUntilNextInterval => translationInterval - _timer;
 
 		private void Awake()
 		{
+			aiPathfinder = GetComponent<AiPathfinder>();
+			Logging.CheckIfCorrectMonoBehaviourInstantiation(ref aiPathfinder, this, "Ai Pathfinder");
+			
 			_character = GetComponent<Character>();
-			_transform = GetComponent<Transform>();
-			_characterMovement = GetComponent<CharacterMovement>();
+			if (!Logging.CheckIfCorrectMonoBehaviourInstantiation(ref _character, this, "Character")) enabled = false;
+			
 		}
 
 		private void FixedUpdate()
@@ -66,20 +62,16 @@ namespace ClockBlockers.ReplaySystem.ReplayRunner
 
 			SetNextTranslationData();
 			
-			Logging.Log("Moving towards (" + _nextTranslation.position.x + ", " + _nextTranslation.position.y + ")");
+			// Logging.Log("Moving towards (" + _nextTranslation.position.x + ", " + _nextTranslation.position.y + ")");
 
 		}
 
 		private void MoveTowardsNextTranslationData()
 		{
-			MoveTowardsTranslationData(ref _nextTranslation);
+			aiPathfinder.NextWaypoint = _nextTranslation;
+			// MoveTowardsTranslationData(ref _nextTranslation);
 		}
 
-		private void MoveTowardsTranslationData(ref Translation tData)
-		{
-			Vector3 newPos = Vector3.SmoothDamp(_transform.position, tData.position, ref currVelocity, TimeLeftUntilNextInterval);
-			_transform.position = newPos;
-		}
 
 		/// <summary>
 		/// Sets the target translation; Where the clone wants to go towards.
@@ -126,6 +118,49 @@ namespace ClockBlockers.ReplaySystem.ReplayRunner
 			
 			_character.Kill();
 
+		}
+	}
+
+	internal class AiPathfinder : MonoBehaviour
+	{
+		private CharacterMovement _characterMovement;
+		
+		private Translation nextWaypoint;
+		private Transform _transform;
+
+		public Vector3 currVelocity = Vector3.zero; // TODO: Shouldn't this be in CharacterMovement?
+
+		public Translation NextWaypoint
+		{
+			get => nextWaypoint;
+			set => nextWaypoint = value;
+		}
+		
+		private void Awake()
+		{
+			_characterMovement = GetComponent<CharacterMovement>();
+			_transform = GetComponent<Transform>();
+
+		}
+		private void Update()
+		{
+			MoveTowardsNextWaypoint();
+		}
+		
+		
+		private void MoveTowardsNextWaypoint()
+		{
+			// Vector3 newPos = Vector3.SmoothDamp(_transform.position, NextWaypoint.position, ref currVelocity, TimeLeftUntilNextInterval);
+			// _transform.position = newPos;
+			if (CheckIfCollisionBetweenCurrentPosAndWaypoint()) return;
+
+			_characterMovement.AddForwardVelocity();
+
+		}
+
+		private bool CheckIfCollisionBetweenCurrentPosAndWaypoint()
+		{
+			return false;
 		}
 	}
 }
