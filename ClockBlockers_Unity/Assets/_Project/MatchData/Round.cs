@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using ClockBlockers.ReplaySystem.ReplayStorage;
 using ClockBlockers.Utility;
 
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Serialization;
 
 
 namespace ClockBlockers.MatchData {
@@ -15,16 +13,16 @@ namespace ClockBlockers.MatchData {
 	{
 
 		[SerializeField]
-		private UnityEvent RoundCreatedEvent;
+		private UnityEvent roundCreatedEvent;
 		
 		[SerializeField]
-		private UnityEvent RoundBegunEvent;
+		private UnityEvent roundBegunEvent;
 
 		[SerializeField]
-		private UnityEvent RoundEndedEvent;
+		private UnityEvent roundEndedEvent;
 
 		[SerializeField]
-		private UnityEvent RoundRemovedEvent;
+		private UnityEvent roundRemovedEvent;
 		
 		
 		[NonSerialized]
@@ -49,7 +47,7 @@ namespace ClockBlockers.MatchData {
 		{
 			StartNewAct();
 
-			RoundCreatedEvent.Invoke();
+			roundCreatedEvent.Invoke();
 		}
 
 		public void Begin()
@@ -57,7 +55,7 @@ namespace ClockBlockers.MatchData {
 			Logging.Log("Round ended", this);
 			
 			
-			RoundBegunEvent.Invoke();
+			roundBegunEvent.Invoke();
 		}
 		
 		public void End()
@@ -65,7 +63,7 @@ namespace ClockBlockers.MatchData {
 			// Look at leaderboard etc..
 			
 			
-			RoundEndedEvent.Invoke();
+			roundEndedEvent.Invoke();
 		}
 
 		private Act PreviousAct()
@@ -77,8 +75,7 @@ namespace ClockBlockers.MatchData {
 		{
 			gameObject.SetActive(false);
 			
-			
-			RoundRemovedEvent.Invoke();
+			roundRemovedEvent.Invoke();
 		}
 
 		public void StartNewAct()

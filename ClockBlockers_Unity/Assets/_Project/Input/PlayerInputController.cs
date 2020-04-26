@@ -3,6 +3,7 @@
 using Between_Names.Property_References;
 
 using ClockBlockers.Characters;
+using ClockBlockers.Events;
 using ClockBlockers.GameControllers;
 using ClockBlockers.MatchData;
 using ClockBlockers.ReplaySystem;
@@ -14,7 +15,6 @@ using ClockBlockers.Weapons;
 using JetBrains.Annotations;
 
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 
@@ -47,6 +47,10 @@ namespace ClockBlockers.Input
 		private float _upDownCameraRotation;
 		private bool _inputEnabled;
 
+
+		[SerializeField]
+		private GameEvent endActEvent;
+
 		
 		private void Awake()
 		{
@@ -67,14 +71,12 @@ namespace ClockBlockers.Input
 
 			_characterMovement.Rotate(_sideToSideCharacterRotation);
 			cameraController.Rotate(_upDownCameraRotation);
+
+			if (_moveInput.magnitude > 0)
+			{
+				_characterMovement.AddForwardVelocity(_moveInput * Time.deltaTime);
+			}
 		}
-
-		private void FixedUpdate()
-		{
-
-			_characterMovement.MoveForward(_moveInput);
-		}
-
 
 		private void OnEnable()
 		{
@@ -95,6 +97,11 @@ namespace ClockBlockers.Input
 			_sideToSideCharacterRotation = value.x * horizontalMouseSensitivity * Time.deltaTime;
 			_upDownCameraRotation = value.y * verticalMouseSensitivity * Time.deltaTime;
 			
+		}
+		[UsedImplicitly]
+		private void OnJump()
+		{
+			_characterMovement.Jump();
 		}
 
 
@@ -122,13 +129,7 @@ namespace ClockBlockers.Input
 		private void OnStartNewAct() // Obviously a test feature
 		{
 			if (!_inputEnabled) return;
-			FindObjectOfType<Act>().Remove();
-		}
-
-		[UsedImplicitly]
-		private void OnSpawn() // Obviously a test feature
-		{
-			FindObjectOfType<Act>().SpawnNewClone(); // Really messy.
+			endActEvent.Raise();
 		}
 
 		[UsedImplicitly]

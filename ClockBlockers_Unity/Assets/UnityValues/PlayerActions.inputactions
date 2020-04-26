@@ -38,14 +38,6 @@
                     "interactions": ""
                 },
                 {
-                    "name": "Spawn",
-                    "type": "Button",
-                    "id": "25542b2e-fc3a-4122-8b48-f26141e42ee2",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
                     "name": "ClearClones",
                     "type": "Button",
                     "id": "8210257b-56ab-44a3-8638-ce5a796c27c7",
@@ -185,28 +177,6 @@
                 },
                 {
                     "name": "",
-                    "id": "ddb6c169-c21a-44d5-90e8-44eb6ae2e1a2",
-                    "path": "<Keyboard>/e",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Spawn",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "5c891853-e4a6-4cc3-8d99-29e3ff8bc463",
-                    "path": "<Gamepad>/buttonNorth",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Spawn",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "9de355b4-5824-4464-9687-6a2128bdccc2",
                     "path": "<Keyboard>/c",
                     "interactions": "",
@@ -275,7 +245,7 @@
                     "name": "",
                     "id": "7a1cc27f-7660-4874-8052-a40007957a06",
                     "path": "<Mouse>/leftButton",
-                    "interactions": "Press(behavior=2)",
+                    "interactions": "Press",
                     "processors": "",
                     "groups": "",
                     "action": "Shoot",

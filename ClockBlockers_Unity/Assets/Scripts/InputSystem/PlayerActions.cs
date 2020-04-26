@@ -51,14 +51,6 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                     ""interactions"": """"
                 },
                 {
-                    ""name"": ""Spawn"",
-                    ""type"": ""Button"",
-                    ""id"": ""25542b2e-fc3a-4122-8b48-f26141e42ee2"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """"
-                },
-                {
                     ""name"": ""ClearClones"",
                     ""type"": ""Button"",
                     ""id"": ""8210257b-56ab-44a3-8638-ce5a796c27c7"",
@@ -198,28 +190,6 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""ddb6c169-c21a-44d5-90e8-44eb6ae2e1a2"",
-                    ""path"": ""<Keyboard>/e"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Spawn"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""5c891853-e4a6-4cc3-8d99-29e3ff8bc463"",
-                    ""path"": ""<Gamepad>/buttonNorth"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Spawn"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""9de355b4-5824-4464-9687-6a2128bdccc2"",
                     ""path"": ""<Keyboard>/c"",
                     ""interactions"": """",
@@ -288,7 +258,7 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                     ""name"": """",
                     ""id"": ""7a1cc27f-7660-4874-8052-a40007957a06"",
                     ""path"": ""<Mouse>/leftButton"",
-                    ""interactions"": ""Press(behavior=2)"",
+                    ""interactions"": ""Press"",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Shoot"",
@@ -361,7 +331,6 @@ public class @PlayerActions : IInputActionCollection, IDisposable
         m_Character_Look = m_Character.FindAction("Look", throwIfNotFound: true);
         m_Character_Shoot = m_Character.FindAction("Shoot", throwIfNotFound: true);
         m_Character_Jump = m_Character.FindAction("Jump", throwIfNotFound: true);
-        m_Character_Spawn = m_Character.FindAction("Spawn", throwIfNotFound: true);
         m_Character_ClearClones = m_Character.FindAction("ClearClones", throwIfNotFound: true);
         m_Character_IncreaseTimescale = m_Character.FindAction("IncreaseTimescale", throwIfNotFound: true);
         m_Character_DecreaseTimescale = m_Character.FindAction("DecreaseTimescale", throwIfNotFound: true);
@@ -421,7 +390,6 @@ public class @PlayerActions : IInputActionCollection, IDisposable
     private readonly InputAction m_Character_Look;
     private readonly InputAction m_Character_Shoot;
     private readonly InputAction m_Character_Jump;
-    private readonly InputAction m_Character_Spawn;
     private readonly InputAction m_Character_ClearClones;
     private readonly InputAction m_Character_IncreaseTimescale;
     private readonly InputAction m_Character_DecreaseTimescale;
@@ -436,7 +404,6 @@ public class @PlayerActions : IInputActionCollection, IDisposable
         public InputAction @Look => m_Wrapper.m_Character_Look;
         public InputAction @Shoot => m_Wrapper.m_Character_Shoot;
         public InputAction @Jump => m_Wrapper.m_Character_Jump;
-        public InputAction @Spawn => m_Wrapper.m_Character_Spawn;
         public InputAction @ClearClones => m_Wrapper.m_Character_ClearClones;
         public InputAction @IncreaseTimescale => m_Wrapper.m_Character_IncreaseTimescale;
         public InputAction @DecreaseTimescale => m_Wrapper.m_Character_DecreaseTimescale;
@@ -464,9 +431,6 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                 @Jump.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnJump;
                 @Jump.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnJump;
                 @Jump.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnJump;
-                @Spawn.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnSpawn;
-                @Spawn.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnSpawn;
-                @Spawn.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnSpawn;
                 @ClearClones.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnClearClones;
                 @ClearClones.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnClearClones;
                 @ClearClones.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnClearClones;
@@ -501,9 +465,6 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                 @Jump.started += instance.OnJump;
                 @Jump.performed += instance.OnJump;
                 @Jump.canceled += instance.OnJump;
-                @Spawn.started += instance.OnSpawn;
-                @Spawn.performed += instance.OnSpawn;
-                @Spawn.canceled += instance.OnSpawn;
                 @ClearClones.started += instance.OnClearClones;
                 @ClearClones.performed += instance.OnClearClones;
                 @ClearClones.canceled += instance.OnClearClones;
@@ -532,7 +493,6 @@ public class @PlayerActions : IInputActionCollection, IDisposable
         void OnLook(InputAction.CallbackContext context);
         void OnShoot(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
-        void OnSpawn(InputAction.CallbackContext context);
         void OnClearClones(InputAction.CallbackContext context);
         void OnIncreaseTimescale(InputAction.CallbackContext context);
         void OnDecreaseTimescale(InputAction.CallbackContext context);

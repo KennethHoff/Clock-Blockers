@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a2311833d629c7469824023d590c5fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  translations: []
   actions: []
   translationInterval:
     useConstant: 0
@@ -115,7 +116,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abfb00c7bac94734b5e2c4a8037be5ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _characterMovement: {fileID: 0}
   cameraController: {fileID: 1628430008802450133}
   gun: {fileID: 7371798284019175839}
   verticalMouseSensitivity:
@@ -126,6 +126,7 @@ MonoBehaviour:
     useConstant: 0
     constantValue: 5
     variable: {fileID: 11400000, guid: 200b86ee37752df4985386a04e2664f9, type: 2}
+  endActEvent: {fileID: 11400000, guid: ad8b6c064072c994a9777d3eb89f6091, type: 2}
 --- !u!1001 &759690741484361695
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -18,8 +18,6 @@ namespace ClockBlockers.ReplaySystem.ReplayRunner
 
 		private CharacterMovement _characterMovement;
 
-		private NavMeshAgent _navMeshAgent;
-		
 		[NonSerialized]
 		public List<Translation> translations;
 
@@ -39,16 +37,17 @@ namespace ClockBlockers.ReplaySystem.ReplayRunner
 		private FloatReference translationInterval;
 
 		private Translation _nextTranslation;
-		private Translation _prevTranslation;
+
+		public Vector3 currVelocity = Vector3.zero;
+		
 
 
 		private float _timer;
 
-		private float _timeLeftUntilNextInterval;
+		private float TimeLeftUntilNextInterval => translationInterval - _timer;
 
 		private void Awake()
 		{
-			_navMeshAgent = GetComponent<NavMeshAgent>();
 			_character = GetComponent<Character>();
 			_transform = GetComponent<Transform>();
 			_characterMovement = GetComponent<CharacterMovement>();
@@ -58,17 +57,33 @@ namespace ClockBlockers.ReplaySystem.ReplayRunner
 		{
 			_timer += Time.fixedDeltaTime;
 
-			// _timeLeftUntilNextInterval = translationInterval - _timer;
+			MoveTowardsNextTranslationData();
 			
-
 
 			if (_timer < translationInterval) return;
-			
+
 			_timer -= translationInterval;
 
 			SetNextTranslationData();
+			
+			Logging.Log("Moving towards (" + _nextTranslation.position.x + ", " + _nextTranslation.position.y + ")");
+
 		}
 
+		private void MoveTowardsNextTranslationData()
+		{
+			MoveTowardsTranslationData(ref _nextTranslation);
+		}
+
+		private void MoveTowardsTranslationData(ref Translation tData)
+		{
+			Vector3 newPos = Vector3.SmoothDamp(_transform.position, tData.position, ref currVelocity, TimeLeftUntilNextInterval);
+			_transform.position = newPos;
+		}
+
+		/// <summary>
+		/// Sets the target translation; Where the clone wants to go towards.
+		/// </summary>
 		private void SetNextTranslationData()
 		{
 			
@@ -76,13 +91,15 @@ namespace ClockBlockers.ReplaySystem.ReplayRunner
 			// {
 			// 	Unlink();
 			// }
-			_prevTranslation = _nextTranslation;
 
+			if (translations.Count <= 0)
+			{
+				Unlink();
+				return;
+			}
+			
 			_nextTranslation = translations[_currentTranslationIndex];
 
-			_navMeshAgent.SetDestination(_nextTranslation.position);
-			
-			
 			_currentTranslationIndex++;
 
 			if (_currentTranslationIndex >= translations.Count)
@@ -106,6 +123,9 @@ namespace ClockBlockers.ReplaySystem.ReplayRunner
 		{
 			Logging.Log(name + " unlinked!", this);
 			enabled = false;
+			
+			_character.Kill();
+
 		}
 	}
 }

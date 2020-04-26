@@ -10,6 +10,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3c07ec5838f69c7458901d70987514dc, type: 3}
-  m_Name: CharacterMovementSpeed
+  m_Name: GravityValue
   m_EditorClassIdentifier: 
-  value: 5
+  value: -9.81

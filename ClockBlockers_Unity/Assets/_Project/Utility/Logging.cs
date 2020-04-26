@@ -3,17 +3,13 @@
 using UnityEngine;
 
 using Object = UnityEngine.Object;
-// ReSharper disable UnusedMember.Global
-
-
-// ReSharper disable Unity.PerformanceCriticalCodeInvocation
 
 namespace ClockBlockers.Utility
 {
 	public class Logging
 	{
-		public static Logging instance;
-		private string _jsonSavePath;
+		private static Logging _instance;
+		private readonly string _jsonSavePath;
 		
 
 		private bool _logToFile;
@@ -22,7 +18,7 @@ namespace ClockBlockers.Utility
 		{
 			_logToFile = logToFile;
 			_jsonSavePath = Application.persistentDataPath + "/" + jsonFileName + ".json";
-			instance = this;
+			_instance = this;
 
 			File.Delete(_jsonSavePath);
 		}
@@ -31,7 +27,7 @@ namespace ClockBlockers.Utility
 		{
 			Debug.Log(message, context);
 			
-			instance.SaveToFile(message, context);
+			_instance.SaveToFile(message, context);
 		}
 
 		private void SaveToFile(object message, Object context = null)
@@ -51,32 +47,32 @@ namespace ClockBlockers.Utility
 		{
 			Debug.Log(message);
 			
-			instance.SaveToFile(message);
+			_instance.SaveToFile(message);
 		}
 
 		public static void LogWarning(object message, Object context)
 		{
 			Debug.LogWarning(message, context);
 			
-			instance.SaveToFile(message, context);
+			_instance.SaveToFile(message, context);
 		}
 
 		public static void LogWarning(object message)
 		{
 			Debug.LogWarning(message);
-			instance.SaveToFile(message);
+			_instance.SaveToFile(message);
 		}
 
 		public static void LogError(object message, Object context)
 		{
 			Debug.LogError(message, context);
-			instance.SaveToFile(message, context);
+			_instance.SaveToFile(message, context);
 		}
 
 		public static void LogError(object message)
 		{
 			Debug.LogError(message);
-			instance.SaveToFile(message);
+			_instance.SaveToFile(message);
 		}
 
 		public static void LogIncorrectInstantiation(string typeStr, Object context)
