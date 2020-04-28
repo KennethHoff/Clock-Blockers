@@ -15,6 +15,12 @@ namespace ClockBlockers.Utility
 			};
 		}
 
+		public static float Round(this float f, int decimalPlaces)
+		{
+			var multiplier = (int) Mathf.Pow(10, decimalPlaces);
+			return Mathf.Round(f * multiplier) / multiplier;
+		}
+
 		public static float[] ToFloatArray(this Vector2 vector2)
 		{
 			return new[]

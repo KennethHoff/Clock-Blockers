@@ -53,10 +53,13 @@
           </e>
           <e p="Main.asmdef" t="Include" />
           <e p="MapData" t="Include">
+            <e p="AlongFloorMarkerGenerator.cs" t="Include" />
             <e p="Editor" t="Include">
               <e p="PathfindingGridEditor.cs" t="Include" />
             </e>
+            <e p="IMarkerGenerator.cs" t="Include" />
             <e p="MarkerStats.cs" t="Include" />
+            <e p="OrbitalRayMarkerGenerator.cs" t="Include" />
             <e p="PathfindingGrid.cs" t="Include" />
             <e p="PathfindingMarker.cs" t="Include" />
           </e>

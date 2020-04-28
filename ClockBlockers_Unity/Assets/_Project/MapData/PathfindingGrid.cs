@@ -1,21 +1,27 @@
 using System;
 using System.Collections.Generic;
 
+using ClockBlockers.Utility;
+
 using UnityEditor;
 
 using UnityEngine;
 
-
 namespace ClockBlockers.MapData
 {
+	// TODO: Clean up this, separate into components
+	
+	// This currently only allows one size of agent, or rather; It creates nodes based on a size.
+	// Any smaller agent will be able to follow it, albeit stupidly - It might go around somewhere where it could realistically go through.
+	// Any larger agent might be able to follow it, but no guarantees. It might simply be too large to follow accurately
 	[ExecuteAlways]
+	[RequireComponent(typeof(IMarkerGenerator))]
 	public class PathfindingGrid : MonoBehaviour
 	{
+		private IMarkerGenerator markerGenerator;
 
-		private const float MinDistance = 1f;
+		public const float MinDistance = 1f;
 		private const float MaxDistance = 100f;
-
-		// public List<Tuple<int, Color>> nodeColorBasedOnAdjacencies = new List<Tuple<int, Color>>();
 
 		[Header("Marker Gizmos")]
 		[Tooltip("Less than this, and it will be classified as 'Few'")]
@@ -26,14 +32,16 @@ namespace ClockBlockers.MapData
 		[Tooltip("More than this, and it will be classified as 'tooMany', and it will not create ray gizmos.")]
 		public int tooManyAdjacentNodesAmount = 50;
 		
+		[Space(5)]
 		public bool alwaysDrawNodes = true;
 		public bool alwaysDrawRays = true;
+		public bool alwaysDrawCollisionArea = false;
 
+		[Space(5)]
 		public float heightAboveFloor = 0.25f;
 		
 		[Range(0, 2)]
 		public float nodeScale = 0.5f;
-
 
 		[Header("Marker Selection")]
 		[Tooltip("Whether or not selecting a node will affect the scale of said node and its adjacent nodes")]
@@ -50,33 +58,54 @@ namespace ClockBlockers.MapData
 		[Range(0, 2)]
 		public float selectionNodeScale = 1f;
 
-		[Header("Grid")]
-		[SerializeField]
-		private Transform floorPlane;
+		[Header("Grid Generation")]
+		public Transform floorPlane;
 
-		[SerializeField]
-		private PathfindingMarker markerPrefab;
+		public PathfindingMarker markerPrefab;
+		
+		[Tooltip("Only creates markers on top of items with these Physics Layers")]
+		public LayerMask pathfindingLayer;
+
+		[Tooltip("Unaffected by collision checks")]
+		public LayerMask nonCollidingLayer;
 
 		public List<PathfindingMarker> markers;
+		
+		[Range(MinDistance, MaxDistance)]
+		public int xDistanceBetweenMarkers;
 
-		[SerializeField] [Range(MinDistance, MaxDistance)]
-		private int xDistanceBetweenMarkers;
-
-		[SerializeField] [Range(MinDistance, MaxDistance)]
-		private int zDistanceBetweenMarkers;
-
+		[Range(MinDistance, MaxDistance)]
+		public int zDistanceBetweenMarkers;
+		
 		[SerializeField]
-		private bool createMarkersUnderCollisions;
+		public Vector3 minimumOpenAreaAroundMarkers;
+		
+		public bool createMarkerNearOrInsideCollisions;
 
 		// I want to only allow integer inputs, but I want to get fractions when dividing
 		private float XDistanceBetweenMarkers => xDistanceBetweenMarkers;
 		private float ZDistanceBetweenMarkers => zDistanceBetweenMarkers;
 
-		
-		
+		private Vector3 PlaneLocalScale => floorPlane.transform.localScale;
+		public float XLength => PlaneLocalScale.x * 10;
+		public float ZLength => PlaneLocalScale.z * 10;
+
+		public float XStartPos => Mathf.Floor(-XLength / 2 + XDistanceBetweenMarkers/2);
+		public float ZStartPos => Mathf.Floor(-ZLength / 2 + ZDistanceBetweenMarkers/2);
+
+		public int NumberOfColumns => Mathf.FloorToInt(XLength / xDistanceBetweenMarkers)-1;
+		public int NumberOfRows => Mathf.FloorToInt(ZLength / zDistanceBetweenMarkers)-1;
+
 		private void OnDrawGizmos()
 		{
+			if (markerGenerator == null) markerGenerator = GetComponent<IMarkerGenerator>();
+			
 			if (Selection.GetFiltered<PathfindingMarker>(SelectionMode.TopLevel).Length == 0) ResetAllMarkerGizmos();
+		}
+
+		public void GenerateAllMarkers()
+		{
+			markerGenerator.GenerateAllMarkers();
 		}
 
 		public void ClearMarkers()
@@ -88,30 +117,6 @@ namespace ClockBlockers.MapData
 			}
 
 			markers.Clear();
-		}
-
-		public void GenerateAllMarkers()
-		{
-			if (xDistanceBetweenMarkers < MinDistance || zDistanceBetweenMarkers < MinDistance) return; 
-			Transform thisTransform = transform;
-			Vector3 planeLocalScale = floorPlane.transform.localScale;
-			
-			float xLength = planeLocalScale.x * 10;
-			float zLength = planeLocalScale.z * 10;
-
-			float xStartPos = Mathf.Floor(-xLength / 2 + XDistanceBetweenMarkers/2);
-			float zStartPos = Mathf.Floor(-zLength / 2 + ZDistanceBetweenMarkers/2);
-
-			int numberOfColumns = Mathf.FloorToInt(xLength / xDistanceBetweenMarkers)-1;
-			int numberOfRows = Mathf.FloorToInt(zLength / zDistanceBetweenMarkers)-1;
-			
-			if (markers == null) markers = new List<PathfindingMarker>(numberOfColumns * numberOfRows);
-			
-			for (var i = 0; i <= numberOfColumns; i ++)
-			{
-				CreateMarkerRow(xStartPos, i, thisTransform, numberOfRows, zStartPos);
-			}
-			
 		}
 
 		public void GenerateMarkerAdjacencies()
@@ -129,43 +134,6 @@ namespace ClockBlockers.MapData
 				marker.scale = nodeScale;
 				marker.PickAColor();
 			}
-		}
-
-		private void CreateMarkerRow(float xStartPos, int i, Transform thisTransform, int numberOfRows, float zStartPos)
-		{
-			float xPos = xStartPos + (xDistanceBetweenMarkers * i);
-
-			Transform newRow = new GameObject("Row " + i).transform;
-
-			newRow.position = new Vector3(xPos, 0, 0);
-
-			newRow.SetParent(thisTransform);
-
-			var createdNothing = true;
-
-			for (var j = 0; j <= numberOfRows; j++)
-			{
-				if (CreateMarker(zStartPos, j, xPos, newRow)) createdNothing = false;
-			}
-
-			if (createdNothing) DestroyImmediate(newRow.gameObject);
-		}
-
-		private bool CreateMarker(float zStartPos, int j, float xPos, Transform newRow)
-		{
-			float markerScale = nodeScale;
-			
-			float zPos = zStartPos + (zDistanceBetweenMarkers * j);
-			var markerPos = new Vector3(xPos, heightAboveFloor + markerScale, zPos);
-			
-			if (!createMarkersUnderCollisions && Physics.CheckBox(markerPos, Vector3.one * markerScale * 0.9f)) return false;
-
-			PathfindingMarker newMarker = Instantiate(markerPrefab, markerPos, Quaternion.identity, newRow);
-			newMarker.Grid = this;
-
-			newMarker.name = "Column " + j;
-			markers.Add(newMarker);
-			return true;
 		}
 	}
 }

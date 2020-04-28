@@ -10,13 +10,16 @@ namespace ClockBlockers.MapData.Editor
 	[CustomEditor(typeof(PathfindingGrid))]
 	public class PathfindingGridEditor : UnityEditor.Editor
 	{
+		// TODO: Create a custom inspector based on the selected option
+		// Only show 'Ray-based Marker Generation' settings if 'Ray' is the selected radio button, and so on..
+
 		public override void OnInspectorGUI()
 		{
 			DrawDefaultInspector();
 
 			var myScript = (PathfindingGrid) target;
 
-			CreateButton(myScript.GenerateAllMarkers, "Generate markers");
+			CreateButton(() => myScript.GenerateAllMarkers(), "Generate markers");
 
 			CreateButton(myScript.ClearMarkers, "Remove all markers");
 			

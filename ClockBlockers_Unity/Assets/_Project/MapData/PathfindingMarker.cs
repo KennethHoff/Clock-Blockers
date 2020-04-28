@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using ClockBlockers.Utility;
@@ -19,8 +20,14 @@ namespace ClockBlockers.MapData
         // TODO: During pathfinding, find the Marker closest to the 'destination', and then recursive find the marker that's closest to you
 
         
+        // [SerializeReference]
         private List<MarkerStats> adjacentMarkers;
-        public PathfindingGrid Grid { get; set; }
+
+        public PathfindingGrid Grid
+        {
+            get => grid;
+            set => grid = value;
+        }
 
         private bool tooManyAdjacencies = false;
 
@@ -29,12 +36,25 @@ namespace ClockBlockers.MapData
         private static readonly Color DefaultDrawColor = new Color(137, 0, 255, 255); // purple
 
         private Color drawColor = DefaultDrawColor;
+        [SerializeField][HideInInspector]
+        private PathfindingGrid grid;
 
         private void OnDrawGizmos()
         {
             if (Grid.alwaysDrawRays && !tooManyAdjacencies) DrawTransparentRays();
             
             if (Grid.alwaysDrawNodes) DrawCube();
+
+            if (Grid.alwaysDrawCollisionArea) DrawCollisionArea();
+
+        }
+
+        private void DrawCollisionArea()
+        {
+            Vector3 markerPos = transform.position;
+            var newPos = new Vector3(markerPos.x, markerPos.y + Grid.minimumOpenAreaAroundMarkers.y / 2, markerPos.z);
+
+            Gizmos.DrawWireCube(newPos, Grid.minimumOpenAreaAroundMarkers);
         }
 
         private void OnDrawGizmosSelected()
@@ -56,8 +76,6 @@ namespace ClockBlockers.MapData
             
             scale = Grid.selectionNodeScale;
             
-            // DrawCube();
-
             if (adjacentMarkers == null) return;
 
             foreach (MarkerStats markerStat in adjacentMarkers)
@@ -100,13 +118,11 @@ namespace ClockBlockers.MapData
             
                 if (Physics.Raycast(position, vectorToChild, distanceToChild)) continue;
             
-                var markerStat = MarkerStats.CreateInstance(marker, vectorToChild.magnitude);
+                var markerStat = new MarkerStats(marker, vectorToChild.magnitude);
                 adjacentMarkers.Add(markerStat);
             }
             PickAColor();
         }
-
-
 
         private void DrawCube()
         {
@@ -158,14 +174,16 @@ namespace ClockBlockers.MapData
 
         private void DrawCubeGizmoOnPosition()
         {
-            Gizmos.DrawCube(transform.position, Vector3.one * scale);
+            Vector3 position = transform.position;
+            position.y += Grid.heightAboveFloor + scale/2;
+            
+            Gizmos.DrawCube(position, Vector3.one * scale);
         }
 
 
         private void DrawRayGizmosToAdjacentMarkersFromList()
         {
             // if (adjacentMarkers == null || adjacentMarkers.Count == 0) return;
-            
             
             foreach (MarkerStats markerStat in adjacentMarkers)
             {
@@ -228,7 +246,7 @@ namespace ClockBlockers.MapData
             
                 if (Physics.Raycast(position, vectorToChild, distanceToChild)) continue;
             
-                var markerStat = MarkerStats.CreateInstance(marker, vectorToChild.magnitude);
+                var markerStat = new MarkerStats(marker, vectorToChild.magnitude);
                 adjacentMarkers.Add(markerStat);
             }
         }
