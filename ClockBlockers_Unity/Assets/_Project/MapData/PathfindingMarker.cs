@@ -20,7 +20,7 @@ namespace ClockBlockers.MapData
         // TODO: During pathfinding, find the Marker closest to the 'destination', and then recursive find the marker that's closest to you
 
         
-        // [SerializeReference]
+        [SerializeReference]
         private List<MarkerStats> adjacentMarkers;
 
         public PathfindingGrid Grid
