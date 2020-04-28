@@ -21,7 +21,7 @@ namespace ClockBlockers.MapData
 
         
         [SerializeReference]
-        private List<MarkerStats> adjacentMarkers;
+        private List<MarkerStats> connectedMarkers;
 
         public PathfindingGrid Grid
         {
@@ -38,6 +38,11 @@ namespace ClockBlockers.MapData
         private Color drawColor = DefaultDrawColor;
         [SerializeField][HideInInspector]
         private PathfindingGrid grid;
+
+
+        
+        // _Exclusively_ for equalizing the 'Draw Height Above Floor' gizmo drawing.
+        public float creationHeightAboveFloor;
 
         private void OnDrawGizmos()
         {
@@ -76,9 +81,9 @@ namespace ClockBlockers.MapData
             
             scale = Grid.selectionNodeScale;
             
-            if (adjacentMarkers == null) return;
+            if (connectedMarkers == null) return;
 
-            foreach (MarkerStats markerStat in adjacentMarkers)
+            foreach (MarkerStats markerStat in connectedMarkers)
             {
                 PathfindingMarker marker = markerStat.marker;
 
@@ -97,13 +102,13 @@ namespace ClockBlockers.MapData
         // ReSharper disable once SuggestBaseTypeForParameter
         private bool CheckIfAdjacent(PathfindingMarker marker)
         {
-            return adjacentMarkers != null && adjacentMarkers.Any(markerStat => markerStat.marker == marker);
+            return connectedMarkers != null && connectedMarkers.Any(markerStat => markerStat.marker == marker);
         }
 
         [ContextMenu("Generate Adjacencies")]
         public void GetAdjacentMarkersFromGrid()
         {
-            adjacentMarkers = new List<MarkerStats>();
+            connectedMarkers = new List<MarkerStats>();
 
             Transform cachedTransform = transform;
 
@@ -119,7 +124,7 @@ namespace ClockBlockers.MapData
                 if (Physics.Raycast(position, vectorToChild, distanceToChild)) continue;
             
                 var markerStat = new MarkerStats(marker, vectorToChild.magnitude);
-                adjacentMarkers.Add(markerStat);
+                connectedMarkers.Add(markerStat);
             }
             PickAColor();
         }
@@ -133,7 +138,7 @@ namespace ClockBlockers.MapData
 
         private void DrawTransparentRays()
         {
-            if (adjacentMarkers == null) return;
+            if (connectedMarkers == null) return;
             const float rayTransparency = 0.6f;
             var transparentDrawColor = new Color(drawColor.a, drawColor.g, drawColor.b, drawColor.a * rayTransparency);
 
@@ -145,9 +150,9 @@ namespace ClockBlockers.MapData
         {
             drawColor = DefaultDrawColor;
 
-            if (adjacentMarkers == null) return;
+            if (connectedMarkers == null) return;
             
-            int adjacentNodesAmount = adjacentMarkers.Count;
+            int adjacentNodesAmount = connectedMarkers.Count;
             
             if (adjacentNodesAmount == 0)
             {
@@ -175,7 +180,7 @@ namespace ClockBlockers.MapData
         private void DrawCubeGizmoOnPosition()
         {
             Vector3 position = transform.position;
-            position.y += Grid.heightAboveFloor + scale/2;
+            position.y += Grid.drawHeightAboveFloor-creationHeightAboveFloor + scale/2;
             
             Gizmos.DrawCube(position, Vector3.one * scale);
         }
@@ -185,7 +190,7 @@ namespace ClockBlockers.MapData
         {
             // if (adjacentMarkers == null || adjacentMarkers.Count == 0) return;
             
-            foreach (MarkerStats markerStat in adjacentMarkers)
+            foreach (MarkerStats markerStat in connectedMarkers)
             {
                 PathfindingMarker marker = markerStat.marker;
                 if (marker == null)
@@ -226,7 +231,7 @@ namespace ClockBlockers.MapData
         
         private void GetAdjacentMarkersFromParent()
         {
-            adjacentMarkers = new List<MarkerStats>();
+            connectedMarkers = new List<MarkerStats>();
 
 
             Transform cachedTransform = transform;
@@ -247,7 +252,7 @@ namespace ClockBlockers.MapData
                 if (Physics.Raycast(position, vectorToChild, distanceToChild)) continue;
             
                 var markerStat = new MarkerStats(marker, vectorToChild.magnitude);
-                adjacentMarkers.Add(markerStat);
+                connectedMarkers.Add(markerStat);
             }
         }
 
@@ -266,6 +271,17 @@ namespace ClockBlockers.MapData
             Vector3 position = transform.position;
 
             Gizmos.DrawRay(position, lastSiblingPos - position);
+        }
+
+        public static PathfindingMarker CreateInstance(string markerName, ref Vector3 markerPos, ref Transform parent, ref float creationYPosAboveFloor)
+        {
+            var newMarker = new GameObject(markerName).AddComponent<PathfindingMarker>();
+
+            newMarker.transform.position = markerPos;
+            newMarker.transform.SetParent(parent);
+            newMarker.creationHeightAboveFloor = creationYPosAboveFloor;
+            
+            return newMarker;
         }
     }
 }

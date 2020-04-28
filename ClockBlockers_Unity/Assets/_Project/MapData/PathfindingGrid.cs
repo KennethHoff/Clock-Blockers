@@ -14,6 +14,8 @@ namespace ClockBlockers.MapData
 	// This currently only allows one size of agent, or rather; It creates nodes based on a size.
 	// Any smaller agent will be able to follow it, albeit stupidly - It might go around somewhere where it could realistically go through.
 	// Any larger agent might be able to follow it, but no guarantees. It might simply be too large to follow accurately
+	
+	// TODO: Remove the idea of 'row' entirely, and make it more manual. Currently there are significant issues with altitude changes. << Do this after making the pathfinding work between 'connected nodes'.
 	[ExecuteAlways]
 	[RequireComponent(typeof(IMarkerGenerator))]
 	public class PathfindingGrid : MonoBehaviour
@@ -38,7 +40,7 @@ namespace ClockBlockers.MapData
 		public bool alwaysDrawCollisionArea = false;
 
 		[Space(5)]
-		public float heightAboveFloor = 0.25f;
+		public float drawHeightAboveFloor = 0.25f;
 		
 		[Range(0, 2)]
 		public float nodeScale = 0.5f;
@@ -76,6 +78,9 @@ namespace ClockBlockers.MapData
 
 		[Range(MinDistance, MaxDistance)]
 		public int zDistanceBetweenMarkers;
+
+		[Tooltip("If you create the marker at the exact position it 'should', then rays can hit things that it realistically shouldn't. This is to offset that")]
+		public float creationHeightAboveFloor = 0;
 		
 		[SerializeField]
 		public Vector3 minimumOpenAreaAroundMarkers;

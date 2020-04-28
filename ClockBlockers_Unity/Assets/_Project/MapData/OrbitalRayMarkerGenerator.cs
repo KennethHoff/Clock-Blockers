@@ -115,17 +115,19 @@ namespace ClockBlockers.MapData
 			}
 
 			string markerName = "Column " + j + (i > 0 ? "(" + i + ")" : "");
-
+			
+			markerPos.y += grid.creationHeightAboveFloor;
 			InstantiateMarker(markerName, markerPos, newRow);
 			createdAtLeastOne = true;
 		}
 
 		private void InstantiateMarker(string markerName, Vector3 markerPos, Transform parent)
 		{
-			PathfindingMarker newMarker = Instantiate(grid.markerPrefab, markerPos, Quaternion.identity, parent);
+			// PathfindingMarker newMarker = Instantiate(grid.markerPrefab, markerPos, Quaternion.identity, parent);
+			var newMarker = PathfindingMarker.CreateInstance(markerName, ref markerPos, ref parent, ref grid.creationHeightAboveFloor);
+			
 			newMarker.Grid = grid;
 
-			newMarker.name = markerName;
 			grid.markers.Add(newMarker);
 		}
 	}

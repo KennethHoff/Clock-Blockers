@@ -54,7 +54,7 @@ namespace ClockBlockers.MapData
 		private bool CreateMarker(int j, float xPos, Transform newRow)
 		{
 			float zPos = grid.ZStartPos + (grid.zDistanceBetweenMarkers * j);
-			var markerPos = new Vector3(xPos, grid.heightAboveFloor + grid.nodeScale/2, zPos);
+			var markerPos = new Vector3(xPos, grid.drawHeightAboveFloor + grid.nodeScale/2, zPos);
 	
 			if (!grid.createMarkerNearOrInsideCollisions && Physics.CheckBox(markerPos, grid.minimumOpenAreaAroundMarkers * 0.5f)) return false;
 			InstantiateMarker("Column " + j, markerPos, newRow);
