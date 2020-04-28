@@ -1,15 +1,19 @@
-using System;
 using System.Collections.Generic;
 
+using ClockBlockers.MapData.Marker;
+using ClockBlockers.MapData.Marker_Generators;
 using ClockBlockers.Utility;
 
 using UnityEditor;
 
 using UnityEngine;
 
-namespace ClockBlockers.MapData
+
+namespace ClockBlockers.MapData.Grid
 {
 	// TODO: Clean up this, separate into components
+	
+	// The performance of this class' functions is not super-important, as it's used to 'bake' the Pathfinding Grid
 	
 	// This currently only allows one size of agent, or rather; It creates nodes based on a size.
 	// Any smaller agent will be able to follow it, albeit stupidly - It might go around somewhere where it could realistically go through.
@@ -18,9 +22,13 @@ namespace ClockBlockers.MapData
 	[RequireComponent(typeof(IMarkerGenerator))]
 	public class PathfindingGrid : MonoBehaviour
 	{
+		#region Fields and Properties
+
+		
+
 		private IMarkerGenerator markerGenerator;
 
-		public const float MinDistance = 1f;
+		public const float MinDistance = 0.1f;
 		private const float MaxDistance = 100f;
 
 		[Header("Marker Gizmos")]
@@ -61,7 +69,7 @@ namespace ClockBlockers.MapData
 		[Header("Grid Generation")]
 		public Transform floorPlane;
 
-		public PathfindingMarker markerPrefab;
+		// public PathfindingMarker markerPrefab;
 		
 		[Tooltip("Only creates markers on top of items with these Physics Layers")]
 		public LayerMask pathfindingLayer;
@@ -70,12 +78,14 @@ namespace ClockBlockers.MapData
 		public LayerMask nonCollidingLayer;
 
 		public List<PathfindingMarker> markers;
-		
-		[Range(MinDistance, MaxDistance)]
-		public int xDistanceBetweenMarkers;
 
-		[Range(MinDistance, MaxDistance)]
-		public int zDistanceBetweenMarkers;
+		// public List<PathfindingMarkerRow> markerRows;
+		
+		// [Range(MinDistance, MaxDistance)]
+		public float xDistanceBetweenMarkers;
+
+		// [Range(MinDistance, MaxDistance)]
+		public float zDistanceBetweenMarkers;
 		
 		[SerializeField]
 		public Vector3 minimumOpenAreaAroundMarkers;
@@ -93,8 +103,23 @@ namespace ClockBlockers.MapData
 		public float XStartPos => Mathf.Floor(-XLength / 2 + XDistanceBetweenMarkers/2);
 		public float ZStartPos => Mathf.Floor(-ZLength / 2 + ZDistanceBetweenMarkers/2);
 
-		public int NumberOfColumns => Mathf.FloorToInt(XLength / xDistanceBetweenMarkers)-1;
-		public int NumberOfRows => Mathf.FloorToInt(ZLength / zDistanceBetweenMarkers)-1;
+		/// <summary>
+		/// Maximum number of created columns
+		/// </summary>
+		public int MaximumNumberOfColumns => Mathf.FloorToInt(XLength / xDistanceBetweenMarkers)-1;
+		/// <summary>
+		/// Maximum number of created rows
+		/// </summary>
+		public int MaximumNumberOfRows => Mathf.FloorToInt(ZLength / zDistanceBetweenMarkers)-1;
+
+		#endregion
+
+		
+		private void OnValidate()
+		{
+			xDistanceBetweenMarkers = xDistanceBetweenMarkers.Clamp(MinDistance, MaxDistance);
+			zDistanceBetweenMarkers = zDistanceBetweenMarkers.Clamp(MinDistance, MaxDistance);
+		}
 
 		private void OnDrawGizmos()
 		{
@@ -102,6 +127,7 @@ namespace ClockBlockers.MapData
 			
 			if (Selection.GetFiltered<PathfindingMarker>(SelectionMode.TopLevel).Length == 0) ResetAllMarkerGizmos();
 		}
+		
 
 		public void GenerateAllMarkers()
 		{
@@ -110,10 +136,10 @@ namespace ClockBlockers.MapData
 
 		public void ClearMarkers()
 		{
-			foreach (PathfindingMarker marker in markers)
+			foreach (PathfindingMarker checkedMarker in markers)
 			{
-				if (marker == null) continue;
-				DestroyImmediate(marker.transform.parent.gameObject);
+				if (checkedMarker == null) continue;
+				DestroyImmediate(checkedMarker.transform.parent.gameObject);
 			}
 
 			markers.Clear();
@@ -121,19 +147,19 @@ namespace ClockBlockers.MapData
 
 		public void GenerateMarkerAdjacencies()
 		{
-			foreach (PathfindingMarker marker in markers)
+			foreach (PathfindingMarker checkedMarker in markers)
 			{
-				marker.GetAdjacentMarkersFromGrid();
+				checkedMarker.GetAdjacentMarkersFromGrid();
 			}
 		}
 		
 		public void ResetAllMarkerGizmos()
 		{
-			foreach (PathfindingMarker marker in markers)
+			foreach (PathfindingMarker checkedMarker in markers)
 			{
-				marker.scale = nodeScale;
-				marker.PickAColor();
+				checkedMarker.ResetGizmo();
 			}
 		}
+
 	}
 }

@@ -15,6 +15,13 @@ namespace ClockBlockers.Utility
 			};
 		}
 
+		public static float Clamp(this float f, float min, float max)
+		{
+			if (f <= min) f = min;
+			if (f >= max) f = max;
+			return f;
+		}
+
 		public static float Round(this float f, int decimalPlaces)
 		{
 			var multiplier = (int) Mathf.Pow(10, decimalPlaces);

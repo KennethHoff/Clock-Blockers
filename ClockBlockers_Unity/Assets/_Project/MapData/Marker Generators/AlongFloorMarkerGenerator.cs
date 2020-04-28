@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
 
+using ClockBlockers.MapData.Grid;
+using ClockBlockers.MapData.Marker;
+
 using UnityEngine;
 
 
-namespace ClockBlockers.MapData
+namespace ClockBlockers.MapData.Marker_Generators
 {
 	[ExecuteInEditMode]
 	public class AlongFloorMarkerGenerator : MonoBehaviour, IMarkerGenerator
@@ -23,10 +26,10 @@ namespace ClockBlockers.MapData
 		{
 			if (grid.xDistanceBetweenMarkers < PathfindingGrid.MinDistance || grid.zDistanceBetweenMarkers < PathfindingGrid.MinDistance) return; 
 			
-			if (grid.markers == null) grid.markers = new List<PathfindingMarker>(grid.NumberOfColumns * grid.NumberOfRows);
+			if (grid.markers == null) grid.markers = new List<PathfindingMarker>();
 			
 			
-			for (var i = 0; i <= grid.NumberOfColumns; i ++)
+			for (var i = 0; i <= grid.MaximumNumberOfColumns; i ++)
 			{
 				CreateMarkerRow(i);
 			}
@@ -36,38 +39,38 @@ namespace ClockBlockers.MapData
 		{
 			float xPos = grid.XStartPos + (grid.xDistanceBetweenMarkers * i);
 
-			Transform newRow = new GameObject("Row " + i).transform;
+			// PathfindingMarkerRow newRow = new GameObject("Row " + i).AddComponent<PathfindingMarkerRow>();
+			// Transform rowTransform = newRow.transform;
 
-			newRow.position = new Vector3(xPos, 0, 0);
+			Transform rowTransform = new GameObject("Row " + i).transform;
 
-			newRow.SetParent(gridTransform);
+
+			rowTransform.position = new Vector3(xPos, 0, 0);
+
+			rowTransform.SetParent(gridTransform);
 
 			var createdNothing = true;
 
-			for (var j = 0; j <= grid.NumberOfRows; j++)
+			for (var j = 0; j <= grid.MaximumNumberOfRows; j++)
 			{
-				if (CreateMarker(j, xPos, newRow)) createdNothing = false;
+				if (CreateMarker(j, xPos, ref rowTransform)) createdNothing = false;
 			}
-			if (createdNothing) DestroyImmediate(newRow.gameObject);
+			if (createdNothing) DestroyImmediate(rowTransform.gameObject);
 		}
 
-		private bool CreateMarker(int j, float xPos, Transform newRow)
+		private bool CreateMarker(int j, float xPos, ref Transform rowTransform)
 		{
 			float zPos = grid.ZStartPos + (grid.zDistanceBetweenMarkers * j);
 			var markerPos = new Vector3(xPos, grid.heightAboveFloor + grid.nodeScale/2, zPos);
 	
 			if (!grid.createMarkerNearOrInsideCollisions && Physics.CheckBox(markerPos, grid.minimumOpenAreaAroundMarkers * 0.5f)) return false;
-			InstantiateMarker("Column " + j, markerPos, newRow);
-			return true;
-		}
-		
-		private void InstantiateMarker(string markerName, Vector3 markerPos, Transform parent)
-		{
-			PathfindingMarker newMarker = Instantiate(grid.markerPrefab, markerPos, Quaternion.identity, parent);
-			newMarker.Grid = grid;
 
-			newMarker.name = markerName;
+			string markerName = "Column " + j;
+			PathfindingMarker newMarker = PathfindingMarker.CreateInstance(markerName, ref markerPos, ref grid, ref rowTransform);
+			
 			grid.markers.Add(newMarker);
+
+			return true;
 		}
 	}
 }

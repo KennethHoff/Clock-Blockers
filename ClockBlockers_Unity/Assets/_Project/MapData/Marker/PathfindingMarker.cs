@@ -1,24 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
+using ClockBlockers.MapData.Grid;
 using ClockBlockers.Utility;
 
 using UnityEditor;
 
 using UnityEngine;
 
-namespace ClockBlockers.MapData
+
+namespace ClockBlockers.MapData.Marker
 {
     [ExecuteInEditMode]
     public class PathfindingMarker : MonoBehaviour
     {
         // DONE: Create a 'pathfinding master' class that stores the transforms of all the 'Pathfinding Marker' objects in the scene
-        
+
         // Potentially, instead of storing the Marker objects, you could just store the position, and then you could even possibly delete the objects to save on performance(?)
-        
+
         // TODO: During pathfinding, find the Marker closest to the 'destination', and then recursive find the marker that's closest to you
 
+        // If same subGrid, then there is a path.
         
         [SerializeReference]
         private List<MarkerStats> adjacentMarkers;
@@ -29,6 +31,12 @@ namespace ClockBlockers.MapData
             set => grid = value;
         }
 
+        // public PathfindingMarkerRow Row
+        // {
+            // get => row;
+            // set => row = value;
+        // }
+
         private bool tooManyAdjacencies = false;
 
         public float scale = 0.5f;
@@ -38,6 +46,11 @@ namespace ClockBlockers.MapData
         private Color drawColor = DefaultDrawColor;
         [SerializeField][HideInInspector]
         private PathfindingGrid grid;
+        
+        // [SerializeField][HideInInspector]
+        // private PathfindingMarkerRow row;
+
+
 
         private void OnDrawGizmos()
         {
@@ -108,17 +121,18 @@ namespace ClockBlockers.MapData
             Transform cachedTransform = transform;
 
             Vector3 position = cachedTransform.position;
-            
-            foreach (PathfindingMarker marker in Grid.markers)
+
+            foreach (PathfindingMarker checkedMarker in grid.markers)
             {
-                if (marker == this) continue;
-                Vector3 markerPos = marker.transform.position;
-                Vector3 vectorToChild = markerPos - position;
-                float distanceToChild = Vector3.Distance(position, markerPos);
+                if (checkedMarker == this) continue;
+                    
+                Vector3 checkedMarkerPos = checkedMarker.transform.position;
+                Vector3 vectorToChild = checkedMarkerPos - position;
+                float distanceToChild = Vector3.Distance(position, checkedMarkerPos);
             
                 if (Physics.Raycast(position, vectorToChild, distanceToChild)) continue;
             
-                var markerStat = new MarkerStats(marker, vectorToChild.magnitude);
+                var markerStat = new MarkerStats(checkedMarker, vectorToChild.magnitude);
                 adjacentMarkers.Add(markerStat);
             }
             PickAColor();
@@ -266,6 +280,28 @@ namespace ClockBlockers.MapData
             Vector3 position = transform.position;
 
             Gizmos.DrawRay(position, lastSiblingPos - position);
+        }
+
+
+        public static PathfindingMarker CreateInstance(string markerName, ref Vector3 markerPos, ref PathfindingGrid newGrid, ref Transform rowTransform)
+        {
+            var newMarker = new GameObject(markerName).AddComponent<PathfindingMarker>();
+            Transform newMarkerTransform = newMarker.transform;
+			
+            newMarkerTransform.SetParent(rowTransform);
+            newMarkerTransform.position = markerPos;
+            
+            
+            newMarker.Grid = newGrid;
+            // newMarker.Row = newRow;
+            
+            return newMarker;
+        }
+
+        public void ResetGizmo()
+        {
+            scale = grid.nodeScale;
+            PickAColor();
         }
     }
 }

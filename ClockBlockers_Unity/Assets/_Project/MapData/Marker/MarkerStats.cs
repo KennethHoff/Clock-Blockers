@@ -1,7 +1,7 @@
 ﻿using System;
 
 
-namespace ClockBlockers.MapData
+namespace ClockBlockers.MapData.Marker
 {
 	// DONE: Find out why these don't save across editor reloads
 		// Apparently, 'Readonly' makes them non-serialized?

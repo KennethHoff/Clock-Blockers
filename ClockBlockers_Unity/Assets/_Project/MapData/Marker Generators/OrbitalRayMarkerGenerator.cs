@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
+using ClockBlockers.MapData.Grid;
+using ClockBlockers.MapData.Marker;
 using ClockBlockers.Utility;
 
 using UnityEngine;
 
 
-namespace ClockBlockers.MapData
+namespace ClockBlockers.MapData.Marker_Generators
 {
 	[ExecuteInEditMode]
 	public class OrbitalRayMarkerGenerator : MonoBehaviour, IMarkerGenerator
@@ -50,12 +51,12 @@ namespace ClockBlockers.MapData
 
 		public void GenerateAllMarkers()
 		{
-			if (grid.xDistanceBetweenMarkers < PathfindingGrid.MinDistance || grid.zDistanceBetweenMarkers < PathfindingGrid.MinDistance) return; 
+			if (grid.xDistanceBetweenMarkers < PathfindingGrid.MinDistance || grid.zDistanceBetweenMarkers < PathfindingGrid.MinDistance) return;
+
+			if (grid.markers == null) grid.markers = new List<PathfindingMarker>();
+
 			
-			if (grid.markers == null) grid.markers = new List<PathfindingMarker>(grid.NumberOfColumns * grid.NumberOfRows);
-			
-			
-			for (var i = 0; i <= grid.NumberOfColumns; i ++)
+			for (var i = 0; i <= grid.MaximumNumberOfColumns; i ++)
 			{
 				CreateMarkerRow(i);
 			}
@@ -64,22 +65,36 @@ namespace ClockBlockers.MapData
 		{
 			float xPos = grid.XStartPos + (grid.xDistanceBetweenMarkers * i);
 
-			Transform newRow = new GameObject("Row " + i).transform;
+			// PathfindingMarkerRow newRow = new GameObject("Row " + i).AddComponent<PathfindingMarkerRow>();
+			//
+			// grid.markerRows.Add(newRow);
+			//
+			// newRow.grid = grid;
+			//
+			// newRow.markers = new List<PathfindingMarker>(grid.ExpectedNumberOfColumns);
 
-			newRow.position = new Vector3(xPos, 0, 0);
+			// PathfindingMarkerRow newRow = PathfindingMarkerRow.CreateInstance("Row " + i, grid);
+			// Transform rowTransform = newRow.transform;
 
-			newRow.SetParent(gridTransform);
+			
+			Transform rowTransform = new GameObject("Row " + i).transform;
+			
 
-			var createdNothing = true;
+			rowTransform.position = new Vector3(xPos, 0, 0);
 
-			for (var j = 0; j <= grid.NumberOfRows; j++)
+			rowTransform.SetParent(gridTransform);
+
+			// var createdNothing = true;
+
+			for (var j = 0; j <= grid.MaximumNumberOfRows; j++)
 			{
-				if (CreateMarker(j, xPos, newRow)) createdNothing = false;
+				// if (CreateMarker(j, xPos, newRow)) createdNothing = false;
+				CreateMarker(j, xPos, ref rowTransform);
 			}
-			if (createdNothing) DestroyImmediate(newRow.gameObject);
+			// if (createdNothing) DestroyImmediate(newRow.gameObject);
 		}
 
-		private bool CreateMarker(int j, float xPos, Transform newRow)
+		private bool CreateMarker(int j, float xPos, ref Transform rowTransform)
 		{
 			float zPos = grid.ZStartPos + (grid.zDistanceBetweenMarkers * j);
 			
@@ -94,21 +109,21 @@ namespace ClockBlockers.MapData
 
 			for (var i = 0; i < numberOfCollisions; i++)
 			{
-				CreateAMarkerOnEachCollision(j, xPos, newRow, allCollisions, i, zPos, ref createdAtLeastOne);
+				CreateAMarkerOnEachCollision(j, xPos, ref rowTransform, allCollisions, i, zPos, ref createdAtLeastOne);
 			}
 			return createdAtLeastOne;
 		}
 
-		private void CreateAMarkerOnEachCollision(int j, float xPos, Transform newRow, RaycastHit[] allCollisions, int i, float zPos, ref bool createdAtLeastOne)
+		private void CreateAMarkerOnEachCollision(int j, float xPos, ref Transform rowTransform, IReadOnlyList<RaycastHit> allCollisions, int i, float zPos, ref bool createdAtLeastOne)
 		{
 			RaycastHit hit = allCollisions[i];
 
 			var markerPos = new Vector3(xPos, hit.point.y.Round(3), zPos);
 
+
 			if (!grid.createMarkerNearOrInsideCollisions)
 			{
 				var newPos = new Vector3(markerPos.x, markerPos.y + grid.minimumOpenAreaAroundMarkers.y / 2, markerPos.z);
-				// var newPos = new Vector3(hit.point.x, hit.point.y + grid.minimumOpenAreaAroundMarkers.y / 2, hit.point.z);
 
 				Collider[] overlappingColliders = Physics.OverlapBox(newPos, grid.minimumOpenAreaAroundMarkers / 2, Quaternion.identity, ~grid.nonCollidingLayer);
 				if (!(overlappingColliders.Length == 1 && (overlappingColliders[0] = hit.collider))) return;
@@ -116,17 +131,10 @@ namespace ClockBlockers.MapData
 
 			string markerName = "Column " + j + (i > 0 ? "(" + i + ")" : "");
 
-			InstantiateMarker(markerName, markerPos, newRow);
-			createdAtLeastOne = true;
-		}
-
-		private void InstantiateMarker(string markerName, Vector3 markerPos, Transform parent)
-		{
-			PathfindingMarker newMarker = Instantiate(grid.markerPrefab, markerPos, Quaternion.identity, parent);
-			newMarker.Grid = grid;
-
-			newMarker.name = markerName;
+			var newMarker = PathfindingMarker.CreateInstance(markerName, ref markerPos, ref grid, ref rowTransform);
+			
 			grid.markers.Add(newMarker);
+
 		}
 	}
 }

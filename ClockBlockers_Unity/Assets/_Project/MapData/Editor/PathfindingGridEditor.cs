@@ -1,5 +1,7 @@
 using System;
 
+using ClockBlockers.MapData.Grid;
+
 using UnityEditor;
 
 using UnityEngine;
@@ -26,6 +28,8 @@ namespace ClockBlockers.MapData.Editor
 			CreateButton(myScript.GenerateMarkerAdjacencies, "Generate marker adjacencies");
 
 			CreateButton(myScript.ResetAllMarkerGizmos, "Reset Marker Colors");
+
+			// CreateButton(myScript.CreateSubGrids, "Create Sub-grids");
 		}
 
 		private static void CreateButton(Action action, string buttonText)
