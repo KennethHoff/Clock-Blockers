@@ -11,6 +11,7 @@ using System.IO;
 using JetBrains.Annotations;
 using UnityEditor;
 using UnityEngine;
+using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object; 
 
@@ -32,11 +33,10 @@ namespace Sisus
 			if(!ApplicationUtility.IsReady())
 			{
 				EditorApplication.delayCall += ApplyPreferencesWhenAssetDatabaseReady;
+				return;
 			}
-			else
-			{
-				DrawGUI.OnNextBeginOnGUI(ApplyContextMenuPreferences, false);
-			}
+
+			DrawGUI.OnNextBeginOnGUI(ApplyContextMenuPreferences, false);
 		}
 
 		private static void ApplyContextMenuPreferences()
@@ -175,15 +175,29 @@ namespace Sisus
 		[UsedImplicitly, MenuItem(PowerInspectorMenuItemPaths.DemoScene, false, PowerInspectorMenuItemPaths.DemoScenePriority)]
 		private static void OpenDemoScene()
 		{
-			var demoScene = SceneManager.GetSceneByName("Power Inspector Demo");
-			if(demoScene.IsValid())
+			var sceneGuids = AssetDatabase.FindAssets("Power Inspector Demo t:SceneAsset");
+			if(sceneGuids.Length == 0)
 			{
-				SceneManager.SetActiveScene(demoScene);
+				var installerGuids = AssetDatabase.FindAssets("Power Inspector Demo Installer");
+				if(installerGuids.Length == 0)
+				{
+					if(DrawGUI.Active.DisplayDialog("Demo Package Not Found", "Power Inspector Demo package was not found at path\nSisus/Power Inspector/Demo/Power Inspector Demo Installer.unitypackage.\n\nWould you like to visit the Asset Store page from where you can reinstall Power Inspector along with the demo scene?", "Open Store Page", "Cancel"))
+					{
+						Application.OpenURL("http://u3d.as/1sNc");
+					}
+					return;
+				}
+
+				if(DrawGUI.Active.DisplayDialog("Install Demo Scene?", "The demo scene is not installed. Would you like to install it now?", "Install", "Cancel"))
+				{
+					var installerPath = AssetDatabase.GUIDToAssetPath(installerGuids[0]);
+					AssetDatabase.ImportPackage(installerPath, false);
+				}
+				return;
 			}
-			else if(DrawGUI.Active.DisplayDialog("Demo Scene Not Found", "Power Inspector Demo scene was not found at path\nSisus/Power Inspector/Demo/Power Inspector Demo.unity.\n\nWould you like to visit the Asset Store page from where you can reinstall Power Inspector along with the demo scene?", "Open Store Page", "Cancel"))
-			{
-				Application.OpenURL("http://u3d.as/1sNc");
-			}
+
+			var scenePath = AssetDatabase.GUIDToAssetPath(sceneGuids[0]);
+			EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
 		}
 
 		[UsedImplicitly, MenuItem(PowerInspectorMenuItemPaths.IssueTracker, false, PowerInspectorMenuItemPaths.IssueTrackerPriority)]

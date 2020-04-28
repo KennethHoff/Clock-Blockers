@@ -1,6 +1,5 @@
 ﻿//#define DEBUG_ENABLED
 
-using System;
 using UnityEditor;
 
 namespace Sisus
@@ -12,23 +11,50 @@ namespace Sisus
 	{
 		public static bool Contains(string define)
 		{
-			return Contains(PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup), define);
+			var buildTarget = EditorUserBuildSettings.selectedBuildTargetGroup;
+			if(buildTarget == BuildTargetGroup.Unknown)
+			{
+				buildTarget = BuildTargetGroup.Standalone;
+			}
+			return Contains(PlayerSettings.GetScriptingDefineSymbolsForGroup(buildTarget), define);
+		}
+
+		public static bool Contains(BuildTargetGroup buildTarget, string define)
+		{
+			if(buildTarget == BuildTargetGroup.Unknown)
+			{
+				buildTarget = BuildTargetGroup.Standalone;
+			}
+			return Contains(PlayerSettings.GetScriptingDefineSymbolsForGroup(buildTarget), define);
 		}
 		
 		public static bool Add(string define)
 		{
-			var scriptingDefineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
+			var buildTarget = EditorUserBuildSettings.selectedBuildTargetGroup;
+			if(buildTarget == BuildTargetGroup.Unknown)
+			{
+				buildTarget = BuildTargetGroup.Standalone;
+			}
+
+			var scriptingDefineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(buildTarget);
 			if(Contains(scriptingDefineSymbols, define))
 			{
 				return false;
 			}
-			PlayerSettings.SetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup, define+";"+scriptingDefineSymbols);
+
+			PlayerSettings.SetScriptingDefineSymbolsForGroup(buildTarget, define+";"+scriptingDefineSymbols);
 			return true;
 		}
 
 		public static bool Add(string define1, string define2)
 		{
-			var scriptingDefineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
+			var buildTarget = EditorUserBuildSettings.selectedBuildTargetGroup;
+			if(buildTarget == BuildTargetGroup.Unknown)
+			{
+				buildTarget = BuildTargetGroup.Standalone;
+			}
+
+			var scriptingDefineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(buildTarget);
 			bool changed = false;
 
 			if(!Contains(scriptingDefineSymbols, define2))
@@ -45,7 +71,7 @@ namespace Sisus
 
 			if(changed)
 			{
-				PlayerSettings.SetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup, scriptingDefineSymbols);
+				PlayerSettings.SetScriptingDefineSymbolsForGroup(buildTarget, scriptingDefineSymbols);
 				return true;
 			}
 			return false;
@@ -53,22 +79,34 @@ namespace Sisus
 
 		public static bool Remove(string define)
 		{
-			var scriptingDefineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
+			var buildTarget = EditorUserBuildSettings.selectedBuildTargetGroup;
+			if(buildTarget == BuildTargetGroup.Unknown)
+			{
+				buildTarget = BuildTargetGroup.Standalone;
+			}
+
+			var scriptingDefineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(buildTarget);
 			if(!Remove(ref scriptingDefineSymbols, define))
 			{
 				return false;
 			}
-			PlayerSettings.SetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup, scriptingDefineSymbols);
+			PlayerSettings.SetScriptingDefineSymbolsForGroup(buildTarget, scriptingDefineSymbols);
 			return true;
 		}
 
 		public static bool Remove(string define1, string define2)
 		{
-			var scriptingDefineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
+			var buildTarget = EditorUserBuildSettings.selectedBuildTargetGroup;
+			if(buildTarget == BuildTargetGroup.Unknown)
+			{
+				buildTarget = BuildTargetGroup.Standalone;
+			}
+
+			var scriptingDefineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(buildTarget);
 
 			if(Remove(ref scriptingDefineSymbols, define1) | Remove(ref scriptingDefineSymbols, define2))
 			{
-				PlayerSettings.SetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup, scriptingDefineSymbols);
+				PlayerSettings.SetScriptingDefineSymbolsForGroup(buildTarget, scriptingDefineSymbols);
 				return true;
 			}
 			return false;

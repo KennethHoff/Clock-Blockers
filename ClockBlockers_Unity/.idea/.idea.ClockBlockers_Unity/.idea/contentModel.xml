@@ -7,6 +7,20 @@
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
       <e p="Assets" t="Include">
         <e p="_Project" t="Include">
+          <e p="AI" t="Include">
+            <e p="AiControllers" t="Include">
+              <e p="AiController.cs" t="Include" />
+              <e p="StandardAiController.cs" t="Include" />
+            </e>
+            <e p="AiPathfinder.cs" t="Include" />
+            <e p="StandardAiPathfinder.cs" t="Include" />
+            <e p="States" t="Include">
+              <e p="AiState.cs" t="Include" />
+              <e p="FullyAutonomous.cs" t="Include" />
+              <e p="Idle.cs" t="Include" />
+              <e p="ReplicatingActions.cs" t="Include" />
+            </e>
+          </e>
           <e p="Characters" t="Include">
             <e p="Scripts" t="Include">
               <e p="Character.cs" t="Include" />
@@ -38,6 +52,14 @@
             <e p="PlayerInputController.cs" t="Include" />
           </e>
           <e p="Main.asmdef" t="Include" />
+          <e p="MapData" t="Include">
+            <e p="Editor" t="Include">
+              <e p="PathfindingGridEditor.cs" t="Include" />
+            </e>
+            <e p="MarkerStats.cs" t="Include" />
+            <e p="PathfindingGrid.cs" t="Include" />
+            <e p="PathfindingMarker.cs" t="Include" />
+          </e>
           <e p="MatchData" t="Include">
             <e p="Act.cs" t="Include" />
             <e p="Match.cs" t="Include" />
@@ -47,7 +69,8 @@
             <e p="CharacterAction.cs" t="Include" />
             <e p="ReplayRunner" t="Include">
               <e p="ActionReplayRunner.cs" t="Include" />
-              <e p="IntervalReplayRunner.cs" t="Include" />
+              <e p="ReplayRunner.cs" t="Include" />
+              <e p="Unlinked.cs" t="Include" />
             </e>
             <e p="ReplayStorage" t="Include">
               <e p="ActionReplayStorage.cs" t="Include" />
@@ -117,10 +140,8 @@
       <e p="obj" t="ExcludeRecursive" />
       <e p="Packages" t="ExcludeRecursive" />
       <e p="PlayModeTests.csproj" t="IncludeRecursive" />
-      <e p="PowerInspector.Demo.csproj" t="IncludeRecursive" />
-      <e p="PowerInspector.Demo.Drawers.csproj" t="IncludeRecursive" />
-      <e p="PowerInspector.Editor.csproj" t="IncludeRecursive" />
-      <e p="PowerInspector.Runtime.csproj" t="IncludeRecursive" />
+      <e p="PowerInspector.Components.csproj" t="IncludeRecursive" />
+      <e p="PowerInspector.csproj" t="IncludeRecursive" />
       <e p="Sisus.Attributes.csproj" t="IncludeRecursive" />
       <e p="Sisus.CreateScriptWizard.csproj" t="IncludeRecursive" />
       <e p="Sisus.FastReflection.csproj" t="IncludeRecursive" />

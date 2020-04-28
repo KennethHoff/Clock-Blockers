@@ -8,7 +8,7 @@ namespace Sisus
 	/// <summary>
 	/// Window responsible for drawing Power Inspector preferences view.
 	/// </summary>
-	public sealed class PowerInspectorPreferencesWindow : InspectorDrawerWindow
+	public sealed class PowerInspectorPreferencesWindow : InspectorDrawerWindow<PowerInspectorPreferencesWindow, PreferencesInspector>
 	{
 		[CanBeNull]
 		public static PreferencesDrawer GetExistingWindow()
@@ -86,7 +86,7 @@ namespace Sisus
 			#endif
 
 			var minSize = PreferencesDrawer.GetExpectedMinSize();
-			var created = (PowerInspectorPreferencesWindow)CreateNew(typeof(PowerInspectorPreferencesWindow), "Preferences", ArrayPool<Object>.CreateWithContent(PowerInspector.GetPreferences()), true, false, minSize, minSize);
+			var created = CreateNew<PowerInspectorPreferencesWindow>("Preferences", ArrayPool<Object>.CreateWithContent(PowerInspector.GetPreferences()), true, false, minSize, minSize);
 			return GetPrefencesDrawer(created);
 		}
 
@@ -118,7 +118,7 @@ namespace Sisus
 		}
 
 		/// <inheritdoc/>
-		protected override void Setup(Object[] inspect, bool lockView, Vector2 scrollPos, float minWidth = 280f, float minHeight = 130f, float maxWidth = 0f, float maxHeight = 0f)
+		protected override void Setup(bool lockView, Vector2 scrollPos, float minWidth = 280f, float minHeight = 130f, float maxWidth = 0f, float maxHeight = 0f)
 		{
 			var preferences = GetPreferences();
 
@@ -130,7 +130,7 @@ namespace Sisus
 			Debug.Assert(maxHeight <= 0f || maxHeight == minSize.y, StringUtils.ToString(maxHeight));
 			#endif
 
-			base.Setup(inspect, true, scrollPos, minWidth, minHeight, maxWidth, maxHeight);
+			base.Setup(true, scrollPos, minWidth, minHeight, maxWidth, maxHeight);
 			SelectionManager.Select(preferences);
 		}
 		

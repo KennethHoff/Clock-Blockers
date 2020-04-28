@@ -120,8 +120,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2253878130908946239}
   - component: {fileID: 6401269965137308291}
-  - component: {fileID: 8577686613341367911}
   - component: {fileID: 4992478787989653737}
+  - component: {fileID: 8577686613341367911}
   - component: {fileID: 2776805031919863050}
   m_Layer: 9
   m_Name: BaseCharacter
@@ -159,30 +159,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   deadMaterial: {fileID: 2100000, guid: d03db172b555d5f40990d1c63e684aec, type: 2}
---- !u!114 &8577686613341367911
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2253878130908946237}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63182630a78c42e59b78795f6d422578, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  armor:
-    useConstant: 1
-    constantValue: 5
-    variable: {fileID: 0}
-  maxHealth:
-    useConstant: 1
-    constantValue: 50
-    variable: {fileID: 0}
-  health:
-    useConstant: 1
-    constantValue: 0
-    variable: {fileID: 0}
 --- !u!114 &4992478787989653737
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -207,6 +183,30 @@ MonoBehaviour:
   divFactMulti: 1.25
   isGrounded: 0
   charDimension: {x: 1, y: 2, z: 1}
+--- !u!114 &8577686613341367911
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2253878130908946237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63182630a78c42e59b78795f6d422578, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  armor:
+    useConstant: 1
+    constantValue: 5
+    variable: {fileID: 0}
+  maxHealth:
+    useConstant: 1
+    constantValue: 50
+    variable: {fileID: 0}
+  health:
+    useConstant: 1
+    constantValue: 0
+    variable: {fileID: 0}
 --- !u!114 &2776805031919863050
 MonoBehaviour:
   m_ObjectHideFlags: 0

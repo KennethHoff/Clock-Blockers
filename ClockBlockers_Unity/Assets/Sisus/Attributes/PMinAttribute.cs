@@ -8,7 +8,7 @@ namespace Sisus.Attributes
 	/// 
 	/// This is just like Unity's built-in MinAttribute but supports targeting of properties and parameters in addition to fields.
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Parameter, AllowMultiple = false, Inherited = false)]
+	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method | AttributeTargets.Parameter | AttributeTargets.ReturnValue, AllowMultiple = false, Inherited = false)]
 	public class PMinAttribute : PropertyAttribute, ITargetableAttribute
 	{
 		/// <param name="minimum"> The minimum allowed value. </param>

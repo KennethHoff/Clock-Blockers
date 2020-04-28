@@ -47,21 +47,10 @@ namespace ClockBlockers.GameControllers
 		private List<Match> allMatches;
 		
 		[SerializeField]
-		private bool logToFile;
-		
-		[SerializeField]
 		private Match matchPrefab;
-		
 		
 		private Match _currentMatch;
 		
-		private Logging _logging;
-
-		private void Awake()
-		{
-			_logging = new Logging("Logging", logToFile);
-		}
-
 		private void Start()
 		{
 			Match newMatch = Instantiate(matchPrefab);
@@ -69,7 +58,7 @@ namespace ClockBlockers.GameControllers
 			
 			newMatch.Setup();
 			newMatch.Begin();
-			Application.targetFrameRate = 60;
+			// Application.targetFrameRate = 60;
 		}
 	}
 }

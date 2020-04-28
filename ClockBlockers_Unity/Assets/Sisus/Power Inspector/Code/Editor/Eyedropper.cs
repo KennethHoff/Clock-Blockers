@@ -40,7 +40,7 @@ namespace Sisus
 			{
 				ObjectReferenceDrawer.eyedropperCurrentTarget -= instance.GetMouseovered;
 				instance.Dispose();
-				instance = null;				
+				instance = null;
 			}
 		}
 

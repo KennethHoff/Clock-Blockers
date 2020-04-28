@@ -9,7 +9,7 @@ namespace Sisus
 	/// <summary>
 	/// Window responsible for drawing Power Inspector views.
 	/// </summary>
-	public sealed class PowerInspectorWindow : InspectorDrawerWindow, IHasCustomMenu
+	public sealed class PowerInspectorWindow : InspectorDrawerWindow<PowerInspectorWindow, PowerInspector>, IHasCustomMenu
 	{
 		/// <inheritdoc/>
 		public override bool CanSplitView
@@ -66,7 +66,7 @@ namespace Sisus
 		[NotNull]
 		public static PowerInspectorWindow CreateNew(bool addAsTab, bool show = true)
 		{
-			var created = (PowerInspectorWindow)CreateNewWithoutShowing(typeof(PowerInspectorWindow), addAsTab);
+			var created = CreateNewWithoutShowing<PowerInspectorWindow>(addAsTab);
 			created.minSize = new Vector2(280f, 130f);
 
 			if(show)
@@ -92,7 +92,7 @@ namespace Sisus
 		[NotNull]
 		public static PowerInspectorWindow CreateNew(Object[] inspect, bool lockView = false, bool addAsTab = true, Vector2 minSize = default(Vector2))
 		{
-			return (PowerInspectorWindow)CreateNew(typeof(PowerInspectorWindow), "Inspector", inspect, lockView, addAsTab, minSize);
+			return CreateNew<PowerInspectorWindow>("Inspector", inspect, lockView, addAsTab, minSize);
 		}
 
 		[UsedImplicitly, MenuItem(PowerInspectorMenuItemPaths.CloseTab, false, PowerInspectorMenuItemPaths.CloseTabPriority)]

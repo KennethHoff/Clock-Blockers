@@ -5,8 +5,6 @@ using Between_Names.Property_References;
 using ClockBlockers.Utility;
 
 using UnityEngine;
-using UnityEngine.PlayerLoop;
-
 
 namespace ClockBlockers.Characters
 {
@@ -228,6 +226,11 @@ namespace ClockBlockers.Characters
 			return true;
 		}
 
+		private void OnDisable()
+		{
+			Logging.Log("Character Movement Disabled on " + name);
+		}
+
 
 		private Vector3 GetForwardVector(out Vector3 right)
 		{
@@ -240,21 +243,32 @@ namespace ClockBlockers.Characters
 			right.Normalize();
 			return forward;
 		}
+		
+		
+		public void AddVelocity(Vector3 moveVector)
+		{
+			Velocity += moveVector * moveSpd;
+		}
 
-		public void AddForwardVelocity(Vector2 directionVector)
+		public void AddVelocityFromInputVector(Vector2 inputVector)
+		{
+			var moveVector = new Vector3(inputVector.x, 0, inputVector.y);
+			AddVelocity(moveVector * Time.deltaTime);
+		}
+
+		public void AddVelocityRelativeToForward(Vector2 directionVector)
 		{
 			Vector3 forward = GetForwardVector(out Vector3 right);
 
 			Vector3 prelimMove = (forward * directionVector.y) + (right * directionVector.x);
-			Vector3 moveVector = prelimMove * MoveSpd;
-
-			Velocity += moveVector;
+			
+			AddVelocity(prelimMove * Time.deltaTime);
 		}
 
 
-		public void AddForwardVelocity()
+		public void AddVelocityRelativeToForward()
 		{
-			AddForwardVelocity(Vector2.up);
+			AddVelocityRelativeToForward(Vector2.up);
 		}
 
 		// public void SetForwardVelocity(Vector2 magnitudeVector)
@@ -286,9 +300,9 @@ namespace ClockBlockers.Characters
 			velocity.y += jumpHeight;
 		}
 
-		public void MoveForward()
+		public void RotateTo(float positionY)
 		{
-			
+			transform.rotation = Quaternion.Euler(0, positionY, 0);
 		}
 	}
 }

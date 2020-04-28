@@ -25,34 +25,17 @@ namespace Sisus
 		private Action onClosed;
 		private int isDirty;
 
-		/// <summary>
-		/// Creates the Add Component Menu Window if in editor mode.
-		/// This is attached to the Add Component button being clicked.
-		/// </summary>
-		/// <param name="setInspector">   The inspector which is opening the menu. </param>
-		/// <param name="items"> Root items of the menu. </param>
-		/// <param name="groupsByLabel"> All groups in the menu flattened, with full label path of group as key in dictionary. </param>
-		/// <param name="itemsByLabel"> All non-group leaf items in the menu flattened, with full label path of item as key in dictionary. </param>
-		/// <param name="tickedItems"> items that are ticked in the menu. </param>
-		/// <param name="canTickMultipleItems"> Is it possible to have mutliple items ticked in the menu simultaneously? </param>
-		/// <param name="unrollPosition"> The position above or below which the menu should open. </param>
-		/// <param name="onMenuItemClicked"> Action to invoke when a menu item is clicked. </param>
-		/// <param name="onClosed"> (Optional) Action to invoke when the menu is closed. </param>
-		/// <param name="menuTitle"> Title for menu. Use GUIContent.none to hide the titlebar. </param>
-		public static void CreateIfInEditorMode([NotNull]IInspector setInspector, [NotNull]List<PopupMenuItem> items, [NotNull]Dictionary<string, PopupMenuItem> groupsByLabel, [NotNull]Dictionary<string, PopupMenuItem> itemsByLabel, [CanBeNull]List<PopupMenuItem> tickedItems, bool canTickMultipleItems, Rect unrollPosition, Action<PopupMenuItem> onMenuItemClicked, [CanBeNull]Action onClosed, GUIContent menuTitle)
+		public static void SelectItem(string label)
 		{
-			if(Platform.EditorMode)
+			if(instance == null)
 			{
-				Create(setInspector, items, groupsByLabel, itemsByLabel, tickedItems, canTickMultipleItems, unrollPosition, onMenuItemClicked, onClosed, menuTitle);
+				#if DEV_MODE
+				Debug.LogWarning("PopupMenu.SelectItem called but instance was null. Create should be called before calling SelectItem.");
+				#endif
+				return;
 			}
-		}
 
-		public static void SelectItemIfInEditorMode(string label)
-		{
-			if(Platform.EditorMode && instance != null)
-			{
-				instance.drawer.SetSelectedMember(label);
-			}
+			instance.drawer.SetSelectedMember(label);
 		}
 
 		/// <summary>

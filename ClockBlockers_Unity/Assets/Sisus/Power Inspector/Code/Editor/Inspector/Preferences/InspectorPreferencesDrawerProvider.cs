@@ -67,7 +67,6 @@ namespace Sisus
 			setupTimer.Start("InspectorPreferencesDrawerProvider.Setup");
 			#endif
 			
-			Platform.SetEditorMode();
 			var settings = InspectorPreferences.GetDefaultPreferences();
 			settings.Setup();
 			DrawGUI.Setup(settings);

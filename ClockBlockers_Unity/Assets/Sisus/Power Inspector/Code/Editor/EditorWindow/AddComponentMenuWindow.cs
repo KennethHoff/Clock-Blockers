@@ -22,14 +22,22 @@ namespace Sisus
 		private Action onClosed;
 		private int isDirty;
 
+		public static bool IsOpen
+		{
+			get
+			{
+				return instance != null;
+			}
+		}
+
 		/// <summary>
 		/// Creates the Add Component Menu Window if in editor mode.
 		/// This is attached to the Add Component button being clicked.
 		/// </summary>
-		/// <param name="inspector">   The inspector which contains the target. </param>
-		/// <param name="target">	   Target onto which components should be added. </param>
-		/// <param name="unrollPosition">The position above or below which the window should open. </param>
-		/// <param name="onClosed">	   This action is invoked when the editor window is closed. </param>
+		/// <param name="inspector"> The inspector which contains the target. </param>
+		/// <param name="target"> Target onto which components should be added. </param>
+		/// <param name="unrollPosition"> The position above or below which the window should open. </param>
+		/// <param name="onClosed"> This action is invoked when the editor window is closed. </param>
 		public static void CreateIfInEditorMode(IInspector inspector, IGameObjectDrawer target, Rect unrollPosition, Action onClosed)
 		{
 			if(Platform.EditorMode)
@@ -127,9 +135,9 @@ namespace Sisus
 			{
 				unrollPosScreenSpace.y -= AddComponentMenuDrawer.TotalHeight + unrollPosition.height + 2f;
 			}
-			
-			unrollPosScreenSpace.x = Mathf.RoundToInt(inspectorDrawer.position.x + setInspector.State.WindowRect.width * 0.5f - AddComponentMenuDrawer.Width * 0.5f) + 1f;
-			
+
+			unrollPosScreenSpace.x = Mathf.CeilToInt(inspectorDrawer.position.x + setInspector.State.contentRect.width * 0.5f - AddComponentMenuDrawer.Width * 0.5f);
+
 			// if the inspector window is docked, the positions need to be adjusted somewhat to be accurate
 			var inspectorWindow = setInspector.InspectorDrawer as EditorWindow;
 			if(inspectorWindow != null)
@@ -165,7 +173,9 @@ namespace Sisus
 				return;
 			}
 
-			DrawGUI.BeginOnGUI(inspector.Preferences, true);
+			var preferences = inspector.Preferences;
+
+			DrawGUI.BeginOnGUI(preferences, true);
 
 			bool addedComponent = false;
 			EditorGUI.BeginChangeCheck();
@@ -197,7 +207,7 @@ namespace Sisus
 			var rect = position;
 			rect.x = 0f;
 			rect.y = 0f;
-			DrawGUI.DrawRect(rect, Color.grey);
+			DrawGUI.DrawRect(rect, preferences.theme.ComponentSeparatorLine);
 		}
 
 		#if REPAINT_ON_UPDATE
@@ -237,7 +247,7 @@ namespace Sisus
 				inspector.OnNextLayout(RestoreClickControlsAfterAFrame);
 			}
 			#if DEV_MODE
-			else { Debug.Log("RestoreClickControlsAfterTwoFrames called with inspector null, so can't restore controls. InspectorUtility.ActiveInspector="+StringUtils.ToColorizedString(InspectorUtility.ActiveInspector)); }
+			else { Debug.Log("RestoreClickControlsAfterTwoFrames called with inspector null, so can't restore controls. InspectorUtility.ActiveInspector="+StringUtils.ToString(InspectorUtility.ActiveInspector)); }
 			#endif
 		}
 
@@ -248,7 +258,7 @@ namespace Sisus
 				inspector.OnNextLayout(RestoreClickControls);
 			}
 			#if DEV_MODE
-			else { Debug.Log("RestoreClickControlsAfterAFrame called with inspector null, so can't restore controls. InspectorUtility.ActiveInspector=" + StringUtils.ToColorizedString(InspectorUtility.ActiveInspector)); }
+			else { Debug.Log("RestoreClickControlsAfterAFrame called with inspector null, so can't restore controls. InspectorUtility.ActiveInspector=" + StringUtils.ToString(InspectorUtility.ActiveInspector)); }
 			#endif
 		}
 
@@ -259,7 +269,7 @@ namespace Sisus
 				inspector.InspectorDrawer.Manager.IgnoreAllMouseInputs = false;
 			}
 			#if DEV_MODE
-			else { Debug.Log("RestoreClickControls called with inspector null, so can't restore controls. InspectorUtility.ActiveInspector=" + StringUtils.ToColorizedString(InspectorUtility.ActiveInspector)); }
+			else { Debug.Log("RestoreClickControls called with inspector null, so can't restore controls. InspectorUtility.ActiveInspector=" + StringUtils.ToString(InspectorUtility.ActiveInspector)); }
 			#endif
 		}
 

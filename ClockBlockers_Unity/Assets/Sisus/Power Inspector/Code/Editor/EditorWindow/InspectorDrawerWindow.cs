@@ -1,16 +1,12 @@
 ﻿#define SAFE_MODE
 #define UPDATE_VALUES_ON_INSPECTOR_UPDATE
-#define SHOW_SCREENSHOT_WHILE_SCRIPTS_RELOADING
-
 //#define DEBUG_ON_SELECTION_CHANGE
 //#define DEBUG_FOCUS
 //#define DEBUG_MOUSEOVERED_INSTANCE
-//#define DEBUG_SAVE_STATE
-//#define DEBUG_RESTORE_STATE
-//#define DEBUG_SPLIT_VIEW
-//#define DEBUG_ON_HIERARCHY_CHANGE
-//#define DEBUG_PLAY_MODE_CHANGED
-//#define DEBUG_ON_SCRIPTS_RELOADED
+#define DEBUG_SPLIT_VIEW
+#define DEBUG_ON_HIERARCHY_CHANGE
+#define DEBUG_PLAY_MODE_CHANGED
+#define DEBUG_ON_SCRIPTS_RELOADED
 //#define DEBUG_ANY_INSPECTOR_PART_MOUSEOVERED
 //#define DEBUG_KEY_DOWN
 //#define DEBUG_REPAINT
@@ -27,11 +23,15 @@ namespace Sisus
 	/// <summary>
 	/// Class that can be inherited from to handle drawing of inspector views.
 	/// </summary>
-	public abstract class InspectorDrawerWindow : EditorWindow, ISplittableInspectorDrawer
+	public abstract class InspectorDrawerWindow<TInspectorDrawer, TInspector> : EditorWindow, ISplittableInspectorDrawer where TInspectorDrawer : InspectorDrawerWindow<TInspectorDrawer, TInspector> where TInspector : class, IInspector, new()
 	{
 		[CanBeNull]
+		private static InspectorDrawerWindow<TInspectorDrawer, TInspector> mouseoveredInstance;
+
+		[CanBeNull, NonSerialized]
 		protected IEditorWindowMessageDispenser messageDispenser;
 
+		[SerializeField]
 		private float lastUpdateTime;
 
 		[SerializeField]
@@ -39,36 +39,40 @@ namespace Sisus
 
 		[SerializeField]
 		protected InspectorTargetingMode inspectorTargetingMode = InspectorTargetingMode.All;
-		
-		private IInspector mainView;
-		private IInspector splitView;
-		
-		[NonSerialized]
+
+		[SerializeField]
 		private bool viewIsSplit;
 
+		[SerializeField]
+		public Editors editors = new Editors();
+
+		[SerializeField]
+		private float onUpdateDeltaTime;
+		[SerializeField]
+		private float onGUIDeltaTime;
+		[SerializeField]
+		private float lastOnGUITime;
+
+		[SerializeField]
+		private TInspector mainView;
+		[NonSerialized]
+		private TInspector splitView;
+		[NonSerialized]
 		private bool isDirty = true;
-		
+		[NonSerialized]
 		private bool swapSplitSidesOnNextRepaint;
-		
 		[NonSerialized]
 		private bool subscribedToEvents;
 
-		private static InspectorDrawerWindow mouseoveredInstance;
-
+		[NonSerialized]
 		protected InspectorManager inspectorManager;
-		
-		private float onUpdateDeltaTime;
-		private float onGUIDeltaTime;
-		private float lastOnGUITime;
 
+		[NonSerialized]
 		private bool nowRestoringPreviousState;
-		
+		[NonSerialized]
 		private bool nowClosing;
+		[NonSerialized]
 		private bool nowLosingFocus;
-
-		#if UNITY_2017_1_OR_NEWER && SHOW_SCREENSHOT_WHILE_SCRIPTS_RELOADING
-		private Texture2D screenshotWhileScriptsReloading;
-		#endif
 
 		#if DEV_MODE && DEBUG_ON_SELECTION_CHANGE
 		private float lastSelectionChangeTime = -1000f;
@@ -218,10 +222,19 @@ namespace Sisus
 			{
 				return nowClosing;
 			}
-		}		
+		}
+
+		/// <inheritdoc/>
+		public Editors Editors
+		{
+			get
+			{
+				return editors;
+			}
+		}
 
 		[NotNull]
-		public static IInspectorDrawer CreateNewWithoutShowing([NotNull] Type windowType, bool addAsTab)
+		protected static T CreateNewWithoutShowing<T>(bool addAsTab) where T : TInspectorDrawer
 		{
 			var manager = InspectorUtility.ActiveManager;
 			if(manager == null)
@@ -238,14 +251,14 @@ namespace Sisus
 			// If no such window is currently focused, then try to find last inspector drawer of same as the created window.
 			else
 			{
-				existingWindow = manager.GetLastSelectedInspectorDrawer(windowType) as EditorWindow;
+				existingWindow = manager.GetLastSelectedInspectorDrawer(typeof(T)) as EditorWindow;
 			}
 
-			var created = (EditorWindow)CreateInstance(windowType);
+			var created = (EditorWindow)CreateInstance(typeof(T));
 
 			if(existingWindow != null)
 			{
-				var existingInspectorDrawerWindow = existingWindow as InspectorDrawerWindow;
+				var existingInspectorDrawerWindow = existingWindow as T;
 				//Sometimes instance can refer to an invisible window with an invalid state.
 				//This might happen e.g. when the editor is started with the window being open but with
 				//scripts containing compile errors. The problem can also be fixed by reverting Layout to
@@ -267,7 +280,7 @@ namespace Sisus
 				}
 			}
 			
-			return (IInspectorDrawer)created;
+			return (T)created;
 		}
 
 		/// <inheritdoc/>
@@ -280,17 +293,17 @@ namespace Sisus
 		}
 
 		[NotNull]
-		public static InspectorDrawerWindow CreateNew([NotNull]Type windowType, [NotNull]string title, [NotNull]Object[] inspect, bool lockView = false, bool addAsTab = true, Vector2 minSize = default(Vector2), Vector2 maxSize = default(Vector2), bool utility = false)
+		protected static T CreateNew<T>([NotNull]string title, [NotNull]Object[] inspect, bool lockView = false, bool addAsTab = true, Vector2 minSize = default(Vector2), Vector2 maxSize = default(Vector2), bool utility = false) where T : TInspectorDrawer
 		{
 			#if DEV_MODE && PI_ASSERTATIONS
 			Debug.Assert(Event.current != null);
-			Debug.Assert(typeof(InspectorDrawerWindow).IsAssignableFrom(windowType));
 			#endif
 
-			var drawerWindow = (InspectorDrawerWindow)CreateNewWithoutShowing(windowType, addAsTab);
+			var drawerWindow = CreateNewWithoutShowing<T>(addAsTab);
 			if(!drawerWindow.SetupDone)
 			{
-				drawerWindow.Setup(inspect, lockView, Vector2.zero, minSize.x, minSize.y, maxSize.x, maxSize.y);
+				drawerWindow.Setup(lockView, Vector2.zero, minSize.x, minSize.y, maxSize.x, maxSize.y);
+				drawerWindow.MainView.RebuildDrawers(inspect, false);
 			}
 
 			if(utility)
@@ -306,17 +319,7 @@ namespace Sisus
 
 			return drawerWindow;
 		}
-
-		private static InspectorDrawerWindow FindInstance()
-		{
-			var instances = Resources.FindObjectsOfTypeAll<InspectorDrawerWindow>();
-			if(instances.Length > 0)
-			{ 
-				return instances[0];
-			}
-			return null;
-		}
-		
+	
 		[UsedImplicitly]
 		private void Start()
 		{
@@ -338,10 +341,19 @@ namespace Sisus
 
 		private void Setup()
 		{
+			#if DEV_MODE
+			var timer = new ExecutionTimeLogger();
+			timer.Start(GetType().Name+".Setup");
+			#endif
+
 			if(!SetupDone)
 			{
-				Setup(ArrayPool<Object>.ZeroSizeArray, false, Vector2.zero, -1f, -1f, -1f, -1f);
+				Setup(false, Vector2.zero, -1f, -1f, -1f, -1f);
 			}
+
+			#if DEV_MODE
+			timer.FinishAndLogResults();
+			#endif
 		}
 		
 		protected virtual GUIContent GetTitleContent()
@@ -406,20 +418,17 @@ namespace Sisus
 		}
 
 		/// <summary> Setups the window and its views so they are ready to be used. </summary>
-		/// <param name="inspect"> The targets to inspect in the main view of the window. </param>
 		/// <param name="lockView"> True to lock the view, false to leave it unlocked. </param>
-		/// <param name="scrollPos"> The scroll position for the main view's viewport. </param>
+		/// <param name="scrollPos"> (Optional) The scroll position for the main view's viewport. </param>
 		/// <param name="minWidth"> (Optional) The minimum width to which the window can be resized. </param>
 		/// <param name="minHeight"> (Optional) The minimum height to which the window can be resized. </param>
 		/// <param name="maxWidth"> (Optional) The maximum width to which the window can be resized. </param>
 		/// <param name="maxHeight"> (Optional) The maximum height to which the window can be resised. </param>
-		protected virtual void Setup(Object[] inspect, bool lockView, Vector2 scrollPos, float minWidth = 280f, float minHeight = 130f, float maxWidth = 0f, float maxHeight = 0f)
+		protected virtual void Setup(bool lockView, Vector2 scrollPos = default(Vector2), float minWidth = 280f, float minHeight = 130f, float maxWidth = 0f, float maxHeight = 0f)
 		{
 			#if DEV_MODE
 			Debug.Assert(!SetupDone);
 			#endif
-
-			Platform.SetEditorMode();
 
 			SelectionManager = GetDefaultSelectionManager();
 
@@ -434,20 +443,50 @@ namespace Sisus
 				minimizer.Setup(this, SelectionManager, minimizer.AutoMinimize);
 			}
 
-			if(mainView != null)
-			{
-				inspectorManager.Dispose(ref mainView);
-			}
 			var preferences = GetPreferences();
 			preferences.Setup();
-			mainView = CreateInspector(InspectorType, inspect, lockView, scrollPos);
+			if(mainView == null)
+			{
+				mainView = CreateInspector(ArrayPool<Object>.ZeroSizeArray, lockView, scrollPos);
+			}
+			else
+			{
+				var state = mainView.State;
+
+				#if DEV_MODE
+				Debug.Log("Reusing existing mainView instance with inspected="+StringUtils.ToString(state.inspected));
+				#endif
+
+				mainView.Setup(this, preferences, state.inspected, state.ScrollPos, state.ViewIsLocked); 
+			}
 			
 			if(splitView != null)
 			{
-				inspectorManager.Dispose(ref splitView);
+				if(viewIsSplit)
+				{
+					#if DEV_MODE
+					Debug.Log("Setup called with viewIsSplit=True and splitView=NotNull");
+					#endif
+
+					var state = splitView.State;
+					splitView.Setup(this, preferences, state.inspected, state.ScrollPos, state.ViewIsLocked);
+				}
+				else
+				{
+					#if DEV_MODE
+					Debug.LogWarning("Setup called with viewIsSplit=false but splitView=NotNull");
+					#endif
+					inspectorManager.Dispose(ref splitView);
+				}
+			}
+			else
+			{
+				#if DEV_MODE
+				if(viewIsSplit) { Debug.LogWarning("Setup called with viewIsSplit=True but splitView=null"); }
+				#endif
+				viewIsSplit = false;
 			}
 
-			viewIsSplit = false;
 			SubscribeToEvents();
 
 			if(minWidth > 0f && minHeight > 0f)
@@ -472,11 +511,9 @@ namespace Sisus
 				}
 			}
 
-			inspectorManager.OnNextLayout(PreCacheCommonlyUsedDrawer, this);
-
 			if(!nowRestoringPreviousState)
 			{
-				inspectorManager.OnNextLayout(RebuildDrawerIfTargetsChanged, this);
+				inspectorManager.OnNextLayout(RebuildDrawerAndExitGUIIfTargetsChanged, this);
 			}
 
 			SetupMessageDispenser(ref messageDispenser, preferences);
@@ -564,38 +601,11 @@ namespace Sisus
 		private void OnEditorPlaymodeStateChanged(PlayModeStateChange playModeStateChange)
 		{
 			#if DEV_MODE && DEBUG_PLAY_MODE_CHANGED
-			Debug.Log("OnEditorPlaymodeStateChanged("+ playModeStateChange + ")");
+			Debug.Log("OnEditorPlaymodeStateChanged("+ playModeStateChange + ") with SetupDone=" + SetupDone);
 			#endif
 			
-			Editors.CleanUp();
-
-			if(playModeStateChange == PlayModeStateChange.ExitingPlayMode || playModeStateChange == PlayModeStateChange.ExitingEditMode)
-			{
-				LinkedMemberHierarchy.OnHierarchyChange();
-
-				mainView.RebuildDrawers(ArrayPool<Object>.ZeroSizeArray, true);
-				if(viewIsSplit)
-				{
-					splitView.RebuildDrawers(ArrayPool<Object>.ZeroSizeArray, true);
-				}
-				mainView.State.ViewIsLocked = true;
-			}
-			else
-			{
-				if(playModeStateChange == PlayModeStateChange.EnteredPlayMode)
-				{
-					MainView.Message(new GUIContent("PLAY MODE\nChanges might not be saved.", MainView.Preferences.graphics.enteringPlayMode), null, MessageType.Info, false);
-				}
-
-				mainView.RebuildDrawers(ArrayPool<Object>.ZeroSizeArray, true);
-				if(viewIsSplit)
-				{
-					splitView.RebuildDrawers(ArrayPool<Object>.ZeroSizeArray, true);
-				}
-				mainView.State.ViewIsLocked = false;
-
-				OnHierarchyOrProjectPossiblyChanged(OnChangedEventSubject.Hierarchy);
-			}
+			editors.CleanUp();
+			OnHierarchyOrProjectPossiblyChanged(OnChangedEventSubject.Hierarchy);
 		}
 
 		private void HierarchyWindowItemCallback(int instanceId, Rect selectionRect)
@@ -659,7 +669,7 @@ namespace Sisus
 				
 				if(!viewIsSplit)
 				{
-					splitView = CreateInspector(InspectorType, inspect, true);
+					splitView = CreateInspector(inspect, true);
 					#if DEV_MODE
 					Debug.Assert(!viewIsSplit);
 					#endif
@@ -670,7 +680,7 @@ namespace Sisus
 					#if DEV_MODE
 					Debug.LogError("viewIsSplit was true but splitView was null!");
 					#endif
-					splitView = CreateInspector(InspectorType, inspect, true);
+					splitView = CreateInspector(inspect, true);
 					#if DEV_MODE
 					Debug.Assert(!viewIsSplit);
 					#endif
@@ -683,7 +693,7 @@ namespace Sisus
 					Debug.LogError("viewIsSplit was true but splitView.SetupDone was false!");
 					#endif
 					SetSplitView(false);
-					splitView = CreateInspector(InspectorType, inspect, true);
+					splitView = CreateInspector(inspect, true);
 					#if DEV_MODE
 					Debug.Assert(!viewIsSplit);
 					#endif
@@ -709,6 +719,8 @@ namespace Sisus
 				Debug.Assert(splitView.State.inspected.Length == 1);
 				Debug.Assert(splitView.State.inspected.Length == 0 || splitView.State.inspected[0] == target);
 				#endif
+
+				ExitGUIUtility.ExitGUI(); // new test
 			}
 			// if window has a search filter, allow clearing it by clicking the element with control held down
 			else if(e.button == 1 && e.control && type == EventType.MouseDown && selectionRect.Contains(e.mousePosition))
@@ -752,22 +764,16 @@ namespace Sisus
 			}
 		}
 		
-		protected IInspector CreateInspector(Type inspectorType, bool lockView = false, Vector2 scrollPos = default(Vector2))
+		protected TInspector CreateInspector(bool lockView = false, Vector2 scrollPos = default(Vector2))
 		{
-			return CreateInspector(inspectorType, ArrayPool<Object>.ZeroSizeArray, lockView, scrollPos);
+			return CreateInspector(ArrayPool<Object>.ZeroSizeArray, lockView, scrollPos);
 		}
 
-		protected IInspector CreateInspector(Type inspectorType, Object[] inspect, bool lockView = false, Vector2 scrollPos = default(Vector2))
+		protected TInspector CreateInspector([NotNull]Object[] inspect, bool lockView = false, Vector2 scrollPos = default(Vector2))
 		{
-			var result = inspectorManager.Create(inspectorType, this, GetPreferences(), inspect, scrollPos, lockView);
+			var result = inspectorManager.Create<TInspector>(this, GetPreferences(), inspect, scrollPos, lockView);
 
 			var state = result.State;
-
-			state.OnLockedStateChanged -= SaveState;
-			state.OnLockedStateChanged += SaveState;
-
-			state.OnScrollPosChanged -= SaveState;
-			state.OnScrollPosChanged += SaveState;
 
 			#if DEV_MODE && PI_ASSERTATIONS
 			Debug.Assert(state.ViewIsLocked == lockView, ToString() +" state.ViewIsLocked ("+StringUtils.ToColorizedString(state.ViewIsLocked)+") did not match lockView ("+StringUtils.ToColorizedString(lockView)+") after Create");
@@ -839,7 +845,7 @@ namespace Sisus
 
 				if(splitView == null)
 				{
-					splitView = CreateInspector(InspectorType, inspect, true);
+					splitView = CreateInspector(inspect, true);
 				}
 				else
 				{
@@ -979,18 +985,18 @@ namespace Sisus
 
 		private void OnHierarchyOrProjectPossiblyChanged(OnChangedEventSubject changed)
 		{
-			//UPDATE: Setup can only be called during the first call to OnGUI
-			//while this can sometimes get invoked before that
-			if(!SetupDone)
-			{
-				return;
-			}
-
 			#if DEV_MODE && DEBUG_ON_HIERARCHY_CHANGE
 			Debug.Log("!!!!!!!! OnHierarchyChange !!!!!!!!!");
 			#endif
 
 			LinkedMemberHierarchy.OnHierarchyChange();
+
+			// UPDATE: Setup can only be called during the first call to OnGUI
+			// while this can sometimes get invoked before that.
+			if(!SetupDone)
+			{
+				return;
+			}
 
 			mainView.OnProjectOrHierarchyChanged(changed);
 			if(ViewIsSplit)
@@ -1017,7 +1023,19 @@ namespace Sisus
 			RebuildDrawers(false);
 		}
 
-		private void RebuildDrawers(bool evenIfTargetsTheSame)
+		protected void RebuildDrawerAndExitGUIIfTargetsChanged()
+		{
+			if(RebuildDrawers(false))
+			{
+				#if DEV_MODE
+				if(KeyboardControlUtility.JustClickedControl != 0 || (Event.current != null && (Event.current.type == EventType.MouseDown || Event.current.type == EventType.KeyDown))) { Debug.LogWarning("Calling ExitGUIUtility with JustClickedControl="+ KeyboardControlUtility.JustClickedControl+", Event="+StringUtils.ToString(Event.current)); }
+				#endif
+
+				ExitGUIUtility.ExitGUI();
+			}
+		}
+
+		private bool RebuildDrawers(bool evenIfTargetsTheSame)
 		{
 			#if SAFE_MODE
 			//UPDATE: Setup can only be called during the first call to OnGUI
@@ -1037,7 +1055,7 @@ namespace Sisus
 					}
 					RebuildDrawers(evenIfTargetsTheSame);
 				}, this);
-				return;
+				return false;
 			}
 			#endif
 
@@ -1048,7 +1066,7 @@ namespace Sisus
 				if(splitView == null)
 				{
 					#if DEV_MODE
-					Debug.LogError("InspectacularWindow.splitView was true but splitBottom was null!");
+					Debug.LogError("PowerInspectorWindow.splitView was true but splitBottom was null!");
 					#endif
 					SetSplitView(false);
 				}
@@ -1062,8 +1080,9 @@ namespace Sisus
 			if(viewChanged)
 			{
 				RefreshView();
-				SaveState();
 			}
+
+			return viewChanged;
 		}
 
 		private void AddDefaultInspectorTab()
@@ -1098,6 +1117,7 @@ namespace Sisus
 		{
 			float time = (float)EditorApplication.timeSinceStartup;
 			onUpdateDeltaTime = time - lastUpdateTime;
+
 			if(OnUpdate != null)
 			{
 				try
@@ -1158,23 +1178,6 @@ namespace Sisus
 
 			
 			inspectorManager.OnNextLayout(SwitchActiveInspectorAndUpdateContent, this);
-
-			SaveState();
-		}
-		
-		/// <summary>
-		/// Prewarms some commonly used IDrawer for smoother user experience when selecting
-		/// targets with these drawer for the first time
-		/// </summary>
-		private void PreCacheCommonlyUsedDrawer()
-		{
-			#if DEV_MODE && PI_ASSERTATIONS
-			Debug.Assert(mainView != null, "main view null!");
-			Debug.Assert(mainView.SetupDone, "main view Setup not done!");
-			Debug.Assert(mainView.DrawerProvider != null, "mainView.DrawerProvider null!");
-			#endif
-
-			mainView.DrawerProvider.Prewarm(mainView);
 		}
 
 		private void SwitchActiveInspectorAndUpdateContent()
@@ -1237,7 +1240,7 @@ namespace Sisus
 				var inspectorDrawer = activeInspectors[n].InspectorDrawer;
 				if(!ReferenceEquals(inspectorDrawer, this))
 				{
-					var updateIconOfDrawer = inspectorDrawer as InspectorDrawerWindow;
+					var updateIconOfDrawer = inspectorDrawer as InspectorDrawerWindow<TInspectorDrawer, TInspector>;
 					if(updateIconOfDrawer != null)
 					{
 						updateIconOfDrawer.UpdateWindowIcon();
@@ -1262,7 +1265,7 @@ namespace Sisus
 			// this is here so that if an EditorWindow tab was docked and not visible
 			// and it gains focus, we check that the target that was being inspected
 			// is still the selected target, exists etc.
-			inspectorManager.OnNextLayout(RebuildDrawerIfTargetsChanged, this);
+			inspectorManager.OnNextLayout(RebuildDrawerAndExitGUIIfTargetsChanged, this);
 		
 			SubscribeToEvents();
 
@@ -1270,7 +1273,7 @@ namespace Sisus
 			{
 				inspectorManager.ActiveInspector = activeInspectorWas;
 			}
-		}		
+		}
 
 		[UsedImplicitly]
 		private void OnLostFocus()
@@ -1359,7 +1362,7 @@ namespace Sisus
 			Debug.Log("!!!!!!!! OnBeforeAssemblyReload !!!!!!!!!");
 			#endif
 
-			Editors.Clear();
+			editors.OnBeforeAssemblyReload();
 		}
 		#endif
 
@@ -1387,7 +1390,8 @@ namespace Sisus
 			{
 				Setup();
 			}
-			RestoreState();
+
+			editors.CleanUp();
 		}
 
 		/// <inheritdoc/>
@@ -1403,23 +1407,78 @@ namespace Sisus
 			rootVisualElement.MarkDirtyRepaint();
 			#endif
 		}
-				
+		
+		#if DEV_MODE
+		private static double? firstOnGUITime;
+		#endif
+
 		[UsedImplicitly]
 		internal void OnGUI()
 		{
-			Platform.SetEditorMode();
-
 			if(!SetupDone)
 			{
-				#if ODIN_INSPECTOR
-				// This helps fix issue where OdinEditor had not yet been injected into Unity's internal systems before Power Inspector was requesting custom editor types for inspected components.
-				if(!ApplicationUtility.IsReady())
+				if(titleContent.image == null)
 				{
+					switch(inspectorTargetingMode)
+					{
+						default:
+							titleContent.image = HasFocus ? InspectorUtility.Preferences.graphics.InspectorIconActive : InspectorUtility.Preferences.graphics.InspectorIconInactive;
+							break;
+						case InspectorTargetingMode.Hierarchy:
+							titleContent.image = EditorGUIUtility.Load("icons/UnityEditor.SceneHierarchyWindow.png") as Texture;
+							break;
+						case InspectorTargetingMode.Project:
+							titleContent.image = EditorGUIUtility.Load("icons/Project.png") as Texture;
+							break;
+					}
+				}
+
+				var rect = new Rect(Screen.width * 0.5f - 50f, Screen.height * 0.5f - DrawGUI.SingleLineHeight * 0.5f, 100f, DrawGUI.SingleLineHeight);
+				switch((int)EditorApplication.timeSinceStartup % 4)
+				{
+					case 1:
+						GUI.Label(rect, "Initializing.");
+						break;
+					case 2:
+						GUI.Label(rect, "Initializing..");
+						break;
+					default:
+						GUI.Label(rect, "Initializing...");
+						break;
+				}
+
+				if(!DefaultDrawerProviders.IsReady || !ApplicationUtility.IsReady())
+				{
+					#if DEV_MODE
+					if(!firstOnGUITime.HasValue)
+					{
+						#if DEV_MODE
+						if(!DefaultDrawerProviders.IsReady)
+						{
+							Debug.Log("Won't call " + GetType().Name + ".Setup yet because !DefaultDrawerProviders.IsReady..."); 
+						}
+						else
+						{
+							Debug.Log("Won't call " + GetType().Name + ".Setup yet because !ApplicationUtility.IsReady()..."); 
+						}
+						#endif
+						firstOnGUITime = EditorApplication.timeSinceStartup;
+					}
+					#endif
+					
+					Repaint();
 					return;
+				}
+				#if DEV_MODE
+				else if(firstOnGUITime.HasValue)
+				{
+					Debug.Log("Time between first OnGUI call and when DefaultDrawerProviders IsReady: " + (EditorApplication.timeSinceStartup - firstOnGUITime.Value));
 				}
 				#endif
 
 				Setup();
+				ExitGUIUtility.ExitGUI();
+				return;
 			}
 
 			Manager.ActiveInspector = MainView;
@@ -1567,37 +1626,11 @@ namespace Sisus
 					break;
 			}
 			
-			Profiler.BeginSample("InspectacularWindow.OnGUI");
+			Profiler.BeginSample("PowerInspectorWindow.OnGUI");
 			
 			DrawGUI.BeginOnGUI(mainView.Preferences, true);
 
 			InspectorUtility.BeginInspectorDrawer(this, this);
-
-			#if UNITY_2017_1_OR_NEWER && SHOW_SCREENSHOT_WHILE_SCRIPTS_RELOADING
-			{
-				if(EditorApplication.isCompiling)
-				{
-					// check height to avoid error "[d3d11] attempting to ReadPixels outside of RenderTexture bounds! Reading (0, 0, 645, 644) from (3440, 20)"
-					if(screenshotWhileScriptsReloading == null && Screen.height > 20f && position.height > 20f)
-					{
-						screenshotWhileScriptsReloading = ScreenshotUtility.ScreenshotEditorWindow(this); 
-					}
-
-					#if DEV_MODE && DEBUG_DRAW_SCREENSHOT
-					Debug.Log("Drawing screenshot...");
-					#endif
-
-					var pos = position;
-					pos.x = -2f;
-					pos.y = 0f;
-					pos.width = screenshotWhileScriptsReloading.width;
-					pos.height = screenshotWhileScriptsReloading.height;
-					GUI.DrawTexture(pos, screenshotWhileScriptsReloading, ScaleMode.StretchToFill);
-					return;
-				}
-				screenshotWhileScriptsReloading = null;
-			}
-			#endif
 
 			// if window is minimized don't waste resources drawing things, when nothing is visible.
 			if(minimizer.Minimized)
@@ -1873,7 +1906,7 @@ namespace Sisus
 				{
 					if(splitView == null)
 					{
-						splitView = CreateInspector(InspectorType, mainView.State.inspected, true, mainView.State.ScrollPos);
+						splitView = CreateInspector(mainView.State.inspected, true, mainView.State.ScrollPos);
 					}
 				}
 				else
@@ -1898,7 +1931,6 @@ namespace Sisus
 					}
 				}
 				RefreshView();
-				SaveState();
 			}
 			#if DEV_MODE && PI_ASSERTATIONS
 			else { Debug.LogWarning("InspectorDrawerWindow.SetSplitView(" + StringUtils.ToColorizedString(enable) + ") called, but viewIsSplit was already "+StringUtils.ToColorizedString((bool)viewIsSplit)); }
@@ -1906,7 +1938,7 @@ namespace Sisus
 		}
 
 		/// <inheritdoc/>
-		public void ShowInSplitView(Object[] inspect)
+		public void ShowInSplitView(params Object[] inspect)
 		{
 			#if SAFE_MODE || DEV_MODE
 			if(!CanSplitView)
@@ -1925,94 +1957,9 @@ namespace Sisus
 			}
 			else
 			{
-				splitView = CreateInspector(InspectorType, inspect, true, Vector2.zero);
+				splitView = CreateInspector(inspect, true, Vector2.zero);
 			}
 			SetSplitView(true);
-		}
-		
-		private void SaveState()
-		{
-			if(!ApplicationUtility.IsReady()) 
-			{
-				#if DEV_MODE
-				Debug.LogWarning("Aborted SaveState because ApplicationUtility.IsReady was false.");
-				#endif
-				return;
-			}
-
-			#if DEV_MODE && DEBUG_SAVE_STATE
-			Debug.Log("Saving InspectorDrawerWindow state @ "+ Application.temporaryCachePath + "/temp-PowerInspectorState.data");
-			#endif
-
-			if(MainView == null)
-			{
-				#if DEV_MODE
-				Debug.LogError("InspectorDrawerWindow.SaveState called but MainView was null!");
-				#endif
-				return;
-			}
-
-			if(MainView.State == null)
-			{
-				#if DEV_MODE
-				Debug.LogError("InspectorDrawerWindow.SaveState called but MainView.State was null!");
-				#endif
-				return;
-			}
-
-			try
-			{
-				using(var saveData = new SplittableInspectorDrawerSerializedState(this))
-				{
-					saveData.Serialize(Application.temporaryCachePath + "/temp-PowerInspectorState.data");
-				}
-			}
-			#if DEV_MODE
-			catch(Exception e)
-			{
-				Debug.LogError(e);
-			#else
-			catch
-			{
-				return;
-			#endif
-			}
-		}
-		
-		private void RestoreState()
-		{
-			if(!ApplicationUtility.IsReady())
-			{
-				#if DEV_MODE
-				Debug.LogWarning("Aborted RestoreState because ApplicationUtility.IsReady was false.");
-				#endif
-				return;
-			}
-
-			#if DEV_MODE && PI_ASSERTATIONS
-			Debug.Assert(SetupDone, GetType().Name+".RestoreState called with SetupDone false!");
-			Debug.Assert(mainView.SetupDone, GetType().Name+".RestoreState called with mainView.SetupDone false!");
-			#endif
-
-			nowRestoringPreviousState = false;
-
-			string path = Application.temporaryCachePath + "/temp-PowerInspectorState.data";
-			if(System.IO.File.Exists(path))
-			{
-				#if DEV_MODE && DEBUG_RESTORE_STATE
-				Debug.Log("Restoring "+GetType().Name+" state from "+ path);
-				#endif
-				
-				viewIsSplit = false;
-				using(var saveData = SplittableInspectorDrawerSerializedState.Deserialize(path))
-				{
-					saveData.Deserialize(this);
-				}
-
-				#if DEV_MODE && PI_ASSERTATIONS
-				Debug.Assert(viewIsSplit == (SplitView != null));
-				#endif
-			}
 		}
 
 		public void SwapSplitViewSides()

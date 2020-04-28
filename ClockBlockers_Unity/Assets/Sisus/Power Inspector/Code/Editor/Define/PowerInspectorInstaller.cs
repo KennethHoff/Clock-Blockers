@@ -11,12 +11,12 @@ namespace Sisus
 		[UsedImplicitly]
 		static PowerInspectorInstaller()
 		{
-			AddDefineIfMissingAndShowWelcomeScreenIfNotShown();
+			EditorApplication.delayCall += AddDefineIfMissingAndShowWelcomeScreenIfNotShown;
 		}
 
 		private static void AddDefineIfMissingAndShowWelcomeScreenIfNotShown()
 		{
-			if(EditorApplication.isCompiling || EditorApplication.isUpdating)
+			if(!ApplicationUtility.IsReady())
 			{
 				EditorApplication.delayCall += AddDefineIfMissingAndShowWelcomeScreenIfNotShown;
 				return;

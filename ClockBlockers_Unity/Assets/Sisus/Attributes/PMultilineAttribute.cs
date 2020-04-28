@@ -8,7 +8,7 @@ namespace Sisus.Attributes
 	/// 
 	/// This is just like Unity's built-in MultilineAttribute but supports targeting of properties and parameters in addition to fields.
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Parameter, AllowMultiple = false, Inherited = false)]
+	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method | AttributeTargets.Parameter | AttributeTargets.ReturnValue, AllowMultiple = false, Inherited = false)]
 	public class PMultilineAttribute : PropertyAttribute, ITargetableAttribute
 	{
 		/// <summary> How many lines of text to make room for. Default is 3. </summary>

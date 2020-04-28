@@ -15,7 +15,7 @@ namespace Sisus
 		{
 			get
 			{
-				return PopupMenuWindow.CreateIfInEditorMode;
+				return PopupMenuWindow.Create;
 			}
 		}
 
@@ -23,7 +23,7 @@ namespace Sisus
 		{
 			get
 			{
-				return PopupMenuWindow.SelectItemIfInEditorMode;
+				return PopupMenuWindow.SelectItem;
 			}
 		}
 

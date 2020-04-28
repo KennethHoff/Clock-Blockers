@@ -2,6 +2,7 @@
 
 using Between_Names.Property_References;
 
+using ClockBlockers.AI;
 using ClockBlockers.Characters;
 using ClockBlockers.Events;
 using ClockBlockers.ReplaySystem;
@@ -34,7 +35,7 @@ namespace ClockBlockers.Input
 		[SerializeField]
 		private Gun gun;
 
-		private AiPathfinder testing;
+		private StandardAiPathfinder testing;
 
 		[SerializeField]
 		private FloatReference verticalMouseSensitivity;
@@ -77,7 +78,7 @@ namespace ClockBlockers.Input
 
 			if (_moveInput.magnitude > 0)
 			{
-				_characterMovement.AddForwardVelocity(_moveInput * Time.deltaTime);
+				_characterMovement.AddVelocityRelativeToForward(_moveInput);
 			}
 		}
 

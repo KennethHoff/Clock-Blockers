@@ -8,7 +8,7 @@ namespace Sisus.Attributes
 	/// 
 	/// This is just like Unity's built-in TextAreaAttribute but supports targeting of properties and parameters in addition to fields.
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Parameter, AllowMultiple = false, Inherited = false)]
+	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method | AttributeTargets.Parameter | AttributeTargets.ReturnValue, AllowMultiple = false, Inherited = false)]
 	public class PTextAreaAttribute : PropertyAttribute, ITargetableAttribute
 	{
 		/// <summary> The minimum amount of lines the text area will use. </summary>

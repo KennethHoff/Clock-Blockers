@@ -120,7 +120,7 @@ namespace ClockBlockers.MatchData
 				Character clone = SpawnNewClone();
 				// clone.GetComponent<IntervalReplayRunner>().replays = replayStorage.PlayerActions;
 
-				var cloneReplayRunner = clone.GetComponent<IntervalReplayRunner>();
+				var cloneReplayRunner = clone.GetComponent<ReplayRunner>();
 				
 				cloneReplayRunner.actions = replayStorage.actions;
 				cloneReplayRunner.translations = replayStorage.translations;

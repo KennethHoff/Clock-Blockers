@@ -16,7 +16,9 @@ MonoBehaviour:
   showProperties: 0
   showMethods: 0
   drawScriptReferenceFields: 0
+  propertyBlacklist: []
   MemberDisplayOrder: 000000000100000002000000
+  simplePropertiesInDebugMode: 1
   enableTooltipIcons: 1
   enableTooltipsFromXmlComments: 1
   textFieldHeight: 2

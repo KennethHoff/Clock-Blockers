@@ -1,5 +1,21 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-6095042441117325922
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7926008950823779502}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5b547cc5c66459e86714a1625396771, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  translationInterval:
+    useConstant: 0
+    constantValue: 0
+    variable: {fileID: 11400000, guid: 4a61bd20ce361284da74fa4a474ce93f, type: 2}
 --- !u!114 &1651983977633155462
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16,8 +32,8 @@ MonoBehaviour:
   response:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3199006382779731743}
-        m_TargetAssemblyTypeName: ClockBlockers.ReplaySystem.ReplayRunner.IntervalReplayRunner,
+      - m_Target: {fileID: 4381367487007400019}
+        m_TargetAssemblyTypeName: ClockBlockers.AI.AiController.StandardAiController,
           Main
         m_MethodName: Begin
         m_Mode: 1
@@ -45,8 +61,8 @@ MonoBehaviour:
   response:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3199006382779731743}
-        m_TargetAssemblyTypeName: ClockBlockers.ReplaySystem.ReplayRunner.IntervalReplayRunner,
+      - m_Target: {fileID: 4381367487007400019}
+        m_TargetAssemblyTypeName: ClockBlockers.AI.AiController.StandardAiController,
           Main
         m_MethodName: End
         m_Mode: 1
@@ -58,7 +74,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &3199006382779731743
+--- !u!114 &4381367487007400019
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -67,14 +83,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 7926008950823779502}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e5b547cc5c66459e86714a1625396771, type: 3}
+  m_Script: {fileID: 11500000, guid: fcd6e1d2177d425fb861eeb96af87f8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraController: {fileID: 7974216674786553497}
-  translationInterval:
-    useConstant: 0
-    constantValue: 0
-    variable: {fileID: 11400000, guid: 4a61bd20ce361284da74fa4a474ce93f, type: 2}
+--- !u!114 &7576223182090036205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7926008950823779502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c47e13478a1f41469645e755ed43655f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &8266837681266467731
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -145,14 +168,3 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 2253878130908946237, guid: 67d00b1d2b3cb5e499d32550ea99e5e9, type: 3}
   m_PrefabInstance: {fileID: 8266837681266467731}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7974216674786553497 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2023152811387489546, guid: 67d00b1d2b3cb5e499d32550ea99e5e9, type: 3}
-  m_PrefabInstance: {fileID: 8266837681266467731}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b4f3978553bb4ec79e660ffdabc69451, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define DEBUG_ENABLED
+
+using System;
 using JetBrains.Annotations;
 using UnityEditor;
 using System.Collections.Generic;
@@ -27,11 +29,11 @@ namespace Sisus
 				return;
 			}
 
-			var packageInstallerGuids = AssetDatabase.FindAssets("t:PluginCompatibilityPackageInstaller");			
+			var packageInstallerGuids = AssetDatabase.FindAssets("t:PluginCompatibilityPackageInstaller");
 			int count = packageInstallerGuids.Length;
 
-			#if DEV_MODE
-			UnityEngine.Debug.Log("!!!!!!!!!!!!!!!!!!!! CompatibilityPackageManager found " + count + " PluginCompatibilityPackageInstallers");
+			#if DEV_MODE && DEBUG_ENABLED
+			UnityEngine.Debug.Log("CompatibilityPackageManager found " + count + " PluginCompatibilityPackageInstallers");
 			#endif
 
 			packageInstallers = new PluginCompatibilityPackageInstaller[count];

@@ -20,7 +20,7 @@ namespace Sisus.Attributes
 		/// Type of the drawer to use.
 		/// </summary>
 		[NotNull]
-		public readonly Type drawerType;
+		public readonly string drawerTypeName;
 
 		/// <summary>
 		/// Parameters that can be used during Setup phase of a drawer that was selected using this attribute.
@@ -31,45 +31,45 @@ namespace Sisus.Attributes
 		/// <summary>
 		/// Specifies that the attribute holder should be drawn with the specified drawer type in the inspector.
 		/// </summary>
-		/// <param name="setDrawerType"> Type of drawer class to use for drawing the attribute holder. This can not be null. </param>
-		public UseDrawerAttribute([NotNull]Type setDrawerType) : base()
+		/// <param name="setDrawerTypeName"> Name of the drawer class to use for drawing the attribute holder. This can not be null or empty. </param>
+		public UseDrawerAttribute([NotNullOrEmpty]string setDrawerTypeName) : base()
 		{
 			#if DEV_MODE && PI_ASSERTATIONS
-			UnityEngine.Debug.Assert(setDrawerType != null, "UseDrawerAttribute parameter \"setDrawerType\" value was null. This is not supported.");
+			UnityEngine.Debug.Assert(!string.IsNullOrEmpty(drawerTypeName), "UseDrawerAttribute parameter \"drawerTypeName\" value was null or empty. This is not supported.");
 			#endif
 
-			drawerType = setDrawerType;
+			drawerTypeName = setDrawerTypeName;
 			setupParameters = noParameters;
 		}
 
 		/// <summary>
 		/// Specifies that the attribute holder should be drawn with the specified drawer type in the inspector.
 		/// </summary>
-		/// <param name="setDrawerType"> Type of drawer class to use for drawing the attribute holder. This can not be null. </param>
+		/// <param name="setDrawerTypeName"> Name of the drawer class to use for drawing the attribute holder. This can not be null or empty. </param>
 		/// <param name="attributeTarget"></param>
-		public UseDrawerAttribute([NotNull]Type setDrawerType, Target attributeTarget) : base(attributeTarget)
+		public UseDrawerAttribute([NotNullOrEmpty]string setDrawerTypeName, Target attributeTarget) : base(attributeTarget)
 		{
 			#if DEV_MODE && PI_ASSERTATIONS
-			UnityEngine.Debug.Assert(setDrawerType != null, "UseDrawerAttribute parameter \"setDrawerType\" value was null. This is not supported.");
+			UnityEngine.Debug.Assert(!string.IsNullOrEmpty(drawerTypeName), "UseDrawerAttribute parameter \"drawerTypeName\" value was null or empty. This is not supported.");
 			#endif
 
-			drawerType = setDrawerType;
+			drawerTypeName = setDrawerTypeName;
 			setupParameters = noParameters;
 		}
 
 		/// <summary>
 		/// Specifies that the attribute holder should be drawn with the specified drawer type in the inspector.
 		/// </summary>
-		/// <param name="setDrawerType"> Type of drawer class to use for drawing the attribute holder. This can not be null. </param>
+		/// <param name="setDrawerTypeName"> Name of the drawer class to use for drawing the attribute holder. This can not be null or empty. </param>
 		/// <param name="setSetupParameters"> Parameter values for use during the Setup phase of the drawer. If no additional parameters are provided for the drawer, this should be a zero-size array. This can not be null. </param>
-		public UseDrawerAttribute([NotNull]Type setDrawerType, [NotNull]params object[] setSetupParameters)
+		public UseDrawerAttribute([NotNullOrEmpty]string setDrawerTypeName, [NotNull]params object[] setSetupParameters)
 		{
 			#if DEV_MODE && PI_ASSERTATIONS
-			UnityEngine.Debug.Assert(setDrawerType != null, "UseDrawerAttribute parameter \"setDrawerType\" value was null. This is not supported.");
+			UnityEngine.Debug.Assert(!string.IsNullOrEmpty(setDrawerTypeName), "UseDrawerAttribute parameter \"drawerTypeName\" value was null or empty. This is not supported.");
 			UnityEngine.Debug.Assert(setSetupParameters != null, "UseDrawerAttribute parameter \"setSetupParameters\" value was null. This is not supported, you should use an empty array instead.");
 			#endif
 
-			drawerType = setDrawerType;
+			drawerTypeName = setDrawerTypeName;
 			setupParameters = setSetupParameters;
 		}
 
@@ -80,9 +80,9 @@ namespace Sisus.Attributes
 		}
 
 		/// <inheritdoc/>
-		public Type GetDrawerType(Type attributeHolderType, Type defaultDrawerTypeForAttributeHolder)
+		public Type GetDrawerType(Type attributeHolderType, Type defaultDrawerTypeForAttributeHolder, IDrawerByNameProvider drawerByNameProvider)
 		{
-			return drawerType;
+			return drawerByNameProvider.GetDrawerTypeByName(drawerTypeName);
 		}
 	}
 }

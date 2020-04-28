@@ -13,10 +13,14 @@ namespace Sisus
 	{
 		public static void OpenWindow([NotNull]string url = "", WebpageLoadFailed onFailToLoadUrl = null)
 		{
+			#if !UNITY_2020_1_OR_NEWER // WebView class no longer exists in Unity 2020.1 or later
 			Open(false, url, onFailToLoadUrl);
+			#endif
 		}
+
 		public static bool ShowPageIfWindowOpen([NotNull]string url, WebpageLoadFailed onFailToLoadUrl = null)
 		{
+			#if !UNITY_2020_1_OR_NEWER // WebView class no longer exists in Unity 2020.1 or later
 			if(TryFindExistingInstance(out instance))
 			{
 				#if DEV_MODE
@@ -38,9 +42,12 @@ namespace Sisus
 			#if DEV_MODE && DEBUG_SHOW_IF_OPEN
 			Debug.Log("PowerInspectorDocumentationWindow.ShowPageIfWindowOpen("+url+") - won't show because window was not open.");
 			#endif
+
+			#endif
+
 			return false;
 		}
-				
+		
 		private const float sideBarWidth = 300f;
 		private const float mainViewWidth = 660f;
 		private const float width = sideBarWidth + mainViewWidth;
@@ -115,7 +122,11 @@ namespace Sisus
 		[MenuItem(PowerInspectorMenuItemPaths.Documentation, false, PowerInspectorMenuItemPaths.DocumentationPriority), UsedImplicitly]
 		public static void Open()
 		{
+			#if !UNITY_2020_1_OR_NEWER // WebView class no longer exists in Unity 2020.1 or later
 			Open(true, "", null);
+			#else
+			PowerInspectorDocumentation.Show();
+			#endif
 		}
 
 		private static bool TryFindExistingInstance(out PowerInspectorDocumentationWindow existingInstance)
@@ -333,6 +344,11 @@ namespace Sisus
 		[UsedImplicitly]
 		private void OnGUI()
 		{
+			if(!InspectorUtility.Preferences.SetupDone)
+			{
+				InspectorUtility.Preferences.Setup();
+			}
+
 			#if DEV_MODE
 			if(Event.current.type == EventType.KeyDown)
 			{
@@ -396,6 +412,8 @@ namespace Sisus
 
 		private void DrawSideBar(Rect sideBarRect)
 		{
+			var guiColorWas = GUI.color;
+
 			var drawRect = sideBarRect;
 			drawRect.height = sideBarItemHeight;
 			for(int n = 0, count = Urls.Length; n < count; n++)
@@ -405,11 +423,14 @@ namespace Sisus
 				{
 					GUI.color = InspectorUtility.Preferences.theme.BackgroundSelected;
 					GUI.Label(drawRect, header, InspectorPreferences.Styles.SideBarItem);
-					GUI.color = Color.white;
 				}
-				else if(GUI.Button(drawRect, header, InspectorPreferences.Styles.SideBarItem))
+				else
 				{
-					SetActiveView(n);
+					GUI.color = guiColorWas;
+					if(GUI.Button(drawRect, header, InspectorPreferences.Styles.SideBarItem))
+					{
+						SetActiveView(n);
+					}
 				}
 				drawRect.y += sideBarItemHeight;
 			}
@@ -430,7 +451,7 @@ namespace Sisus
 				autoUpdateEnabled = !autoUpdateEnabled;
 			}
 
-			GUI.color = Color.white;
+			GUI.color = guiColorWas;
 		}
 
 		[SerializeField]

@@ -8,8 +8,8 @@ namespace Sisus.Attributes
 	/// 
 	/// This is just like Unity's built-in RangeAttribute but supports targeting of properties and methods in addition to fields.
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
-	public class PRangeAttribute : PropertyAttribute, ITargetableAttribute
+	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method | AttributeTargets.Parameter | AttributeTargets.ReturnValue, AllowMultiple = false, Inherited = false)]
+	public class PRangeAttribute : PropertyAttribute, ITargetableAttribute, IDrawerSetupDataProvider
 	{
 		/// <param name="minimum"> The minimum allowed value. </param>
 		public readonly float min;
@@ -35,6 +35,11 @@ namespace Sisus.Attributes
 		{
 			min = minValue;
 			max = maxValue;
+		}
+
+		public object[] GetSetupParameters()
+		{
+			return new object[] { min, max };
 		}
 	}
 }

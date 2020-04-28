@@ -158,7 +158,7 @@ namespace Sisus
 							else if(string.Equals(window.GetType().Name, "ProjectBrowser", StringComparison.OrdinalIgnoreCase) && window.IsVisible())
 							{
 								projectWindow = window;
-								hierarchyWindow.Repaint();
+								projectWindow.Repaint();
 							}
 						}
 					}

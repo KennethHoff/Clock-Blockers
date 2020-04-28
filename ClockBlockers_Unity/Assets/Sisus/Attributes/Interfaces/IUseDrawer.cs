@@ -16,10 +16,11 @@ namespace Sisus.Attributes
 		/// <param name="defaultDrawerTypeForAttributeHolder">
 		/// Default drawer type that would be used for attribute holder, had this attribute not been added to it.
 		/// </param>
+		/// <param name="drawerByNameProvider"> Can provide a drawer type by its full or short name. </param>
 		/// <returns>
 		/// Type of drawer to use for drawing the attribute holder in Power Inspector.
 		/// </returns>
 		[NotNull]
-		Type GetDrawerType([NotNull]Type attributeHolderType, [NotNull]Type defaultDrawerTypeForAttributeHolder);
+		Type GetDrawerType([NotNull]Type attributeHolderType, [NotNull]Type defaultDrawerTypeForAttributeHolder, [NotNull]IDrawerByNameProvider drawerByNameProvider);
 	}
 }
