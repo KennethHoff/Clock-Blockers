@@ -7,9 +7,10 @@ namespace ClockBlockers.ToBeMoved {
 	internal class CameraController : MonoBehaviour
 	{
 		[SerializeField]
-		private FloatReference minCamAngle;
+		private FloatReference minCamAngle = null;
+		
 		[SerializeField]
-		private FloatReference maxCamAngle;
+		private FloatReference maxCamAngle = null;
 		
 		public void Rotate(float input)
 		{

@@ -6,7 +6,7 @@ namespace ClockBlockers.UI.Main_Menu
 	public abstract class BaseGameMenu : MonoBehaviour
 	{
 		[SerializeField]
-		private BaseGameMenu[] connectedMenus;
+		private BaseGameMenu[] connectedMenus = null;
 
 		protected BaseGameMenu[] ConnectedMenus => connectedMenus;
 

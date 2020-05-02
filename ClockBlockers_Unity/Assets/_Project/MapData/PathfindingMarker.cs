@@ -46,11 +46,11 @@ namespace ClockBlockers.MapData
 
         private void OnDrawGizmos()
         {
-            if (Grid.alwaysDrawRays && !tooManyAdjacencies) DrawTransparentRays();
+            if (grid.alwaysDrawRays && !tooManyAdjacencies) DrawTransparentRays();
             
-            if (Grid.alwaysDrawNodes) DrawCube();
+            if (grid.alwaysDrawNodes) DrawCube();
 
-            if (Grid.alwaysDrawCollisionArea) DrawCollisionArea();
+            if (grid.alwaysDrawCollisionArea) DrawCollisionArea();
 
         }
 
@@ -273,14 +273,28 @@ namespace ClockBlockers.MapData
             Gizmos.DrawRay(position, lastSiblingPos - position);
         }
 
-        public static PathfindingMarker CreateInstance(string markerName, ref Vector3 markerPos, ref Transform parent, ref float creationYPosAboveFloor)
+        public static PathfindingMarker CreateInstance(string markerName, ref PathfindingGrid grid, ref Vector3 markerPos, ref Transform parent, ref float creationYPosAboveFloor)
         {
             var newMarker = new GameObject(markerName).AddComponent<PathfindingMarker>();
+            
 
             newMarker.transform.position = markerPos;
             newMarker.transform.SetParent(parent);
-            newMarker.creationHeightAboveFloor = creationYPosAboveFloor;
             
+            newMarker.creationHeightAboveFloor = creationYPosAboveFloor;
+
+            newMarker.grid = grid;
+            
+            
+            return newMarker;
+        }
+
+        public static PathfindingMarker CreateInstance(string markerName, ref PathfindingGrid grid)
+        {
+            var newMarker = new GameObject(markerName).AddComponent<PathfindingMarker>();
+
+            newMarker.grid = grid;
+
             return newMarker;
         }
     }

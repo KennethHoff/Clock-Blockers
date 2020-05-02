@@ -47,12 +47,13 @@ namespace ClockBlockers.GameControllers
 		private List<Match> allMatches;
 		
 		[SerializeField]
-		private Match matchPrefab;
+		private Match matchPrefab = null;
 		
 		private Match _currentMatch;
 		
 		private void Start()
 		{
+			allMatches = new List<Match>();
 			Match newMatch = Instantiate(matchPrefab);
 			allMatches.Add(newMatch);
 			

@@ -68,7 +68,7 @@ namespace ClockBlockers.Characters
 		private Renderer _bodyRenderer;
 		
 		[SerializeField]
-		private Material deadMaterial;
+		private Material deadMaterial = null;
 
 		internal Action onKilled;
 

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using ClockBlockers.Utility;
 
@@ -9,36 +8,29 @@ using UnityEngine;
 namespace ClockBlockers.MapData
 {
 	[ExecuteInEditMode]
-	public class OrbitalRayMarkerGenerator : MonoBehaviour, IMarkerGenerator
+	public class OrbitalRayMarkerGenerator : IntervalMarkerGeneratorBase
 	{
+		[SerializeField]
+		private float rayCastCeiling = 20f;
 		
 		[SerializeField]
-		private bool showAffectedArea;
-		[SerializeField]
-		private float rayCastCeiling;
-		
-		[SerializeField]
-		private float rayCastFloor;
+		private float rayCastFloor = -0.5f;
+
+
+		// I want to only allow integer inputs, but I want to get fractions when dividing
 
 		private float RayCastHeight => rayCastCeiling - rayCastFloor;
 		private float MarkerCreationDistanceCheck => rayCastCeiling - rayCastFloor;
-		
-		private PathfindingGrid grid;
-		private Transform gridTransform;
-
-		private void Awake()
-		{
-			grid = GetComponent<PathfindingGrid>();
-			gridTransform = grid.transform;
-		}
 
 		private void OnDrawGizmos()
 		{
 			if (!showAffectedArea) return;
 			Gizmos.color = Color.red;
 			
-			var wireCubePos = new Vector3(grid.XStartPos + grid.XLength / 2, (rayCastFloor + rayCastCeiling) / 2, grid.ZStartPos + grid.ZLength / 2);
+			var wireCubePos = new Vector3(0, (rayCastFloor + rayCastCeiling) / 2, 0);
+			
 			var wireCubeSize = new Vector3(grid.XLength, RayCastHeight, grid.ZLength);
+			
 			Gizmos.DrawWireCube(wireCubePos, wireCubeSize);
 		}
 
@@ -48,40 +40,59 @@ namespace ClockBlockers.MapData
 			if (rayCastFloor > rayCastCeiling) rayCastFloor = rayCastCeiling;
 		}
 
-		public void GenerateAllMarkers()
+		public override void GenerateAllMarkers()
 		{
-			if (grid.xDistanceBetweenMarkers < PathfindingGrid.MinDistance || grid.zDistanceBetweenMarkers < PathfindingGrid.MinDistance) return; 
-			
-			if (grid.markers == null) grid.markers = new List<PathfindingMarker>(grid.NumberOfColumns * grid.NumberOfRows);
-			
-			
-			for (var i = 0; i <= grid.NumberOfColumns; i ++)
+			if (xDistanceBetweenMarkers < MinDistance || zDistanceBetweenMarkers < MinDistance)
 			{
-				CreateMarkerRow(i);
+				Logging.LogWarning("X/Z Distance Between Markers is unset.");
+				return;
+			} 
+			
+			if (grid.markers == null) grid.markers = new List<PathfindingMarker>(NumberOfColumns * NumberOfRows);
+			
+			
+			for (var i = 0; i <= NumberOfColumns; i ++)
+			{
+				CreateMarkerColumn(i);
 			}
 		}
-		private void CreateMarkerRow(int i)
+
+		public override void ClearMarkers()
 		{
-			float xPos = grid.XStartPos + (grid.xDistanceBetweenMarkers * i);
+			foreach (PathfindingMarker marker in grid.markers)
+			{
+				if (marker == null) continue;
+				DestroyImmediate(marker.transform.parent.gameObject);
+			}
+			grid.markers.Clear();
 
-			Transform newRow = new GameObject("Row " + i).transform;
+		}
 
-			newRow.position = new Vector3(xPos, 0, 0);
+		private void CreateMarkerColumn(int i)
+		{
+			float xPos = MarkerSizeAdjustedXStartPos + (xDistanceBetweenMarkers * i);
 
-			newRow.SetParent(gridTransform);
+			Transform newColumn = new GameObject("Column " + i).transform;
+
+			newColumn.position = new Vector3(xPos, 0, 0);
+
+			newColumn.SetParent(gridTransform);
 
 			var createdNothing = true;
 
-			for (var j = 0; j <= grid.NumberOfRows; j++)
+			for (var j = 0; j <= NumberOfRows; j++)
 			{
-				if (CreateMarker(j, xPos, newRow)) createdNothing = false;
+				if (CreateMarker(j, xPos, newColumn)) createdNothing = false;
 			}
-			if (createdNothing) DestroyImmediate(newRow.gameObject);
+
+			if (!createdNothing) return;
+			DestroyImmediate(newColumn.gameObject);
+			Logging.Log("Did not create any Markers on column " + i);
 		}
 
-		private bool CreateMarker(int j, float xPos, Transform newRow)
+		private bool CreateMarker(int j, float xPos, Transform newColumn)
 		{
-			float zPos = grid.ZStartPos + (grid.zDistanceBetweenMarkers * j);
+			float zPos = MarkerSizeAdjustedZStartPos - (zDistanceBetweenMarkers * j);
 			
 			var originPos = new Vector3(xPos, rayCastCeiling, zPos);
 			Vector3 direction = Vector3.down;
@@ -94,7 +105,12 @@ namespace ClockBlockers.MapData
 
 			for (var i = 0; i < numberOfCollisions; i++)
 			{
-				CreateAMarkerOnEachCollision(j, xPos, newRow, allCollisions, i, zPos, ref createdAtLeastOne);
+				CreateAMarkerOnEachCollision(j, xPos, newColumn, allCollisions, i, zPos, ref createdAtLeastOne);
+			}
+
+			if (!createdAtLeastOne)
+			{
+				Logging.Log("Did not create any Markers on column " + j);
 			}
 			return createdAtLeastOne;
 		}
@@ -107,16 +123,18 @@ namespace ClockBlockers.MapData
 
 			if (!grid.createMarkerNearOrInsideCollisions)
 			{
+				// If you're only colliding with yourself, then that's fine. Otherwise, create nothing 
+				
 				var newPos = new Vector3(markerPos.x, markerPos.y + grid.minimumOpenAreaAroundMarkers.y / 2, markerPos.z);
-				// var newPos = new Vector3(hit.point.x, hit.point.y + grid.minimumOpenAreaAroundMarkers.y / 2, hit.point.z);
 
 				Collider[] overlappingColliders = Physics.OverlapBox(newPos, grid.minimumOpenAreaAroundMarkers / 2, Quaternion.identity, ~grid.nonCollidingLayer);
 				if (!(overlappingColliders.Length == 1 && (overlappingColliders[0] = hit.collider))) return;
 			}
 
-			string markerName = "Column " + j + (i > 0 ? "(" + i + ")" : "");
+			string markerName = "Row " + j + (i > 0 ? "(" + i + ")" : "");
 			
 			markerPos.y += grid.creationHeightAboveFloor;
+
 			InstantiateMarker(markerName, markerPos, newRow);
 			createdAtLeastOne = true;
 		}
@@ -124,10 +142,11 @@ namespace ClockBlockers.MapData
 		private void InstantiateMarker(string markerName, Vector3 markerPos, Transform parent)
 		{
 			// PathfindingMarker newMarker = Instantiate(grid.markerPrefab, markerPos, Quaternion.identity, parent);
-			var newMarker = PathfindingMarker.CreateInstance(markerName, ref markerPos, ref parent, ref grid.creationHeightAboveFloor);
+			var newMarker = PathfindingMarker.CreateInstance(markerName, ref grid, ref markerPos, ref parent, ref grid.creationHeightAboveFloor);
 			
 			newMarker.Grid = grid;
-
+			newMarker.gameObject.layer = LayerInt;
+			
 			grid.markers.Add(newMarker);
 		}
 	}

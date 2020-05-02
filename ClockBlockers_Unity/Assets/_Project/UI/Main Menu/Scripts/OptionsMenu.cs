@@ -18,22 +18,22 @@ namespace ClockBlockers.UI.Main_Menu
 		
 		[Header("Mouse Sensitivity")]
 		[SerializeField]
-		private FloatReference horizontalSensitivity;
+		private FloatReference horizontalSensitivity = null;
 
 		[SerializeField]
-		private FloatReference verticalSensitivity;
+		private FloatReference verticalSensitivity = null;
 
 		[SerializeField]
-		private TMP_InputField horizontalSensitivityInputField;
+		private TMP_InputField horizontalSensitivityInputField = null;
 
 		[SerializeField]
-		private TMP_InputField verticalSensitivityInputField;
+		private TMP_InputField verticalSensitivityInputField = null;
 
 		[SerializeField]
-		private Slider horizontalSensitivitySlider;
+		private Slider horizontalSensitivitySlider = null;
 
 		[SerializeField]
-		private Slider verticalSensitivitySlider;
+		private Slider verticalSensitivitySlider = null;
 
 		private void Awake()
 		{

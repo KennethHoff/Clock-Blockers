@@ -23,17 +23,16 @@ namespace ClockBlockers.MatchData
 		
 		
 		[SerializeField]
-		private UnityEvent MatchCreatedEvent;
+		private UnityEvent matchCreatedEvent = null;
 		
 		[SerializeField]
-		private UnityEvent MatchBegunEvent;
+		private UnityEvent matchBegunEvent = null;
 
 		[SerializeField]
-		private UnityEvent MatchEndedEvent;
+		private UnityEvent matchEndedEvent = null;
 
 		[SerializeField]
-		private UnityEvent MatchRemovedEvent;
-		
+		private UnityEvent matchRemovedEvent = null;
 		
 		[SerializeField]
 		private List<Round> allRounds;
@@ -45,14 +44,15 @@ namespace ClockBlockers.MatchData
 		public Round CurrentRound => allRounds.Last();
 
 		[SerializeField]
-		private Round roundPrefab;
+		private Round roundPrefab = null;
 
 		[SerializeField]
-		private string battleArena;
+		private string battleArena = null;
 
 		private void Awake()
 		{
 			spawner = GetComponent<CharacterSpawner>();
+			allRounds = new List<Round>();
 		}
 
 		public void Setup()
@@ -60,7 +60,7 @@ namespace ClockBlockers.MatchData
 			SceneManager.LoadScene(battleArena, LoadSceneMode.Additive);
 			
 			
-			MatchCreatedEvent.Invoke();
+			matchCreatedEvent.Invoke();
 		}
 
 		public void Begin()
@@ -68,7 +68,7 @@ namespace ClockBlockers.MatchData
 			StartNewRound();
 			
 			
-			MatchBegunEvent.Invoke();
+			matchBegunEvent.Invoke();
 		}
 
 		public void End()
@@ -76,7 +76,7 @@ namespace ClockBlockers.MatchData
 			Logging.Log("Match ended!", this);
 			
 			
-			MatchEndedEvent.Invoke();
+			matchEndedEvent.Invoke();
 		}
 
 		public void Remove()
@@ -85,7 +85,7 @@ namespace ClockBlockers.MatchData
 
 			gameObject.SetActive(false);
 			
-			MatchRemovedEvent.Invoke();
+			matchRemovedEvent.Invoke();
 		}
 
 		private void StartNewRound()

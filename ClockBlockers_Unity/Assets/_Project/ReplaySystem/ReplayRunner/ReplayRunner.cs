@@ -28,7 +28,7 @@ namespace ClockBlockers.ReplaySystem.ReplayRunner
 
 
 		[SerializeField]
-		private FloatReference translationInterval;
+		private FloatReference translationInterval = null;
 
 		private float _timer;
 		

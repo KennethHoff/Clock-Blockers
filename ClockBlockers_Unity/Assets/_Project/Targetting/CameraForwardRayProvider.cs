@@ -6,7 +6,7 @@ namespace ClockBlockers.Targetting
 	public class CameraForwardRayProvider : MonoBehaviour, IRayProvider
 	{
 		[SerializeField]
-		private Camera cam;
+		private Camera cam = null;
 
 		public Ray CreateRay()
 		{

@@ -20,17 +20,17 @@ namespace ClockBlockers.ReplaySystem.ReplayStorage
 	public class ActionReplayStorage : MonoBehaviour
 	{
 		[SerializeField]
-		private FloatReference timeWhenActStarted;
+		private FloatReference timeWhenActStarted = null;
 		
 		[SerializeField]
-		private bool logEveryAction;
+		private bool logEveryAction = false;
 
 		[SerializeField]
-		private bool saveActions;
+		private bool saveActions = false;
 
 		private GameController _gameController;
 
-		public List<CharacterAction> PlayerActions { get; private set; }
+		private List<CharacterAction> PlayerActions { get; set; }
 
 		private List<Tuple<Actions, float[]>> _currentFrameCharacterActions;
 

@@ -17,14 +17,13 @@ namespace ClockBlockers.MapData
 	
 	// TODO: Remove the idea of 'row' entirely, and make it more manual. Currently there are significant issues with altitude changes. << Do this after making the pathfinding work between 'connected nodes'.
 	[ExecuteAlways]
-	[RequireComponent(typeof(IMarkerGenerator))]
+	[RequireComponent(typeof(MarkerGeneratorBase))]
 	public class PathfindingGrid : MonoBehaviour
 	{
-		private IMarkerGenerator markerGenerator;
+		// [SerializeField]
+		private MarkerGeneratorBase markerGenerator = null;
 
-		public const float MinDistance = 1f;
-		private const float MaxDistance = 100f;
-
+		
 		[Header("Marker Gizmos")]
 		[Tooltip("Less than this, and it will be classified as 'Few'")]
 		public int fewAdjacentNodesAmount = 3;
@@ -60,11 +59,14 @@ namespace ClockBlockers.MapData
 		[Range(0, 2)]
 		public float selectionNodeScale = 1f;
 
+		
 		[Header("Grid Generation")]
 		public Transform floorPlane;
 
-		public PathfindingMarker markerPrefab;
-		
+		public float XStartPos => transform.position.x - XLength / 2;
+		public float ZStartPos => transform.position.z + ZLength / 2;
+
+
 		[Tooltip("Only creates markers on top of items with these Physics Layers")]
 		public LayerMask pathfindingLayer;
 
@@ -73,11 +75,6 @@ namespace ClockBlockers.MapData
 
 		public List<PathfindingMarker> markers;
 		
-		[Range(MinDistance, MaxDistance)]
-		public int xDistanceBetweenMarkers;
-
-		[Range(MinDistance, MaxDistance)]
-		public int zDistanceBetweenMarkers;
 
 		[Tooltip("If you create the marker at the exact position it 'should', then rays can hit things that it realistically shouldn't. This is to offset that")]
 		public float creationHeightAboveFloor = 0;
@@ -87,45 +84,42 @@ namespace ClockBlockers.MapData
 		
 		public bool createMarkerNearOrInsideCollisions;
 
-		// I want to only allow integer inputs, but I want to get fractions when dividing
-		private float XDistanceBetweenMarkers => xDistanceBetweenMarkers;
-		private float ZDistanceBetweenMarkers => zDistanceBetweenMarkers;
-
 		private Vector3 PlaneLocalScale => floorPlane.transform.localScale;
-		public float XLength => PlaneLocalScale.x * 10;
-		public float ZLength => PlaneLocalScale.z * 10;
-
-		public float XStartPos => Mathf.Floor(-XLength / 2 + XDistanceBetweenMarkers/2);
-		public float ZStartPos => Mathf.Floor(-ZLength / 2 + ZDistanceBetweenMarkers/2);
-
-		public int NumberOfColumns => Mathf.FloorToInt(XLength / xDistanceBetweenMarkers)-1;
-		public int NumberOfRows => Mathf.FloorToInt(ZLength / zDistanceBetweenMarkers)-1;
-
+		public float XLength => PlaneLocalScale.x;
+		public float ZLength => PlaneLocalScale.z;
+		
 		private void OnDrawGizmos()
 		{
-			if (markerGenerator == null) markerGenerator = GetComponent<IMarkerGenerator>();
-			
 			if (Selection.GetFiltered<PathfindingMarker>(SelectionMode.TopLevel).Length == 0) ResetAllMarkerGizmos();
+		}
+
+		private bool CheckMarkerGenerator()
+		{
+			if (markerGenerator != null) return false;
+			Logging.Log("No Marker Generator!");
+			markerGenerator = GetComponent<MarkerGeneratorBase>();
+			return true;
 		}
 
 		public void GenerateAllMarkers()
 		{
+			if (CheckMarkerGenerator()) return;
+
 			markerGenerator.GenerateAllMarkers();
 		}
 
 		public void ClearMarkers()
 		{
-			foreach (PathfindingMarker marker in markers)
-			{
-				if (marker == null) continue;
-				DestroyImmediate(marker.transform.parent.gameObject);
-			}
+			if (CheckMarkerGenerator()) return;
 
+			markerGenerator.ClearMarkers();
 			markers.Clear();
 		}
 
 		public void GenerateMarkerAdjacencies()
 		{
+			if (CheckMarkerGenerator()) return;
+
 			foreach (PathfindingMarker marker in markers)
 			{
 				marker.GetAdjacentMarkersFromGrid();
@@ -134,11 +128,11 @@ namespace ClockBlockers.MapData
 		
 		public void ResetAllMarkerGizmos()
 		{
-			foreach (PathfindingMarker marker in markers)
-			{
-				marker.scale = nodeScale;
-				marker.PickAColor();
-			}
+			if (CheckMarkerGenerator()) return;
+
+			markerGenerator.ResetAllMarkerGizmos();
 		}
+		
+
 	}
 }

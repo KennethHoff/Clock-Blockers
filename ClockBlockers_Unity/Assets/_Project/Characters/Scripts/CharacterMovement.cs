@@ -12,16 +12,16 @@ namespace ClockBlockers.Characters
 	{
 		
 		[SerializeField]
-		private FloatReference moveSpd;
+		private FloatReference moveSpd = null;
 		
 		[SerializeField]
-		private FloatReference jumpHeight;
+		private FloatReference jumpHeight = null;
 
 		[SerializeField] 
 		private Vector3 velocity;
 
 		[SerializeField]
-		private float divFactMulti;
+		private float divFactMulti = 1.25f;
 
 		public bool isGrounded;
 

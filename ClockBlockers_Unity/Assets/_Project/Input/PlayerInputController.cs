@@ -30,18 +30,18 @@ namespace ClockBlockers.Input
 		private IntervalReplayStorage _replayStorage;
 
 		[SerializeField]
-		private CameraController cameraController;
+		private CameraController cameraController = null;
 
 		[SerializeField]
-		private Gun gun;
+		private Gun gun = null;
 
 		private StandardAiPathfinder testing;
 
 		[SerializeField]
-		private FloatReference verticalMouseSensitivity;
+		private FloatReference verticalMouseSensitivity = null;
 
 		[SerializeField]
-		private FloatReference horizontalMouseSensitivity;
+		private FloatReference horizontalMouseSensitivity = null;
 
 		private Vector2 _moveInput;
 		private float _sideToSideCharacterRotation;
@@ -49,7 +49,7 @@ namespace ClockBlockers.Input
 		private bool _inputEnabled;
 
 		[SerializeField]
-		private GameEvent endActEvent;
+		private GameEvent endActEvent = null;
 		
 		private void Awake()
 		{

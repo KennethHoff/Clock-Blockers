@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &149534689774175847
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 149534689774175846}
+  - component: {fileID: 149534689774175845}
+  - component: {fileID: 2179795566395000333}
+  m_Layer: 0
+  m_Name: Pathfinding Markers
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &149534689774175846
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 149534689774175847}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &149534689774175845
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 149534689774175847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed8b7882ce8ed1348af72d5d24f6c076, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fewAdjacentNodesAmount: 3
+  someAdjacentNodesAmount: 10
+  tooManyAdjacentNodesAmount: 50
+  alwaysDrawNodes: 1
+  alwaysDrawRays: 0
+  alwaysDrawCollisionArea: 0
+  drawHeightAboveFloor: 0.25
+  nodeScale: 0.5
+  selectionChangeScale: 1
+  selectionChangeNodeColors: 1
+  selectionDrawRays: 1
+  selectionNodeScale: 1
+  floorPlane: {fileID: 0}
+  markerPrefab: {fileID: 1633517128170111610, guid: ab0e917cfea5c7d459fb32c63040bb6b, type: 3}
+  pathfindingMarkerLayer:
+    serializedVersion: 2
+    m_Bits: 4096
+  pathfindingLayer:
+    serializedVersion: 2
+    m_Bits: 2048
+  nonCollidingLayer:
+    serializedVersion: 2
+    m_Bits: 12288
+  markers: []
+  xDistanceBetweenMarkers: 2
+  zDistanceBetweenMarkers: 2
+  creationHeightAboveFloor: 0
+  minimumOpenAreaAroundMarkers: {x: 1, y: 1, z: 1}
+  createMarkerNearOrInsideCollisions: 0
+--- !u!114 &2179795566395000333
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 149534689774175847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec8c372c0f554991bddc35b7ed5926d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  showAffectedArea: 1
+  rayCastCeiling: 20
+  rayCastFloor: 0
+  maxDistanceBetweenMarkers: 10
+  boxCheckDistanceIncreasePerAttempt: 0.25

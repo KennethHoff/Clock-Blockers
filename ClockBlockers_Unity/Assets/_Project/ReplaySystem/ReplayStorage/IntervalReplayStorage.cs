@@ -22,7 +22,7 @@ namespace ClockBlockers.ReplaySystem.ReplayStorage
 		private Transform _transform;
 
 		[SerializeField]
-		private FloatReference translationInterval;
+		private FloatReference translationInterval = null;
 
 		private float _timer;
 

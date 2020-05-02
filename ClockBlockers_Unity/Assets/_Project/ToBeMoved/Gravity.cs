@@ -11,7 +11,7 @@ namespace ClockBlockers.ToBeMoved
     public class Gravity : MonoBehaviour
     {
         [SerializeField]
-        private FloatReference gravityValue;
+        private FloatReference gravityValue = null;
 
         private CharacterMovement _characterMovement;
 

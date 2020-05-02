@@ -25,16 +25,16 @@ namespace ClockBlockers.MatchData
 		// List of all players to spawn - List <Player> perhaps, although I don't want the same player instance to be created.
 		// Mostly for the independence of being able to create a completely random character and it working correctly
 		[SerializeField]
-		private GameEvent actCreatedEvent;
+		private GameEvent actCreatedEvent = null;
 
 		
 		[SerializeField]
-		private GameEvent actRemovedEvent; // Temporary
+		private GameEvent actRemovedEvent = null; // Temporary
 
 		private float _actDuration;
 
 		[SerializeField]
-		private FloatReference timeWhenActStarted;
+		private FloatReference timeWhenActStarted = null;
 		
 		
 		private List<Character> _playerCharacters;
@@ -44,13 +44,13 @@ namespace ClockBlockers.MatchData
 
 		public List<IntervalReplayStorage> replaysForThisAct;
 		
-		private bool _begun;
+		// private bool _begun = false;
 
 		// private bool Ongoing => _begun && !_ended;
 		//
 		// private bool HasNotStarted => !_begun && !_ended;
 
-		private bool _ended;
+		// private bool _ended = false;
 
 
 		public void Setup()
@@ -59,8 +59,8 @@ namespace ClockBlockers.MatchData
 			_playerCharacters = new List<Character>();
 			SpawnAllCharacters();
 
-			_begun = false;
-			_ended = false;
+			// _begun = false;
+			// _ended = false;
 
 
 			actCreatedEvent.Raise();
@@ -71,7 +71,7 @@ namespace ClockBlockers.MatchData
 		public void Begin()
 		{
 			timeWhenActStarted.Value = Time.time;
-			_begun = true;
+			// _begun = true;
 		}
 
 
@@ -79,7 +79,7 @@ namespace ClockBlockers.MatchData
 		public void End()
 		{
 			Logging.Log("Act ended!", this);
-			_ended = true;
+			// _ended = true;
 
 			
 			// The following is temporary 

@@ -23,7 +23,7 @@ namespace ClockBlockers.Weapons
 		
 		
 		[SerializeField]
-		private GameObject[] bulletHoles;
+		private GameObject[] bulletHoles = null;
 		
 		private AudioSource _audioSource;
 
@@ -38,25 +38,25 @@ namespace ClockBlockers.Weapons
 		// }
 
 		[SerializeField]
-		private GameObject casingPrefab;
+		private GameObject casingPrefab = null;
 
 		[SerializeField]
-		private GameObject muzzleFlashPrefab;
+		private GameObject muzzleFlashPrefab = null;
 
 		[SerializeField]
-		private Transform barrelLocation;
+		private Transform barrelLocation = null;
 
 		[SerializeField]
-		private Transform casingExitLocation;
+		private Transform casingExitLocation = null;
 
 		[SerializeField]
 		private Character holder;
 		
 		[SerializeField]
-		private FloatReference damage;
+		private FloatReference damage = null;
 
 		[SerializeField]
-		private FloatReference range;
+		private FloatReference range = null;
 
 		// public bool CanShoot { get; private set; }
 

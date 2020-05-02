@@ -16,7 +16,7 @@ namespace ClockBlockers.ReplaySystem.ReplayRunner
 		private Character _character;
 
 		[SerializeField]
-		private Gun gun;
+		private Gun gun = null;
 		
 		[NonSerialized]
 		public List<CharacterAction> replays;

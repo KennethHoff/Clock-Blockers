@@ -34,16 +34,16 @@ namespace ClockBlockers.ToBeMoved {
 		private float MaxHealth => maxHealth.Value;
 			
 		[SerializeField]
-		private FloatReference armor;
+		private FloatReference armor = null;
 
 		// [SerializeField]
 		// private FloatReference shielding;
 
 		[SerializeField]
-		private FloatReference maxHealth;
+		private FloatReference maxHealth = null;
 
 		[SerializeField]
-		private FloatReference health;
+		private FloatReference health = null;
 
 		
 

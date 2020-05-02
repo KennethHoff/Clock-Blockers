@@ -8,10 +8,10 @@ namespace ClockBlockers.GameControllers {
 	{
 
 		[SerializeField]
-		private Character playerPrefab;
+		private Character playerPrefab = null;
 
 		[SerializeField]
-		private Character clonePrefab;
+		private Character clonePrefab = null;
 		
 		public Character SpawnPlayer()
 		{

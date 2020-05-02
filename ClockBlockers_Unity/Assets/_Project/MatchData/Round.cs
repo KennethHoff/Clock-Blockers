@@ -13,16 +13,16 @@ namespace ClockBlockers.MatchData {
 	{
 
 		[SerializeField]
-		private UnityEvent roundCreatedEvent;
+		private UnityEvent roundCreatedEvent = null;
 		
 		[SerializeField]
-		private UnityEvent roundBegunEvent;
+		private UnityEvent roundBegunEvent = null;
 
 		[SerializeField]
-		private UnityEvent roundEndedEvent;
+		private UnityEvent roundEndedEvent = null;
 
 		[SerializeField]
-		private UnityEvent roundRemovedEvent;
+		private UnityEvent roundRemovedEvent = null;
 		
 		
 		[NonSerialized]
