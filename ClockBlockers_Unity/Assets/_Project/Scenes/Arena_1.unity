@@ -729,7 +729,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 522104192619426730, guid: 6222a7189442e364291cd6094fda5e5c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 5.5
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 522104192619426730, guid: 6222a7189442e364291cd6094fda5e5c, type: 3}
       propertyPath: m_LocalPosition.z
@@ -807,7 +807,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 522104192619426730, guid: 6222a7189442e364291cd6094fda5e5c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 5.5
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 522104192619426730, guid: 6222a7189442e364291cd6094fda5e5c, type: 3}
       propertyPath: m_LocalPosition.z
@@ -879,7 +879,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 667546684}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -44.999992, y: 2.5, z: -18.000004}
+  m_LocalPosition: {x: -26.49999, y: 2.5, z: -5}
   m_LocalScale: {x: 8, y: 4, z: 1}
   m_Children: []
   m_Father: {fileID: 1011344439}
@@ -1232,7 +1232,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1011344438}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -30, y: 0, z: 4}
+  m_LocalPosition: {x: -30, y: -0.5, z: 4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 368509711}
@@ -1248,69 +1248,6 @@ Transform:
   - {fileID: 667546685}
   m_Father: {fileID: 0}
   m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1083847873
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1083847876}
-  - component: {fileID: 1083847874}
-  - component: {fileID: 1083847875}
-  m_Layer: 12
-  m_Name: Surface Collider Marker
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1083847874
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1083847873}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e8ca775ca1d6354ea6caa686a900969, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  connectedMarkers: []
-  scale: 0.5
-  grid: {fileID: 149534690005254036}
-  creationHeightAboveFloor: 0
-  references:
-    version: 1
---- !u!65 &1083847875
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1083847873}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 193, y: 1, z: 193}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!4 &1083847876
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1083847873}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -99.25, y: 0.55, z: -0.25}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 149534690005254039}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1093464035
 GameObject:
@@ -1339,7 +1276,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1093464035}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -23, y: 2.5, z: -9}
+  m_LocalPosition: {x: -22.999994, y: 2.5, z: -9}
   m_LocalScale: {x: 17, y: 4, z: 1}
   m_Children: []
   m_Father: {fileID: 1011344439}
@@ -1844,7 +1781,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 522104192619426730, guid: 6222a7189442e364291cd6094fda5e5c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 5.5
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 522104192619426730, guid: 6222a7189442e364291cd6094fda5e5c, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2540,6 +2477,14 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 0.4
       objectReference: {fileID: 0}
+    - target: {fileID: 4633043596518141307, guid: cc426022cddf2e24b9d2c6fda998fb84, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4633043596518141307, guid: cc426022cddf2e24b9d2c6fda998fb84, type: 3}
+      propertyPath: m_Convex
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7122754452447126932, guid: cc426022cddf2e24b9d2c6fda998fb84, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -2739,7 +2684,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1907000948
 Transform:
   m_ObjectHideFlags: 0
@@ -3044,7 +2989,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2012490863}
   m_Layer: 11
-  m_Name: Planes
+  m_Name: Map Border
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3094,7 +3039,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 522104192619426730, guid: 6222a7189442e364291cd6094fda5e5c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 5.5
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 522104192619426730, guid: 6222a7189442e364291cd6094fda5e5c, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3168,17 +3113,8 @@ MonoBehaviour:
   selectionDrawRays: 0
   selectionNodeScale: 1
   floorPlane: {fileID: 522104193286480113}
-  pathfindingLayer:
-    serializedVersion: 2
-    m_Bits: 2048
-  nonCollidingLayer:
-    serializedVersion: 2
-    m_Bits: 12288
-  markers:
-  - {fileID: 1083847874}
-  creationHeightAboveFloor: 0.11
   minimumOpenAreaAroundMarkers: {x: 1, y: 1, z: 1}
-  createMarkerNearOrInsideCollisions: 0
+  markers: []
 --- !u!1 &149534690005254038
 GameObject:
   m_ObjectHideFlags: 0
@@ -3207,8 +3143,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 1083847876}
+  m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3221,18 +3156,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 149534690005254038}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec8c372c0f554991bddc35b7ed5926d2, type: 3}
+  m_Script: {fileID: 11500000, guid: c70af323ac97419180b52c853ea434b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   showAffectedArea: 1
-  pathfindingMarkerLayer:
-    serializedVersion: 2
-    m_Bits: 4096
+  createMarkerNearOrInsideCollisions: 0
+  creationHeightAboveFloor: 0.15
+  xDistanceBetweenMarkers: 2
+  zDistanceBetweenMarkers: 2
   rayCastCeiling: 20
   rayCastFloor: -0.5
-  maxDistanceBetweenMarkers: 10
-  boxCheckDistanceIncreasePerAttempt: 0.25
-  test_MarkerCreationAmount: 1
 --- !u!1001 &522104193286480112
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3271,6 +3204,10 @@ PrefabInstance:
     - target: {fileID: 522104192619426730, guid: 6222a7189442e364291cd6094fda5e5c, type: 3}
       propertyPath: m_LocalScale.x
       value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 522104192619426730, guid: 6222a7189442e364291cd6094fda5e5c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6222a7189442e364291cd6094fda5e5c, type: 3}

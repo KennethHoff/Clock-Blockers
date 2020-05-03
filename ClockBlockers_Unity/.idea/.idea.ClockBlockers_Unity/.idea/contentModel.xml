@@ -55,7 +55,11 @@
           <e p="MapData" t="Include">
             <e p="AlongFloorMarkerGenerator.cs" t="Include" />
             <e p="Editor" t="Include">
+              <e p="AlongFloorMarkerGeneratorEditor.cs" t="Include" />
+              <e p="MarkerGeneratorBaseEditor.cs" t="Include" />
+              <e p="OrbitalRayMarkerGeneratorEditor.cs" t="Include" />
               <e p="PathfindingGridEditor.cs" t="Include" />
+              <e p="SurfaceColliderMarkerGeneratorEditor.cs" t="Include" />
             </e>
             <e p="IntervalMarkerGeneratorBase.cs" t="Include" />
             <e p="MarkerGeneratorBase.cs" t="Include" />

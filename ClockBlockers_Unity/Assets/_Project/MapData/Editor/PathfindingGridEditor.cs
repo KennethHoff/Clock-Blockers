@@ -16,22 +16,15 @@ namespace ClockBlockers.MapData.Editor
 		public override void OnInspectorGUI()
 		{
 			DrawDefaultInspector();
-
+		
 			var myScript = (PathfindingGrid) target;
-
-			CreateButton(() => myScript.GenerateAllMarkers(), "Generate markers");
-
-			CreateButton(myScript.ClearMarkers, "Remove all markers");
 			
-			CreateButton(myScript.GenerateMarkerAdjacencies, "Generate marker adjacencies");
-
-			CreateButton(myScript.ResetAllMarkerGizmos, "Reset Marker Colors");
+			CreateButton(myScript.ResetMarkerGizmos, "Reset Marker Gizmos");
 		}
-
+		
 		private static void CreateButton(Action action, string buttonText)
 		{
 			if (GUILayout.Button(buttonText)) action.Invoke();
 		}
 	}
-	
 }

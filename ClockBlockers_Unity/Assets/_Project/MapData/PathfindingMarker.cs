@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 using ClockBlockers.Utility;
@@ -8,18 +7,19 @@ using UnityEditor;
 
 using UnityEngine;
 
+
 namespace ClockBlockers.MapData
 {
     [ExecuteInEditMode]
     public class PathfindingMarker : MonoBehaviour
     {
         // DONE: Create a 'pathfinding master' class that stores the transforms of all the 'Pathfinding Marker' objects in the scene
-        
+
         // Potentially, instead of storing the Marker objects, you could just store the position, and then you could even possibly delete the objects to save on performance(?)
-        
+
         // TODO: During pathfinding, find the Marker closest to the 'destination', and then recursive find the marker that's closest to you
 
-        
+
         [SerializeReference]
         private List<MarkerStats> connectedMarkers;
 
@@ -32,23 +32,23 @@ namespace ClockBlockers.MapData
         private bool tooManyAdjacencies = false;
 
         public float scale = 0.5f;
-        
+
         private static readonly Color DefaultDrawColor = new Color(137, 0, 255, 255); // purple
 
         private Color drawColor = DefaultDrawColor;
-        [SerializeField][HideInInspector]
+
+        [SerializeField]
+        [HideInInspector]
         private PathfindingGrid grid;
 
-
-        
         // _Exclusively_ for equalizing the 'Draw Height Above Floor' gizmo drawing.
         public float creationHeightAboveFloor;
 
         private void OnDrawGizmos()
         {
             if (grid.alwaysDrawRays && !tooManyAdjacencies) DrawTransparentRays();
-            
-            if (grid.alwaysDrawNodes) DrawCube();
+
+            if (grid.alwaysDrawNodes) DrawCubeGizmoOnPosition();
 
             if (grid.alwaysDrawCollisionArea) DrawCollisionArea();
 
@@ -65,9 +65,9 @@ namespace ClockBlockers.MapData
         private void OnDrawGizmosSelected()
         {
             if (Selection.activeGameObject != gameObject) return;
-            Grid.ResetAllMarkerGizmos();
+            Grid.ResetMarkerGizmos();
             DrawSingleSelectedMarker();
-            
+
             // TODO: If multiples are selected, instead check if there is an available path between the two. This requires a rework of the adjacency system.
         }
 
@@ -78,9 +78,9 @@ namespace ClockBlockers.MapData
             if (Grid.selectionDrawRays) DrawTransparentRays();
 
             if (!Grid.AffectNodes) return;
-            
+
             scale = Grid.selectionNodeScale;
-            
+
             if (connectedMarkers == null) return;
 
             foreach (MarkerStats markerStat in connectedMarkers)
@@ -92,14 +92,13 @@ namespace ClockBlockers.MapData
                     Logging.Log("Marker is null? Dafuq");
                     return;
                 }
-                
+
                 if (Grid.selectionChangeNodeColors) marker.drawColor = Color.magenta;
 
                 marker.scale = Grid.selectionChangeScale ? Grid.selectionNodeScale : Grid.nodeScale;
             }
         }
 
-        // ReSharper disable once SuggestBaseTypeForParameter
         private bool CheckIfAdjacent(PathfindingMarker marker)
         {
             return connectedMarkers != null && connectedMarkers.Any(markerStat => markerStat.marker == marker);
@@ -113,27 +112,21 @@ namespace ClockBlockers.MapData
             Transform cachedTransform = transform;
 
             Vector3 position = cachedTransform.position;
-            
+
             foreach (PathfindingMarker marker in Grid.markers)
             {
                 if (marker == this) continue;
                 Vector3 markerPos = marker.transform.position;
                 Vector3 vectorToChild = markerPos - position;
                 float distanceToChild = Vector3.Distance(position, markerPos);
-            
+
                 if (Physics.Raycast(position, vectorToChild, distanceToChild)) continue;
-            
+
                 var markerStat = new MarkerStats(marker, vectorToChild.magnitude);
                 connectedMarkers.Add(markerStat);
             }
+
             PickAColor();
-        }
-
-        private void DrawCube()
-        {
-            Gizmos.color = drawColor;
-
-            DrawCubeGizmoOnPosition();
         }
 
         private void DrawTransparentRays()
@@ -151,9 +144,9 @@ namespace ClockBlockers.MapData
             drawColor = DefaultDrawColor;
 
             if (connectedMarkers == null) return;
-            
+
             int adjacentNodesAmount = connectedMarkers.Count;
-            
+
             if (adjacentNodesAmount == 0)
             {
                 drawColor = Color.white;
@@ -179,9 +172,11 @@ namespace ClockBlockers.MapData
 
         private void DrawCubeGizmoOnPosition()
         {
+            Gizmos.color = drawColor;
+
             Vector3 position = transform.position;
-            position.y += Grid.drawHeightAboveFloor-creationHeightAboveFloor + scale/2;
-            
+            position.y += (Grid.drawHeightAboveFloor - creationHeightAboveFloor) + (scale/2);
+
             Gizmos.DrawCube(position, Vector3.one * scale);
         }
 
@@ -189,7 +184,7 @@ namespace ClockBlockers.MapData
         private void DrawRayGizmosToAdjacentMarkersFromList()
         {
             // if (adjacentMarkers == null || adjacentMarkers.Count == 0) return;
-            
+
             foreach (MarkerStats markerStat in connectedMarkers)
             {
                 PathfindingMarker marker = markerStat.marker;
@@ -198,95 +193,33 @@ namespace ClockBlockers.MapData
                     Logging.Log("Marker in list does not exist for some reason..");
                     return;
                 }
+
                 Vector3 markerPos = marker.transform.position;
                 Vector3 position = transform.position;
-                
+
                 Vector3 vectorToChild = markerPos - position;
                 Gizmos.DrawRay(position, vectorToChild);
             }
         }
-        
-        private void DrawRayGizmosToAdjacentMarkersFromCollisionCheck()
+
+        public void ResetGizmo()
         {
-            Transform cachedTransform = transform;
-
-            Transform parent = cachedTransform.parent;
-
-            // If too many, then the editor slows to a crawl. Caution is advised with this function
-            if (parent.childCount > 10) return;
-            
-            Vector3 position = cachedTransform.position;
-
-            foreach (Transform child in parent)
-            {
-                Vector3 childPos = child.position;
-                Vector3 vectorToChild = childPos - position;
-                float distanceToChild = Vector3.Distance(position, childPos);
-
-                if (Physics.Raycast(position, vectorToChild, distanceToChild)) continue;
-
-                Gizmos.DrawRay(position, vectorToChild);
-            }
-        }
-        
-        private void GetAdjacentMarkersFromParent()
-        {
-            connectedMarkers = new List<MarkerStats>();
-
-
-            Transform cachedTransform = transform;
-
-            Vector3 position = cachedTransform.position;
-            
-            
-            Transform parent = cachedTransform.parent;
-            foreach (Transform child in parent)
-            {
-                var marker = child.GetComponent<PathfindingMarker>();
-                if (marker == null) return;
-                
-                Vector3 markerPos = child.position;
-                Vector3 vectorToChild = markerPos - position;
-                float distanceToChild = Vector3.Distance(position, markerPos);
-            
-                if (Physics.Raycast(position, vectorToChild, distanceToChild)) continue;
-            
-                var markerStat = new MarkerStats(marker, vectorToChild.magnitude);
-                connectedMarkers.Add(markerStat);
-            }
+            scale = grid.nodeScale;
+            PickAColor();
         }
 
-        private void DrawRayGizmoToLastSibling()
-        {
-            Transform parent = transform.parent;
-
-            int siblingIndex = transform.GetSiblingIndex();
-
-            Vector3 lastSiblingPos = default;
-
-            if (siblingIndex < 1) return;
-
-            lastSiblingPos = parent.GetChild(siblingIndex - 1).position;
-
-            Vector3 position = transform.position;
-
-            Gizmos.DrawRay(position, lastSiblingPos - position);
-        }
-
-        public static PathfindingMarker CreateInstance(string markerName, ref PathfindingGrid grid, ref Vector3 markerPos, ref Transform parent, ref float creationYPosAboveFloor)
+        public static void CreateInstance(string markerName, ref PathfindingGrid grid, ref Vector3 markerPos, ref Transform parent, ref float creationYPosAboveFloor)
         {
             var newMarker = new GameObject(markerName).AddComponent<PathfindingMarker>();
-            
 
             newMarker.transform.position = markerPos;
             newMarker.transform.SetParent(parent);
-            
+
             newMarker.creationHeightAboveFloor = creationYPosAboveFloor;
 
             newMarker.grid = grid;
-            
-            
-            return newMarker;
+
+            grid.markers.Add(newMarker);
         }
 
         public static PathfindingMarker CreateInstance(string markerName, ref PathfindingGrid grid)
