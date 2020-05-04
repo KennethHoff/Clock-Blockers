@@ -21,7 +21,7 @@ namespace ClockBlockers.MapData
 
 
         [SerializeReference]
-        private List<MarkerStats> connectedMarkers;
+        public List<MarkerStats> connectedMarkers;
 
         public PathfindingGrid Grid
         {
@@ -104,31 +104,6 @@ namespace ClockBlockers.MapData
             return connectedMarkers != null && connectedMarkers.Any(markerStat => markerStat.marker == marker);
         }
 
-        [ContextMenu("Generate Adjacencies")]
-        public void GetAdjacentMarkersFromGrid()
-        {
-            connectedMarkers = new List<MarkerStats>();
-
-            Transform cachedTransform = transform;
-
-            Vector3 position = cachedTransform.position;
-
-            foreach (PathfindingMarker marker in Grid.markers)
-            {
-                if (marker == this) continue;
-                Vector3 markerPos = marker.transform.position;
-                Vector3 vectorToChild = markerPos - position;
-                float distanceToChild = Vector3.Distance(position, markerPos);
-
-                if (Physics.Raycast(position, vectorToChild, distanceToChild)) continue;
-
-                var markerStat = new MarkerStats(marker, vectorToChild.magnitude);
-                connectedMarkers.Add(markerStat);
-            }
-
-            PickAColor();
-        }
-
         private void DrawTransparentRays()
         {
             if (connectedMarkers == null) return;
@@ -208,27 +183,38 @@ namespace ClockBlockers.MapData
             PickAColor();
         }
 
-        public static void CreateInstance(string markerName, ref PathfindingGrid grid, ref Vector3 markerPos, ref Transform parent, ref float creationYPosAboveFloor)
+        public static PathfindingMarker CreateInstance(string markerName, ref PathfindingGrid grid, ref Vector3 markerPos, ref Transform parent, ref float creationYPosAboveFloor)
         {
             var newMarker = new GameObject(markerName).AddComponent<PathfindingMarker>();
+            newMarker.connectedMarkers = new List<MarkerStats>();
 
             newMarker.transform.position = markerPos;
             newMarker.transform.SetParent(parent);
-
+            
             newMarker.creationHeightAboveFloor = creationYPosAboveFloor;
 
             newMarker.grid = grid;
 
             grid.markers.Add(newMarker);
+            return newMarker;
         }
 
         public static PathfindingMarker CreateInstance(string markerName, ref PathfindingGrid grid)
         {
             var newMarker = new GameObject(markerName).AddComponent<PathfindingMarker>();
+            newMarker.connectedMarkers = new List<MarkerStats>();
 
             newMarker.grid = grid;
+            
+            grid.markers.Add(newMarker);
 
             return newMarker;
+        }
+
+        public void SetAdjacentMarkers(List<MarkerStats> connectedMarkers)
+        {
+            Logging.Log("Hey");
+            this.connectedMarkers = connectedMarkers;
         }
     }
 }

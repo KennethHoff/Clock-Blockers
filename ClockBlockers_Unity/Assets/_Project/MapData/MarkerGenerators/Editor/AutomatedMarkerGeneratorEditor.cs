@@ -7,12 +7,12 @@ using UnityEditor;
 using UnityEngine;
 
 
-namespace ClockBlockers.MapData.Editor
+namespace ClockBlockers.MapData.MarkerGenerators.Editor
 {
-	[CustomEditor(typeof(MarkerGeneratorBase))]
-	public class MarkerGeneratorBaseEditor : UnityEditor.Editor
+	[CustomEditor(typeof(AutomatedMarkerGenerator))]
+	public class AutomatedMarkerGeneratorEditor : UnityEditor.Editor
 	{
-		protected MarkerGeneratorBase myScript;
+		protected AutomatedMarkerGenerator myScript = null;
 		
 		public override void OnInspectorGUI()
 		{
@@ -33,7 +33,7 @@ namespace ClockBlockers.MapData.Editor
 			CreateButton(myScript.GenerateMarkerAdjacencies, "Generate marker adjacencies");
 		}
 
-		private static void CreateButton(Action action, string buttonText)
+		protected static void CreateButton(Action action, string buttonText)
 		{
 			if (GUILayout.Button(buttonText)) action.Invoke();
 		}

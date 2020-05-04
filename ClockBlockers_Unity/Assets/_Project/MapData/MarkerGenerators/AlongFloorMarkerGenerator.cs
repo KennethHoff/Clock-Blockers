@@ -1,11 +1,10 @@
-﻿using ClockBlockers.Utility;
+﻿using UnityEngine;
 
-using UnityEngine;
 
-namespace ClockBlockers.MapData
+namespace ClockBlockers.MapData.MarkerGenerators
 {
 	[ExecuteInEditMode]
-	public class AlongFloorMarkerGenerator : IntervalMarkerGeneratorBase
+	public class AlongFloorMarkerGenerator : IntervalAutomatedMarkerGenerator
 	{
 		protected override bool CreateMarker(int j, float xPos, Transform newRow)
 		{

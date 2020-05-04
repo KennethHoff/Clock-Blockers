@@ -6,11 +6,12 @@ using ClockBlockers.Utility;
 
 using UnityEngine;
 
-namespace ClockBlockers.MapData
+
+namespace ClockBlockers.MapData.MarkerGenerators
 {
 
 	[ExecuteInEditMode]
-	public class SurfaceColliderMarkerGenerator : MarkerGeneratorBase
+	public class SurfaceColliderMarkerGenerator : AutomatedMarkerGenerator
 	{
 		
 		private const float MaxDistanceCheck = 100f;

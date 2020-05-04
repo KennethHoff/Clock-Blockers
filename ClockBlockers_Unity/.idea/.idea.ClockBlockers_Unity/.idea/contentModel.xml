@@ -53,21 +53,26 @@
           </e>
           <e p="Main.asmdef" t="Include" />
           <e p="MapData" t="Include">
-            <e p="AlongFloorMarkerGenerator.cs" t="Include" />
             <e p="Editor" t="Include">
-              <e p="AlongFloorMarkerGeneratorEditor.cs" t="Include" />
-              <e p="MarkerGeneratorBaseEditor.cs" t="Include" />
-              <e p="OrbitalRayMarkerGeneratorEditor.cs" t="Include" />
               <e p="PathfindingGridEditor.cs" t="Include" />
-              <e p="SurfaceColliderMarkerGeneratorEditor.cs" t="Include" />
             </e>
-            <e p="IntervalMarkerGeneratorBase.cs" t="Include" />
-            <e p="MarkerGeneratorBase.cs" t="Include" />
+            <e p="MarkerGenerators" t="Include">
+              <e p="AlongFloorMarkerGenerator.cs" t="Include" />
+              <e p="AutomatedMarkerGenerator.cs" t="Include" />
+              <e p="Editor" t="Include">
+                <e p="AlongFloorMarkerGeneratorEditor.cs" t="Include" />
+                <e p="AutomatedMarkerGeneratorEditor.cs" t="Include" />
+                <e p="OrbitalRayMarkerGeneratorEditor.cs" t="Include" />
+                <e p="SurfaceColliderMarkerGeneratorEditor.cs" t="Include" />
+              </e>
+              <e p="IntervalAutomatedMarkerGenerator.cs" t="Include" />
+              <e p="MarkerGeneratorBase.cs" t="Include" />
+              <e p="OrbitalRayMarkerGenerator.cs" t="Include" />
+              <e p="SurfaceColliderMarkerGenerator.cs" t="Include" />
+            </e>
             <e p="MarkerStats.cs" t="Include" />
-            <e p="OrbitalRayMarkerGenerator.cs" t="Include" />
             <e p="PathfindingGrid.cs" t="Include" />
             <e p="PathfindingMarker.cs" t="Include" />
-            <e p="SurfaceColliderMarkerGenerator.cs" t="Include" />
           </e>
           <e p="MatchData" t="Include">
             <e p="Act.cs" t="Include" />

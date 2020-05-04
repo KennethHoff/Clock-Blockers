@@ -4,10 +4,12 @@ using ClockBlockers.Utility;
 
 using UnityEngine;
 
-namespace ClockBlockers.MapData
+
+namespace ClockBlockers.MapData.MarkerGenerators
 {
-	public abstract class IntervalMarkerGeneratorBase : MarkerGeneratorBase
+	public abstract class IntervalAutomatedMarkerGenerator : AutomatedMarkerGenerator
 	{
+		[Space(10)]
 		[Range(MinDistance, MaxDistance)]
 		public int xDistanceBetweenMarkers;
 
@@ -20,17 +22,68 @@ namespace ClockBlockers.MapData
 		protected float MarkerSizeAdjustedZStartPos => Mathf.Floor(grid.ZLength / 2 - ZDistanceBetweenMarkers/2);
 		private float XDistanceBetweenMarkers => xDistanceBetweenMarkers;
 		private float ZDistanceBetweenMarkers => zDistanceBetweenMarkers;
-		protected int NumberOfColumns => Mathf.FloorToInt(grid.XLength / xDistanceBetweenMarkers)-1;
-		protected int NumberOfRows => Mathf.FloorToInt(grid.ZLength / zDistanceBetweenMarkers)-1;
+		private int NumberOfColumns => Mathf.FloorToInt(grid.XLength / xDistanceBetweenMarkers)-1;
+		private int NumberOfRows => Mathf.FloorToInt(grid.ZLength / zDistanceBetweenMarkers)-1;
 
 		public sealed override void GenerateMarkerAdjacencies()
 		{
 			foreach (PathfindingMarker marker in grid.markers)
 			{
-				marker.GetAdjacentMarkersFromGrid();
+				marker.connectedMarkers = new List<MarkerStats>();
+        
+				Transform cachedTransform = transform;
+        
+				Vector3 position = cachedTransform.position;
+        
+				foreach (PathfindingMarker marker2 in grid.markers)
+				{
+					if (marker2 == marker) continue;
+					Vector3 markerPos = marker2.transform.position;
+					
+					Vector3 vectorToChild = markerPos - position;
+					float distanceToChild = Vector3.Distance(position, markerPos);
+        
+					if (Physics.Raycast(position, vectorToChild, distanceToChild)) continue;
+        
+					var markerStat = new MarkerStats(marker2, vectorToChild.magnitude);
+					marker.connectedMarkers.Add(markerStat);
+				}
+        
+				marker.PickAColor();
 			}
 		}
-		
+
+		// public override void GenerateMarkerAdjacencies()
+		// {
+		// 	Logging.Log("Generating Marker Adjacencies");
+		// 	grid.markers.ForEach(marker =>
+		// 	{
+		// 		if (marker == null) return;
+		// 		Vector3 position = marker.transform.position;
+		// 		Vector3 gridMinimumOpenAreaAroundMarkers = position + grid.minimumOpenAreaAroundMarkers;
+		//
+		//
+		// 		Collider[] hits = Physics.OverlapBox(position, grid.minimumOpenAreaAroundMarkers);
+		//
+		// 		Logging.Log("# of hits: " + hits.Length);
+		// 		
+		// 		List<MarkerStats> connectedMarkers = new List<MarkerStats>();
+		// 		
+		// 		foreach (Collider hit in hits)
+		// 		{
+		// 			var collMarker = hit.GetComponent<PathfindingMarker>();
+		// 			if (collMarker == null) return;
+		//
+		// 			var collMarkerStat = new MarkerStats(collMarker, Vector3.Distance(position, gridMinimumOpenAreaAroundMarkers));
+		//
+		// 			Logging.Log(collMarkerStat.marker + " : " + collMarkerStat.distance);
+		// 			connectedMarkers.Add(collMarkerStat);
+		// 		}
+		// 		
+		// 		marker.SetAdjacentMarkers(connectedMarkers);
+		// 	});
+		// }
+
 		public sealed override void ClearMarkers()
 		{
 			foreach (PathfindingMarker marker in grid.markers)

@@ -1,10 +1,10 @@
 ﻿using UnityEditor;
 
 
-namespace ClockBlockers.MapData.Editor
+namespace ClockBlockers.MapData.MarkerGenerators.Editor
 {
 	[CustomEditor(typeof(AlongFloorMarkerGenerator))]
-	class AlongFloorMarkerGeneratorEditor : MarkerGeneratorBaseEditor
+	internal class AlongFloorMarkerGeneratorEditor : AutomatedMarkerGeneratorEditor
 	{
 		public override void OnInspectorGUI()
 		{

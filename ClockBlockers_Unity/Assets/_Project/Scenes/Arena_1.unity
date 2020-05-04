@@ -292,6 +292,207 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1840957799448107733, guid: cc426022cddf2e24b9d2c6fda998fb84, type: 3}
   m_PrefabInstance: {fileID: 60216509}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &132890640
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 132890643}
+  - component: {fileID: 132890641}
+  - component: {fileID: 132890642}
+  m_Layer: 0
+  m_Name: Surface Collider Marker 16
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &132890641
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 132890640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e8ca775ca1d6354ea6caa686a900969, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  connectedMarkers: []
+  scale: 0.5
+  grid: {fileID: 149534690005254036}
+  creationHeightAboveFloor: 0
+  references:
+    version: 1
+--- !u!65 &132890642
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 132890640}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 20.5, y: 2, z: 20.5}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &132890643
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 132890640}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 24.25, y: 1.1, z: 39.75}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 149534690005254039}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &149444265
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 149444268}
+  - component: {fileID: 149444266}
+  - component: {fileID: 149444267}
+  m_Layer: 0
+  m_Name: Surface Collider Marker 30
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &149444266
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 149444265}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e8ca775ca1d6354ea6caa686a900969, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  connectedMarkers: []
+  scale: 0.5
+  grid: {fileID: 149534690005254036}
+  creationHeightAboveFloor: 0
+  references:
+    version: 1
+--- !u!65 &149444267
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 149444265}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 7.5, y: 2, z: 7.5}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &149444268
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 149444265}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -39.25, y: 1.1, z: 46.25}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 149534690005254039}
+  m_RootOrder: 15
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!134 &170014273
+PhysicMaterial:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  dynamicFriction: 0.6
+  staticFriction: 0.6
+  bounciness: 0
+  frictionCombine: 0
+  bounceCombine: 0
+--- !u!1 &271024466
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 271024469}
+  - component: {fileID: 271024467}
+  - component: {fileID: 271024468}
+  m_Layer: 0
+  m_Name: Surface Collider Marker 18
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &271024467
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 271024466}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e8ca775ca1d6354ea6caa686a900969, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  connectedMarkers: []
+  scale: 0.5
+  grid: {fileID: 149534690005254036}
+  creationHeightAboveFloor: 0
+  references:
+    version: 1
+--- !u!65 &271024468
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 271024466}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 20.5, y: 2, z: 20.5}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &271024469
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 271024466}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 34, y: 1.1, z: 39.75}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 149534690005254039}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &291416594
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -775,6 +976,10 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 102
       objectReference: {fileID: 0}
+    - target: {fileID: 6715252222016188800, guid: 6222a7189442e364291cd6094fda5e5c, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 1919907010}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6222a7189442e364291cd6094fda5e5c, type: 3}
 --- !u!4 &539744733 stripped
@@ -845,6 +1050,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -90
       objectReference: {fileID: 0}
+    - target: {fileID: 6715252222016188800, guid: 6222a7189442e364291cd6094fda5e5c, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 170014273}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6222a7189442e364291cd6094fda5e5c, type: 3}
 --- !u!4 &560471348 stripped
@@ -852,6 +1061,69 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 522104192619426730, guid: 6222a7189442e364291cd6094fda5e5c, type: 3}
   m_PrefabInstance: {fileID: 560471347}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &603538219
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 603538222}
+  - component: {fileID: 603538220}
+  - component: {fileID: 603538221}
+  m_Layer: 0
+  m_Name: Surface Collider Marker 26
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &603538220
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 603538219}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e8ca775ca1d6354ea6caa686a900969, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  connectedMarkers: []
+  scale: 0.5
+  grid: {fileID: 149534690005254036}
+  creationHeightAboveFloor: 0
+  references:
+    version: 1
+--- !u!65 &603538221
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 603538219}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 7.5, y: 2, z: 7.5}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &603538222
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 603538219}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -39.25, y: 1.1, z: 46.25}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 149534690005254039}
+  m_RootOrder: 13
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &667546684
 GameObject:
   m_ObjectHideFlags: 0
@@ -1039,6 +1311,207 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &733130538
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 733130541}
+  - component: {fileID: 733130539}
+  - component: {fileID: 733130540}
+  m_Layer: 0
+  m_Name: Surface Collider Marker 24
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &733130539
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 733130538}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e8ca775ca1d6354ea6caa686a900969, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  connectedMarkers: []
+  scale: 0.5
+  grid: {fileID: 149534690005254036}
+  creationHeightAboveFloor: 0
+  references:
+    version: 1
+--- !u!65 &733130540
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 733130538}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 14.5, y: 2, z: 14.5}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &733130541
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 733130538}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -42.75, y: 1.1, z: 42.75}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 149534690005254039}
+  m_RootOrder: 12
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!134 &834718785
+PhysicMaterial:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  dynamicFriction: 0.6
+  staticFriction: 0.6
+  bounciness: 0
+  frictionCombine: 0
+  bounceCombine: 0
+--- !u!1 &853675870
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 853675873}
+  - component: {fileID: 853675871}
+  - component: {fileID: 853675872}
+  m_Layer: 0
+  m_Name: Surface Collider Marker 14
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &853675871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 853675870}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e8ca775ca1d6354ea6caa686a900969, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  connectedMarkers: []
+  scale: 0.5
+  grid: {fileID: 149534690005254036}
+  creationHeightAboveFloor: 0
+  references:
+    version: 1
+--- !u!65 &853675872
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 853675870}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 20.5, y: 2, z: 20.5}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &853675873
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 853675870}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 13.5, y: 1.1, z: 39.75}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 149534690005254039}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &866159139
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 866159142}
+  - component: {fileID: 866159140}
+  - component: {fileID: 866159141}
+  m_Layer: 0
+  m_Name: Surface Collider Marker 4
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &866159140
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 866159139}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e8ca775ca1d6354ea6caa686a900969, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  connectedMarkers: []
+  scale: 0.5
+  grid: {fileID: 149534690005254036}
+  creationHeightAboveFloor: 0
+  references:
+    version: 1
+--- !u!65 &866159141
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 866159139}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 14.5, y: 2, z: 14.5}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &866159142
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 866159139}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -28.25, y: 1.1, z: 42.75}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 149534690005254039}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &886633510
 GameObject:
   m_ObjectHideFlags: 0
@@ -1134,6 +1607,132 @@ Transform:
   m_Father: {fileID: 1246168812}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -25, y: 0, z: 0}
+--- !u!1 &904737132
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 904737135}
+  - component: {fileID: 904737133}
+  - component: {fileID: 904737134}
+  m_Layer: 0
+  m_Name: Surface Collider Marker 8
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &904737133
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 904737132}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e8ca775ca1d6354ea6caa686a900969, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  connectedMarkers: []
+  scale: 0.5
+  grid: {fileID: 149534690005254036}
+  creationHeightAboveFloor: 0
+  references:
+    version: 1
+--- !u!65 &904737134
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 904737132}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 14.5, y: 2, z: 14.5}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &904737135
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 904737132}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -13.75, y: 1.1, z: 42.75}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 149534690005254039}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &912472213
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 912472216}
+  - component: {fileID: 912472214}
+  - component: {fileID: 912472215}
+  m_Layer: 0
+  m_Name: Surface Collider Marker 20
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &912472214
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 912472213}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e8ca775ca1d6354ea6caa686a900969, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  connectedMarkers: []
+  scale: 0.5
+  grid: {fileID: 149534690005254036}
+  creationHeightAboveFloor: 0
+  references:
+    version: 1
+--- !u!65 &912472215
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 912472213}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 15.5, y: 2, z: 15.5}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &912472216
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 912472213}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 42.25, y: 1.1, z: 42.25}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 149534690005254039}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &938813640
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1756,6 +2355,69 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1840957799448107733, guid: cc426022cddf2e24b9d2c6fda998fb84, type: 3}
   m_PrefabInstance: {fileID: 1141903500}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1153492089
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1153492092}
+  - component: {fileID: 1153492090}
+  - component: {fileID: 1153492091}
+  m_Layer: 0
+  m_Name: Surface Collider Marker 6
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1153492090
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1153492089}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e8ca775ca1d6354ea6caa686a900969, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  connectedMarkers: []
+  scale: 0.5
+  grid: {fileID: 149534690005254036}
+  creationHeightAboveFloor: 0
+  references:
+    version: 1
+--- !u!65 &1153492091
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1153492089}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 14.5, y: 2, z: 14.5}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &1153492092
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1153492089}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -21.5, y: 1.1, z: 42.75}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 149534690005254039}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1157706554
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2175,6 +2837,69 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1840957799448107733, guid: cc426022cddf2e24b9d2c6fda998fb84, type: 3}
   m_PrefabInstance: {fileID: 1398559191}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1452126098
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1452126101}
+  - component: {fileID: 1452126099}
+  - component: {fileID: 1452126100}
+  m_Layer: 0
+  m_Name: Surface Collider Marker 28
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1452126099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1452126098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e8ca775ca1d6354ea6caa686a900969, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  connectedMarkers: []
+  scale: 0.5
+  grid: {fileID: 149534690005254036}
+  creationHeightAboveFloor: 0
+  references:
+    version: 1
+--- !u!65 &1452126100
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1452126098}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 7.5, y: 2, z: 7.5}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &1452126101
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1452126098}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -39.25, y: 1.1, z: 46.25}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 149534690005254039}
+  m_RootOrder: 14
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1515462694
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2323,6 +3048,258 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1840957799448107733, guid: cc426022cddf2e24b9d2c6fda998fb84, type: 3}
   m_PrefabInstance: {fileID: 1520348195}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1528942861
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1528942864}
+  - component: {fileID: 1528942862}
+  - component: {fileID: 1528942863}
+  m_Layer: 0
+  m_Name: Surface Collider Marker 22
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1528942862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1528942861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e8ca775ca1d6354ea6caa686a900969, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  connectedMarkers: []
+  scale: 0.5
+  grid: {fileID: 149534690005254036}
+  creationHeightAboveFloor: 0
+  references:
+    version: 1
+--- !u!65 &1528942863
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1528942861}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 7, y: 2, z: 7}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &1528942864
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1528942861}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -46.5, y: 1.1, z: 41.75}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 149534690005254039}
+  m_RootOrder: 11
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1553230677
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1553230680}
+  - component: {fileID: 1553230678}
+  - component: {fileID: 1553230679}
+  m_Layer: 0
+  m_Name: Surface Collider Marker 12
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1553230678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1553230677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e8ca775ca1d6354ea6caa686a900969, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  connectedMarkers: []
+  scale: 0.5
+  grid: {fileID: 149534690005254036}
+  creationHeightAboveFloor: 0
+  references:
+    version: 1
+--- !u!65 &1553230679
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1553230677}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 20.5, y: 2, z: 20.5}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &1553230680
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1553230677}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 3.75, y: 1.1, z: 39.75}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 149534690005254039}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1610901961
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1610901964}
+  - component: {fileID: 1610901962}
+  - component: {fileID: 1610901963}
+  m_Layer: 0
+  m_Name: Surface Collider Marker 32
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1610901962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1610901961}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e8ca775ca1d6354ea6caa686a900969, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  connectedMarkers: []
+  scale: 0.5
+  grid: {fileID: 149534690005254036}
+  creationHeightAboveFloor: 0
+  references:
+    version: 1
+--- !u!65 &1610901963
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1610901961}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 7.5, y: 2, z: 7.5}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &1610901964
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1610901961}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -39.25, y: 1.1, z: 46.25}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 149534690005254039}
+  m_RootOrder: 16
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1634506724
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1634506727}
+  - component: {fileID: 1634506725}
+  - component: {fileID: 1634506726}
+  m_Layer: 0
+  m_Name: Surface Collider Marker 0
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1634506725
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1634506724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e8ca775ca1d6354ea6caa686a900969, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  connectedMarkers: []
+  scale: 0.5
+  grid: {fileID: 149534690005254036}
+  creationHeightAboveFloor: 0
+  references:
+    version: 1
+--- !u!65 &1634506726
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1634506724}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 14.5, y: 2, z: 14.5}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &1634506727
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1634506724}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -42.75, y: 1.1, z: 42.75}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 149534690005254039}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1744177048
 GameObject:
   m_ObjectHideFlags: 0
@@ -2595,6 +3572,69 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1798502655}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1812801076
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1812801079}
+  - component: {fileID: 1812801077}
+  - component: {fileID: 1812801078}
+  m_Layer: 0
+  m_Name: Surface Collider Marker 2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1812801077
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1812801076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e8ca775ca1d6354ea6caa686a900969, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  connectedMarkers: []
+  scale: 0.5
+  grid: {fileID: 149534690005254036}
+  creationHeightAboveFloor: 0
+  references:
+    version: 1
+--- !u!65 &1812801078
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1812801076}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 14.5, y: 2, z: 14.5}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &1812801079
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1812801076}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -36, y: 1.1, z: 42.75}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 149534690005254039}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1867755202
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2810,6 +3850,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1917055733}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!134 &1919907010
+PhysicMaterial:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  dynamicFriction: 0.6
+  staticFriction: 0.6
+  bounciness: 0
+  frictionCombine: 0
+  bounceCombine: 0
 --- !u!1 &1927513755
 GameObject:
   m_ObjectHideFlags: 0
@@ -3014,6 +4066,69 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2043466097
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2043466100}
+  - component: {fileID: 2043466098}
+  - component: {fileID: 2043466099}
+  m_Layer: 0
+  m_Name: Surface Collider Marker 10
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2043466098
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2043466097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e8ca775ca1d6354ea6caa686a900969, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  connectedMarkers: []
+  scale: 0.5
+  grid: {fileID: 149534690005254036}
+  creationHeightAboveFloor: 0
+  references:
+    version: 1
+--- !u!65 &2043466099
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2043466097}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 14.5, y: 2, z: 14.5}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &2043466100
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2043466097}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -7, y: 1.1, z: 42.75}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 149534690005254039}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2129251419
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3113,8 +4228,42 @@ MonoBehaviour:
   selectionDrawRays: 0
   selectionNodeScale: 1
   floorPlane: {fileID: 522104193286480113}
-  minimumOpenAreaAroundMarkers: {x: 1, y: 1, z: 1}
-  markers: []
+  minimumOpenAreaAroundMarkers: {x: 1, y: 2, z: 1}
+  markers:
+  - {fileID: 1634506725}
+  - {fileID: 1634506725}
+  - {fileID: 1812801077}
+  - {fileID: 1812801077}
+  - {fileID: 866159140}
+  - {fileID: 866159140}
+  - {fileID: 1153492090}
+  - {fileID: 1153492090}
+  - {fileID: 904737133}
+  - {fileID: 904737133}
+  - {fileID: 2043466098}
+  - {fileID: 2043466098}
+  - {fileID: 1553230678}
+  - {fileID: 1553230678}
+  - {fileID: 853675871}
+  - {fileID: 853675871}
+  - {fileID: 132890641}
+  - {fileID: 132890641}
+  - {fileID: 271024467}
+  - {fileID: 271024467}
+  - {fileID: 912472214}
+  - {fileID: 912472214}
+  - {fileID: 1528942862}
+  - {fileID: 1528942862}
+  - {fileID: 733130539}
+  - {fileID: 733130539}
+  - {fileID: 603538220}
+  - {fileID: 603538220}
+  - {fileID: 1452126099}
+  - {fileID: 1452126099}
+  - {fileID: 149444266}
+  - {fileID: 149444266}
+  - {fileID: 1610901962}
+  - {fileID: 1610901962}
 --- !u!1 &149534690005254038
 GameObject:
   m_ObjectHideFlags: 0
@@ -3143,7 +4292,24 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 1634506727}
+  - {fileID: 1812801079}
+  - {fileID: 866159142}
+  - {fileID: 1153492092}
+  - {fileID: 904737135}
+  - {fileID: 2043466100}
+  - {fileID: 1553230680}
+  - {fileID: 853675873}
+  - {fileID: 132890643}
+  - {fileID: 271024469}
+  - {fileID: 912472216}
+  - {fileID: 1528942864}
+  - {fileID: 733130541}
+  - {fileID: 603538222}
+  - {fileID: 1452126101}
+  - {fileID: 149444268}
+  - {fileID: 1610901964}
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3156,16 +4322,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 149534690005254038}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c70af323ac97419180b52c853ea434b7, type: 3}
+  m_Script: {fileID: 11500000, guid: ec8c372c0f554991bddc35b7ed5926d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   showAffectedArea: 1
   createMarkerNearOrInsideCollisions: 0
-  creationHeightAboveFloor: 0.15
-  xDistanceBetweenMarkers: 2
-  zDistanceBetweenMarkers: 2
-  rayCastCeiling: 20
-  rayCastFloor: -0.5
+  creationHeightAboveFloor: 0
+  maxDistanceBetweenMarkers: 10
+  boxCheckDistanceIncreasePerAttempt: 0.25
+  maximumCreatedMarkers: 17
 --- !u!1001 &522104193286480112
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3209,6 +4374,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: -0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 6715252222016188800, guid: 6222a7189442e364291cd6094fda5e5c, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 834718785}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6222a7189442e364291cd6094fda5e5c, type: 3}
 --- !u!4 &522104193286480113 stripped

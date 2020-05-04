@@ -1,10 +1,10 @@
 ﻿using UnityEditor;
 
 
-namespace ClockBlockers.MapData.Editor
+namespace ClockBlockers.MapData.MarkerGenerators.Editor
 {
 	[CustomEditor(typeof(OrbitalRayMarkerGenerator))]
-	class OrbitalRayMarkerGeneratorEditor : MarkerGeneratorBaseEditor
+	class OrbitalRayMarkerGeneratorEditor : AutomatedMarkerGeneratorEditor
 	{
 		public override void OnInspectorGUI()
 		{

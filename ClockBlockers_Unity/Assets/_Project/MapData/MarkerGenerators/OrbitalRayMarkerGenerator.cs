@@ -5,10 +5,10 @@ using ClockBlockers.Utility;
 using UnityEngine;
 
 
-namespace ClockBlockers.MapData
+namespace ClockBlockers.MapData.MarkerGenerators
 {
 	[ExecuteInEditMode]
-	public class OrbitalRayMarkerGenerator : IntervalMarkerGeneratorBase
+	public class OrbitalRayMarkerGenerator : IntervalAutomatedMarkerGenerator
 	{
 		[SerializeField]
 		private float rayCastCeiling = 20f;
