@@ -4,6 +4,8 @@ using System.Linq;
 
 using ClockBlockers.Utility;
 
+using Sisus.OdinSerializer.Utilities;
+
 using UnityEngine;
 
 
@@ -18,7 +20,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 		
 		[Space(10)]
 		[SerializeField]
-		private float maxDistanceBetweenMarkers = 10;
+		private float maxMarkerSize = 10;
 		
 		[SerializeField]
 		private float boxCheckDistanceIncreasePerAttempt = 0.25f;
@@ -33,6 +35,11 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			
 		}
 
+		private void OnValidate()
+		{
+			if (maximumCreatedMarkers < 0) maximumCreatedMarkers = 0;
+		}
+
 		public override void GenerateAllMarkers()
 		{
 			if (grid.markers == null) grid.markers = new List<PathfindingMarker>();
@@ -45,7 +52,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			startPos.y += grid.minimumOpenAreaAroundMarkers.y / 2 + 0.1f;
 			startPos.z -= grid.minimumOpenAreaAroundMarkers.z;
 			
-			CreateMarker(startPos);
+			IterativelyCreateMarkers(startPos);
 		}
 
 		public override void ClearMarkers()
@@ -63,57 +70,58 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			Logging.Log("Surface Collider Marker Generator has not implemented GenerateMarkerAdjacencies");
 		}
 
-		private void CreateMarker(Vector3 startPos)
+		private void IterativelyCreateMarkers(Vector3 startPos)
 		{
-			Vector3[] markerPositionAndSize = GetMarkerPositionAndSize(startPos);
-
-			Vector3 markerPos = markerPositionAndSize[0];
-			Vector3 markerSize = markerPositionAndSize[1] * 2;
-
-			InstantiateMarker("Surface Collider Marker", markerPos, markerSize);
-
-			
-			float nextMarkerXStartPos = markerPos.x + (markerSize.x / 2 - 0.5f);
-			float nextMarkerYStartPos = markerPos.y;
-			float nextMarkerZStartPos = markerPos.z + (markerSize.z/2-0.5f);
-			
-			var tooFarOnX = false;
-			var tooFarOnZ = false;
-			
-			if (markerPos.x + markerSize.x/2 >= grid.XEndPos)
+			while (true)
 			{
-				Logging.Log("Over the edge on the X-axis.");
-				tooFarOnX = true;
-			}
+				Vector3[] markerPositionAndSize = GetMarkerPositionAndSize(startPos);
 
-			if (markerPos.z + markerSize.z/2 <= grid.ZEndPos)
-			{
-				Logging.Log("Over the edge on the Z-axis.");
-				tooFarOnZ = true;
-			}
+				Vector3 markerPos = markerPositionAndSize[0];
+				Vector3 markerSize = markerPositionAndSize[1] * 2;
 
-			if (tooFarOnX && tooFarOnZ)
-			{
-				Logging.Log("Too far on both X and Z. Stopped creating markers!");
-				return;
-			}
+				InstantiateMarker("Surface Collider Marker", markerPos, markerSize);
 
-			if (tooFarOnX)
-			{
-				nextMarkerXStartPos = grid.XStartPos + grid.minimumOpenAreaAroundMarkers.x;
-				nextMarkerZStartPos -= markerSize.z/2;
-			}
+				float nextMarkerXStartPos = markerPos.x + (markerSize.x / 2) + 0.5f;
+				float nextMarkerYStartPos = markerPos.y;
 
-			if (gridTransform.childCount >= maximumCreatedMarkers)
-			{
-				Logging.Log("Created enough markers. Stopped creating markers");
-				return;
+				float nextMarkerZStartPos = markerPos.z;
+
+				var tooFarOnX = false;
+				var tooFarOnZ = false;
+
+				if (markerPos.x + markerSize.x / 2 >= grid.XEndPos)
+				{
+					Logging.Log("Over the edge on the X-axis.");
+					tooFarOnX = true;
+				}
+
+				if (markerPos.z + markerSize.z / 2 <= grid.ZEndPos)
+				{
+					Logging.Log("Over the edge on the Z-axis.");
+					tooFarOnZ = true;
+				}
+
+				if (tooFarOnX && tooFarOnZ)
+				{
+					Logging.Log("Too far on both X and Z. Stopped creating markers!");
+					return;
+				}
+
+				if (tooFarOnX)
+				{
+					nextMarkerXStartPos = grid.XStartPos + grid.minimumOpenAreaAroundMarkers.x;
+					nextMarkerZStartPos -= markerSize.z;
+				}
+
+				if (gridTransform.childCount >= maximumCreatedMarkers)
+				{
+					Logging.Log("Created enough markers. Stopped creating markers");
+					return;
+				}
+
+				var nextMarkerStartPos = new Vector3(nextMarkerXStartPos, nextMarkerYStartPos, nextMarkerZStartPos);
+				startPos = nextMarkerStartPos;
 			}
-			
-			// Because all objects should be on a 'scale increment' of 1, removing 0.5f should then cause it to not be inside the object
-				
-			var nextMarkerStartPos = new Vector3(nextMarkerXStartPos, nextMarkerYStartPos, nextMarkerZStartPos);
-			CreateMarker(nextMarkerStartPos);
 		}
 
 		private Vector3[] GetMarkerPositionAndSize(Vector3 startPos)
@@ -132,110 +140,391 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			Vector3 currPos = startPos;
 
 			Vector3 currSize = grid.minimumOpenAreaAroundMarkers / 2;
-
-			var collForward = false;
-			var collLeft = false;
-			var collBackward = false;
-			var collRight = false;
-
-			var iterations = 0;
-
+			
 			Logging.Log("Start position: " + currPos + " | Start size: " + currSize);
 
-			FindMarkerSize(ref currPos, ref currSize, ref collForward, ref collLeft, ref collBackward, ref collRight, ref iterations);
+			FindMarkerPosAndSize(ref currPos, ref currSize);
 
 			return new[] {currPos, currSize};
 		}
 
-		private void FindMarkerSize(ref Vector3 currPos, ref Vector3 currSize, ref bool collForward, ref bool collLeft, ref bool collBackward, ref bool collRight, ref int iterations)
+		private void FindMarkerPosAndSize(ref Vector3 currPos, ref Vector3 currSize)
 		{
+			var iterations = 0;
+
 			while (true)
 			{
+				Logging.Log($"Iteration {iterations} | Current position: {currPos.ToString("F4")} | Current Size: {currSize.ToString("F4")}");
 
-				if (iterations++ >= 1000)
+				#region Guard Clauses
+
+				if (iterations++ >= 250)
 				{
 					Logging.Log("Too many iterations. Probably a logic error. Stopping");
 					return;
 				}
-				
-				if (currSize.x > MaxDistanceCheck || currSize.z > MaxDistanceCheck)
+
+				if (currSize.x >= MaxDistanceCheck || currSize.z >= MaxDistanceCheck)
 				{
 					Logging.Log("Searched too far. Stopping");
 					return;
 				}
 
-				if (currSize.x > maxDistanceBetweenMarkers || currSize.z > maxDistanceBetweenMarkers)
+				if (currSize.x >= maxMarkerSize / 2 || currSize.z >= maxMarkerSize / 2)
 				{
 					Logging.Log("Marker is as big as it gets. Stopping");
 					return;
 				}
 
-				Collider[] colliders = Physics.OverlapBox(currPos, currSize, Quaternion.identity, ~0, QueryTriggerInteraction.Ignore);
-				int size = colliders.Length;
+				#endregion
 
-				if (size == 0)
+				
+				MakeSureMarkerIsInsideMap(ref currPos);
+
+				if (!GetCollisions(ref currPos, ref currSize, out bool forward, out bool left, out bool backward, out bool right)) continue;
+
+				var moved = MoveBasedOnCollisions(ref currPos, forward, left, backward, right, "");
+				var resized = ResizeBasedOnCollisions(ref currSize, forward, left, backward, right, "");
+
+				if (!moved || !resized) break;
+			}
+		}
+
+		/// <summary>
+		/// Returns false if the object was found to be inside another object (and was therefore moved from inside this method)
+		/// </summary>
+		private bool GetCollisions(ref Vector3 currPos, ref Vector3 currSize, out bool collForward, out bool collLeft, out bool collBackward, out bool collRight)
+		{
+			collForward = false;
+			collLeft = false;
+			collBackward = false;
+			collRight = false;
+			
+			Collider[] colliders = Physics.OverlapBox(currPos, currSize, Quaternion.identity, ~0, QueryTriggerInteraction.Ignore);
+			int collidersSize = colliders.Length;
+
+			if (collidersSize == 0)
+			{
+				currSize.x += boxCheckDistanceIncreasePerAttempt;
+				currSize.z += boxCheckDistanceIncreasePerAttempt;
+			}
+
+
+			string collNames = "";
+			foreach (Collider coll in colliders)
+			{
+				bool isNotInsideOtherObject = CheckCollidingDirections(ref currPos, coll, ref collForward, ref collLeft, ref collBackward, ref collRight, false, true);
+
+				if (!isNotInsideOtherObject)
 				{
-					Logging.Log("Iteration " + iterations + " | Current position: " + currPos + " | Current size: " + currSize + " || " + (collForward ? " Colliding Forward. " : "") + (collBackward ? " Colliding Backward. " : "") +
-					            (collRight ? " Colliding Right. " : "") + (collLeft ? " Colliding Left. " : ""));
+					DoSubCollisionChecking(ref currPos, ref currSize, collidersSize);
+					return false;
 				}
-				else 
+
+				if (collNames != "") collNames += ",";
+				collNames += " " + coll.name;
+			}
+
+			Logging.Log($"Collided with {collNames}");
+
+			return true;
+		}
+		
+		private void DoSubCollisionChecking(ref Vector3 currPos, ref Vector3 currSize, int collidersSize)
+		{
+			Logging.Log("[SUB COLLISION CHECK]: Started");
+
+			// A separate loop that moves the object out of the colliding object
+
+			var subCollisionCheckIterations = 0;
+			
+			while (true)
+			{
+				Logging.Log($"[SUB COLLISION CHECK]: Iteration {subCollisionCheckIterations} | Current position: {currPos.ToString("F4")} | Current Size: {currSize.ToString("F4")}");
+
+				if (subCollisionCheckIterations++ > 100)
 				{
-					string collNames = "";
-					foreach (Collider coll in colliders)
-					{
-						SetCollidingDirections(ref currPos, coll, ref collForward, ref collLeft, ref collBackward, ref collRight);
-						if (collNames != "") collNames += ",";
-						collNames += " " + coll.name;
-					}
-					
-					Logging.Log("Collided with" + collNames);
+					Logging.Log("[SUB COLLISION CHECK]: Too many iterations");
+					break;
+				}
 
-					Logging.Log("Iteration " + iterations + " | Current position: " + currPos + " | Current size: " + currSize + " || " + (collForward ? " Colliding Forward. " : "") + (collBackward ? " Colliding Backward. " : "") +
-					            (collRight ? " Colliding Right. " : "") + (collLeft ? " Colliding Left. " : ""));
+				Collider[] newColliders = Physics.OverlapBox(currPos, currSize , Quaternion.identity, ~0, QueryTriggerInteraction.Ignore);
 
-					if (collForward && collBackward)
-					{
-						Logging.Log("Colliding forward and backwards.. Stopping");
-						return;
-					}
+				var forward = false;
+				var left = false;
+				var backward = false;
+				var right = false;
 
-					if (collLeft && collRight)
+				foreach (Collider newColl in newColliders)
+				{
+					CheckCollidingDirections(ref currPos, newColl.transform.position, ref forward, ref left, ref backward, ref right, newColl.gameObject, true,  true);
+
+					MoveBasedOnCollisions(ref currPos, forward, left, backward, right, "[SUB COLLISION CHECK:]");
+				}
+			}
+
+			Logging.Log("[SUB COLLISION CHECK]: Ended");
+		}
+
+		/// <summary>
+		/// Returns true if it moved
+		/// </summary>
+		private bool MoveBasedOnCollisions(ref Vector3 currPos, bool forward, bool left, bool backward, bool right, string stringPrefix)
+		{
+			int sides = (forward ? 1 : 0) + (left ? 1 : 0) + (backward ? 1 : 0) + (right ? 1 : 0);
+
+			string directionString = "";
+
+			switch (sides)
+			{
+				case 4:
+					return false;
+				case 3:
+					if (!forward)
 					{
-						Logging.Log("Colliding Left and Right.. Stopping");
-						return;
+						directionString = "Backward, Left, and Right";
+						currPos.z += boxCheckDistanceIncreasePerAttempt;
 					}
-					
-					if (collLeft || collRight || collBackward || collForward)
+					else if (!left)
 					{
-						Logging.Log("Moving " + (collForward ? "Backwards" : " " ) + (collBackward ? "Forwards" : " " ) + (collLeft ? "Right" : " " ) + (collRight ? "Left" : " " ));
+						directionString = "Forward, Backward, and Right";
+						currPos.x += boxCheckDistanceIncreasePerAttempt;
 					}
-					
-					if (collForward)
+					else if (!backward)
 					{
+						directionString = "Forward, Left, and Right";
 						currPos.z -= boxCheckDistanceIncreasePerAttempt;
 					}
-					else if (collBackward)
+					else
 					{
+						directionString = "Forward, Backward, and Left";
+						currPos.x -= boxCheckDistanceIncreasePerAttempt;
+					}
+					break;
+				case 2: 
+					if (forward && backward)
+					{
+						directionString = "Forward and backwards";
+					}
+					else if (left && right)
+					{
+						directionString = "Left and right";
+					}
+					else
+					{
+						if (forward)
+						{
+							currPos.z -= boxCheckDistanceIncreasePerAttempt;
+
+							if (left)
+							{
+								directionString = "Forward and left";
+								currPos.x += boxCheckDistanceIncreasePerAttempt;
+							}
+							else
+							{
+								directionString = "Forward and right";
+								currPos.x -= boxCheckDistanceIncreasePerAttempt;
+							}
+						}
+						else if (backward)
+						{
+							currPos.z += boxCheckDistanceIncreasePerAttempt;
+
+							if (left)
+							{
+								directionString = "Backward and left";
+								currPos.x += boxCheckDistanceIncreasePerAttempt;
+							}
+							else
+							{
+								directionString = "Backward and right";
+								currPos.x -= boxCheckDistanceIncreasePerAttempt;
+							}
+						}
+					}
+					break;
+				case 1:
+					if (forward)
+					{
+						directionString = "forward";
+						currPos.z -= boxCheckDistanceIncreasePerAttempt;
+					}
+
+					else if (left)
+					{
+						directionString = "left";
+
+						currPos.x += boxCheckDistanceIncreasePerAttempt;
+					}
+
+					else if (backward)
+					{
+						directionString = "backward";
+
 						currPos.z += boxCheckDistanceIncreasePerAttempt;
 					}
 
-					if (collRight)
+					else if (right)
 					{
+						directionString = "right";
+
 						currPos.x -= boxCheckDistanceIncreasePerAttempt;
 					}
-					else if (collLeft)
+
+					break;
+				case 0:
+					directionString = "none";
+					break;
+				default:
+					Logging.LogError("This can literally never be called - I do not see how [4 * (0 xor 1)] can ever be outside the range 0-4");
+					return false;
+			}
+			Logging.Log($"{stringPrefix} Collided on the sides: {directionString}");
+
+			return true;
+		}
+		
+		/// <summary>
+		/// Returns true if it resized
+		/// </summary>
+		private bool ResizeBasedOnCollisions(ref Vector3 currSize, bool forward, bool left, bool backward, bool right, string stringPrefix)
+		{
+			int sides = (forward ? 1 : 0) + (left ? 1 : 0) + (backward ? 1 : 0) + (right ? 1 : 0);
+
+			string directionString = "";
+
+			switch (sides)
+			{
+				case 4:
+					return false;
+				case 3:
+					if (!forward)
 					{
-						currPos.x += boxCheckDistanceIncreasePerAttempt;
+						directionString = "Backward, Left, and Right";
+						currSize.z += boxCheckDistanceIncreasePerAttempt;
 					}
-				}
-				currSize.x += boxCheckDistanceIncreasePerAttempt;
-				currSize.z += boxCheckDistanceIncreasePerAttempt;
+					else if (!left)
+					{
+						directionString = "Forward, Backward, and Right";
+						currSize.x += boxCheckDistanceIncreasePerAttempt;
+					}
+					else if (!backward)
+					{
+						directionString = "Forward, Left, and Right";
+						currSize.z += boxCheckDistanceIncreasePerAttempt;
+					}
+					else
+					{
+						directionString = "Forward, Backward, and Left";
+						currSize.x += boxCheckDistanceIncreasePerAttempt;
+					}
+					break;
+				case 2: 
+					if (forward && backward)
+					{
+						directionString = "Forward and backwards";
+						currSize.x += boxCheckDistanceIncreasePerAttempt;
+
+					}
+					else if (left && right)
+					{
+						directionString = "Left and right";
+						currSize.z += boxCheckDistanceIncreasePerAttempt;
+
+					}
+					else
+					{
+						
+						currSize.x += boxCheckDistanceIncreasePerAttempt;
+						currSize.z += boxCheckDistanceIncreasePerAttempt;
+						
+						if (forward)
+						{
+							if (left)
+							{
+								directionString = "Forward and left";
+							}
+							else
+							{
+								directionString = "Forward and right";
+							}
+						}
+						else if (backward)
+						{
+							if (left)
+							{
+								directionString = "Backward and left";
+							}
+							else
+							{
+								directionString = "Backward and right";
+							}
+						}
+					}
+
+					break;
+				case 1:
+					if (forward)
+					{
+						directionString = "forward";
+					}
+
+					else if (left)
+					{
+						directionString = "left";
+					}
+
+					else if (backward)
+					{
+						directionString = "backward";
+					}
+
+					else if (right)
+					{
+						directionString = "right";
+					}
+
+					break;
+				case 0:
+					directionString = "none";
+					break;
+				default:
+					Logging.LogError("This can literally never be called - I do not see how [4 * (0 xor 1)] can ever be outside the range 0-4");
+					return false;
+			}
+			Logging.Log($"{stringPrefix} Collided on the sides: {directionString}");
+
+			return true;
+		}
+
+		private void MakeSureMarkerIsInsideMap(ref Vector3 currPos)
+		{
+			if (currPos.z + (grid.minimumOpenAreaAroundMarkers.z / 2) <= grid.ZEndPos)
+			{
+				Logging.Log("Too far backward. Moved back into map.");
+				currPos.z = grid.ZEndPos + (grid.minimumOpenAreaAroundMarkers.z / 2);
+			}
+			else if (currPos.z - (grid.minimumOpenAreaAroundMarkers.z / 2) >= grid.ZStartPos)
+			{
+				Logging.Log("Too far forward. Moved back into map.");
+				currPos.z = grid.ZStartPos - (grid.minimumOpenAreaAroundMarkers.z / 2);
+			}
+
+			if (currPos.x - (grid.minimumOpenAreaAroundMarkers.x / 2) >= grid.XEndPos)
+			{
+				Logging.Log("Too far to the right. Moved back into map.");
+				currPos.x = grid.XEndPos - grid.minimumOpenAreaAroundMarkers.x / 2;
+			}
+			else if (currPos.x + (grid.minimumOpenAreaAroundMarkers.x / 2) <= grid.XStartPos)
+			{
+				Logging.Log("Too far to the left. Moved back into map.");
+				currPos.x = grid.XStartPos + (grid.minimumOpenAreaAroundMarkers.x / 2);
 			}
 		}
 
 
-
-		private void InstantiateMarker(string markerName, Vector3 markerPos, Vector3 colliderSize)
+		private void InstantiateMarker(string markerName, Vector3 markerPos, Vector3 markerSize)
 		{
 			// var newMarker = PathfindingMarker.CreateInstance(markerName, ref grid);
 			var newMarker = PathfindingMarker.CreateInstance(markerName + " " + grid.markers.Count, ref grid);
@@ -244,65 +533,89 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			newMarker.transform.SetParent(gridTransform);
 
 			var newMarkerCollider = newMarker.gameObject.AddComponent<BoxCollider>();
-			newMarkerCollider.size = colliderSize;
+			newMarkerCollider.size = markerSize;
 			// newMarkerCollider.isTrigger = true;
 
 			Logging.Log("");
 			Logging.Log("");
 			Logging.Log("");
 			Logging.Log("");
-			Logging.Log("INSTANTIATED MARKER #" + grid.markers.Count);
+			Logging.Log("INSTANTIATED MARKER #" + (grid.markers.Count - 1) + " at position " + markerPos.ToString("F4") + ", with size " + markerSize.ToString("F4"));
 			Logging.Log("");
 			Logging.Log("");
 			Logging.Log("");
 			Logging.Log("");
-			
-			grid.markers.Add(newMarker);
 		}
 
-
-		private static void SetCollidingDirections(ref Vector3 currMarkerPos, Collider collider, ref bool collForward, ref bool collLeft, ref bool collBackward, ref bool collRight)
+		/// <summary>
+		/// Returns false if it could not decipher a direction, which means it's probably inside the object.
+		/// </summary>
+		private static bool CheckCollidingDirections(ref Vector3 currMarkerPos, Collider collider, ref bool collForward, ref bool collLeft, ref bool collBackward, ref bool collRight, bool allowMultipleDirections, bool logging)
 		{
 			Vector3 colliderPos = collider.ClosestPointOnBounds(currMarkerPos);
-			SetCollidingDirections(ref currMarkerPos, colliderPos, ref collForward, ref collLeft, ref collBackward, ref collRight, collider.gameObject);
+			return CheckCollidingDirections(ref currMarkerPos, colliderPos, ref collForward, ref collLeft, ref collBackward, ref collRight, collider.gameObject, allowMultipleDirections, logging);
 		}
 
-		private static void SetCollidingDirections(ref Vector3 currMarkerPos, Vector3 hitPos, ref bool collForward, ref bool collLeft, ref bool collBackward, ref bool collRight, GameObject gObjHit)
+		private static bool CheckCollidingDirections(ref Vector3 currMarkerPos, Vector3 hitPos, ref bool collForward, ref bool collLeft, ref bool collBackward, ref bool collRight, GameObject gObjHit,  bool allowMultipleDirections, bool logging)
 		{
-			var floatLeniency = 0.25f;
-
-			// TODO: This seems backwards?
+			var collidedWithSomething = false;
+			
+			const float floatLeniency = 0.25f;
 
 			float zDist = hitPos.z - currMarkerPos.z;
-
 			float xDist = hitPos.x - currMarkerPos.x;
 
-			if (Math.Abs(zDist) > floatLeniency)
+			if (allowMultipleDirections)
 			{
-				if (Math.Sign(zDist) == 1)
+				CheckIfCollidedOnZAxis(hitPos, ref collForward, ref collBackward, gObjHit, logging, zDist, floatLeniency, ref collidedWithSomething);
+				CheckIfCollidedOnXAxis(hitPos, ref collLeft, ref collRight, gObjHit, logging, xDist, floatLeniency, ref collidedWithSomething);
+			}
+			else
+			{
+				if ( Mathf.Abs(zDist) >= Mathf.Abs(xDist))
 				{
-					Logging.Log(gObjHit.name + " Collided forward at position: " + hitPos);
-					collForward = true;
+					CheckIfCollidedOnZAxis(hitPos, ref collForward, ref collBackward, gObjHit, logging, zDist, floatLeniency, ref collidedWithSomething);
 				}
-				else
+				else 
 				{
-					Logging.Log(gObjHit.name + " Collided backward at position: " + hitPos);
-					collBackward = true;
+					CheckIfCollidedOnXAxis(hitPos, ref collLeft, ref collRight, gObjHit, logging, xDist, floatLeniency, ref collidedWithSomething);
 				}
 			}
 
-			if (Math.Abs(xDist) > floatLeniency)
+			return collidedWithSomething;
+		}
+
+		private static void CheckIfCollidedOnXAxis(Vector3 hitPos, ref bool collLeft, ref bool collRight, GameObject gObjHit, bool logging, float xDist, float floatLeniency, ref bool collidedWithSomething)
+		{
+			if (!(Math.Abs(xDist) > floatLeniency)) return;
+			if (Math.Sign(xDist) == 1)
 			{
-				if (Math.Sign(xDist) == 1)
-				{
-					Logging.Log(gObjHit.name + " Collided right at position: " + hitPos);
-					collRight = true;
-				}
-				else
-				{
-					Logging.Log(gObjHit.name + " Collided left at position: " + hitPos);
-					collLeft = true;
-				}
+				if (logging) Logging.Log(gObjHit.name + " Collided right at position: " + hitPos.ToString("F4"));
+				collRight = true;
+				collidedWithSomething = true;
+			}
+			else
+			{
+				if (logging) Logging.Log(gObjHit.name + " Collided left at position: " + hitPos.ToString("F4"));
+				collLeft = true;
+				collidedWithSomething = true;
+			}
+		}
+
+		private static void CheckIfCollidedOnZAxis(Vector3 hitPos, ref bool collForward, ref bool collBackward, GameObject gObjHit, bool logging, float zDist, float floatLeniency, ref bool collidedWithSomething)
+		{
+			if (!(Math.Abs(zDist) > floatLeniency)) return;
+			if (Math.Sign(zDist) == 1)
+			{
+				if (logging) Logging.Log(gObjHit.name + " Collided forward at position: " + hitPos.ToString("F4"));
+				collForward = true;
+				collidedWithSomething = true;
+			}
+			else
+			{
+				if (logging) Logging.Log(gObjHit.name + " Collided backward at position: " + hitPos.ToString("F4"));
+				collBackward = true;
+				collidedWithSomething = true;
 			}
 		}
 	}
