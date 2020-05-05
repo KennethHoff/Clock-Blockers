@@ -30,7 +30,6 @@ namespace ClockBlockers.ReplaySystem
 		
 	}
 
-	
 	// DONE: Remove Move, RotateCharacter, and RotateCamera
 	// TODO: Reimplement this
 	public enum Actions

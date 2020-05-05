@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 149534689774175846}
   - component: {fileID: 149534689774175845}
-  - component: {fileID: 2179795566395000333}
+  - component: {fileID: 3609927531256765598}
   m_Layer: 0
-  m_Name: Pathfinding Markers
+  m_Name: Pathfinding Grid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -53,27 +53,13 @@ MonoBehaviour:
   drawHeightAboveFloor: 0.25
   nodeScale: 0.5
   selectionChangeScale: 1
-  selectionChangeNodeColors: 1
-  selectionDrawRays: 1
+  selectionChangeNodeColors: 0
+  selectionDrawRays: 0
   selectionNodeScale: 1
   floorPlane: {fileID: 0}
-  markerPrefab: {fileID: 1633517128170111610, guid: ab0e917cfea5c7d459fb32c63040bb6b, type: 3}
-  pathfindingMarkerLayer:
-    serializedVersion: 2
-    m_Bits: 4096
-  pathfindingLayer:
-    serializedVersion: 2
-    m_Bits: 2048
-  nonCollidingLayer:
-    serializedVersion: 2
-    m_Bits: 12288
+  minimumOpenAreaAroundMarkers: {x: 1, y: 2, z: 1}
   markers: []
-  xDistanceBetweenMarkers: 2
-  zDistanceBetweenMarkers: 2
-  creationHeightAboveFloor: 0
-  minimumOpenAreaAroundMarkers: {x: 1, y: 1, z: 1}
-  createMarkerNearOrInsideCollisions: 0
---- !u!114 &2179795566395000333
+--- !u!114 &3609927531256765598
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -82,11 +68,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 149534689774175847}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec8c372c0f554991bddc35b7ed5926d2, type: 3}
+  m_Script: {fileID: 11500000, guid: c70af323ac97419180b52c853ea434b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   showAffectedArea: 1
+  createMarkerNearOrInsideCollisions: 0
+  creationHeightAboveFloor: 0
+  xDistanceBetweenCreatedMarkers: 2
+  zDistanceBetweenCreatedMarkers: 2
+  xDistanceBetweenMergedMarkers: 10
+  zDistanceBetweenMergedMarkers: 10
   rayCastCeiling: 20
-  rayCastFloor: 0
-  maxDistanceBetweenMarkers: 10
-  boxCheckDistanceIncreasePerAttempt: 0.25
+  rayCastFloor: -0.5

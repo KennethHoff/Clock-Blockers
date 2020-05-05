@@ -6,9 +6,9 @@ namespace ClockBlockers.MapData.MarkerGenerators
 	[ExecuteInEditMode]
 	public class AlongFloorMarkerGenerator : IntervalAutomatedMarkerGenerator
 	{
-		protected override bool CreateMarker(int j, float xPos, Transform newRow)
+		protected override bool CreateMarker(float xPos, int rowIndex, Transform newColumn, int columnIndex)
 		{
-			float zPos = MarkerSizeAdjustedZStartPos - (zDistanceBetweenMarkers * j); 
+			float zPos = MarkerSizeAdjustedZStartPos - (zDistanceBetweenCreatedMarkers * rowIndex); 
 			
 			var markerPos = new Vector3(xPos, creationHeightAboveFloor, zPos);
 
@@ -22,7 +22,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 				}
 			}
 				
-			InstantiateMarker("Column " + j, markerPos, ref newRow);
+			InstantiateMarker("Column " + rowIndex, markerPos, newColumn);
 			return true;
 		}
 	}

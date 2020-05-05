@@ -21,7 +21,7 @@ namespace ClockBlockers.Utility
 
 		public static void Log(object message)
 		{
-			// Debug.Log(message);
+			Debug.Log(message);
 		}
 
 		public static void LogWarning(object message, Object context)

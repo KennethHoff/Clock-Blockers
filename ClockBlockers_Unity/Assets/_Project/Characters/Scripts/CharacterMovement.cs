@@ -66,7 +66,7 @@ namespace ClockBlockers.Characters
 			
 			
 			CheckIfHittingForwardWall(ref charTransform, ref currPos);
-			CheckIfHittingBackwardsWall(ref charTransform, ref currPos);
+			CheckIfHittingBackWall(ref charTransform, ref currPos);
 
 		}
 
@@ -144,7 +144,7 @@ namespace ClockBlockers.Characters
 			return true;
 		}
 
-		private bool CheckIfHittingBackwardsWall(ref Transform charTransform, ref Vector3 currPos)
+		private bool CheckIfHittingBackWall(ref Transform charTransform, ref Vector3 currPos)
 		{
 			float distance = -velocity.z + (charDimension.z / 2);
 			RaycastHit[] rays = Physics.RaycastAll(currPos, Vector3.back, distance);

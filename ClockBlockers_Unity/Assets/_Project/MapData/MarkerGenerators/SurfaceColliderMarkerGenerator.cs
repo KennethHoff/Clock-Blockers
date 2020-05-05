@@ -129,8 +129,8 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			// Start by creating a BoxCast at the start position [First iteration is the first-position on the map, given by PathfindingGrid - Upper-left], with start area equal to grid.MinimumOpenAreaAroundMarker
 
 			// If it collides at one point, move the current marker position the other direction(If hit at top, go down, if hit at right, go left), and repeat the process.
-			// If it collides at two points, but they're on the same side (Forward+Left / Forward+Right / Backward+Left / Backward+Right), do the same as if you collided with only one object. (If hit with Forward+left, go Backward+right)
-			// If it collides at opposite corners (Backward + Top / Forward + Left), end this process.
+			// If it collides at two points, but they're on the same side (Forward+Left / Forward+Right / Back+Left / Back+Right), do the same as if you collided with only one object. (If hit with Forward+left, go Back+right)
+			// If it collides at opposite corners (Back + Top / Forward + Left), end this process.
 			// Create a 'Marker' at this position, as well as a BoxCollider with the given area. (as well as a Gizmo for visualization)
 
 			// Get the next start position << Haven't thought about how, just yet.
@@ -181,10 +181,10 @@ namespace ClockBlockers.MapData.MarkerGenerators
 				
 				MakeSureMarkerIsInsideMap(ref currPos);
 
-				if (!GetCollisions(ref currPos, ref currSize, out bool forward, out bool left, out bool backward, out bool right)) continue;
+				if (!GetCollisions(ref currPos, ref currSize, out bool forward, out bool left, out bool back, out bool right)) continue;
 
-				var moved = MoveBasedOnCollisions(ref currPos, forward, left, backward, right, "");
-				var resized = ResizeBasedOnCollisions(ref currSize, forward, left, backward, right, "");
+				var moved = MoveBasedOnCollisions(ref currPos, forward, left, back, right, "");
+				var resized = ResizeBasedOnCollisions(ref currSize, forward, left, back, right, "");
 
 				if (!moved || !resized) break;
 			}
@@ -193,11 +193,11 @@ namespace ClockBlockers.MapData.MarkerGenerators
 		/// <summary>
 		/// Returns false if the object was found to be inside another object (and was therefore moved from inside this method)
 		/// </summary>
-		private bool GetCollisions(ref Vector3 currPos, ref Vector3 currSize, out bool collForward, out bool collLeft, out bool collBackward, out bool collRight)
+		private bool GetCollisions(ref Vector3 currPos, ref Vector3 currSize, out bool collForward, out bool collLeft, out bool collBack, out bool collRight)
 		{
 			collForward = false;
 			collLeft = false;
-			collBackward = false;
+			collBack = false;
 			collRight = false;
 			
 			Collider[] colliders = Physics.OverlapBox(currPos, currSize, Quaternion.identity, ~0, QueryTriggerInteraction.Ignore);
@@ -213,7 +213,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			string collNames = "";
 			foreach (Collider coll in colliders)
 			{
-				bool isNotInsideOtherObject = CheckCollidingDirections(ref currPos, coll, ref collForward, ref collLeft, ref collBackward, ref collRight, false, true);
+				bool isNotInsideOtherObject = CheckCollidingDirections(ref currPos, coll, ref collForward, ref collLeft, ref collBack, ref collRight, false, true);
 
 				if (!isNotInsideOtherObject)
 				{
@@ -252,14 +252,14 @@ namespace ClockBlockers.MapData.MarkerGenerators
 
 				var forward = false;
 				var left = false;
-				var backward = false;
+				var back = false;
 				var right = false;
 
 				foreach (Collider newColl in newColliders)
 				{
-					CheckCollidingDirections(ref currPos, newColl.transform.position, ref forward, ref left, ref backward, ref right, newColl.gameObject, true,  true);
+					CheckCollidingDirections(ref currPos, newColl.transform.position, ref forward, ref left, ref back, ref right, newColl.gameObject, true,  true);
 
-					MoveBasedOnCollisions(ref currPos, forward, left, backward, right, "[SUB COLLISION CHECK:]");
+					MoveBasedOnCollisions(ref currPos, forward, left, back, right, "[SUB COLLISION CHECK:]");
 				}
 			}
 
@@ -269,9 +269,9 @@ namespace ClockBlockers.MapData.MarkerGenerators
 		/// <summary>
 		/// Returns true if it moved
 		/// </summary>
-		private bool MoveBasedOnCollisions(ref Vector3 currPos, bool forward, bool left, bool backward, bool right, string stringPrefix)
+		private bool MoveBasedOnCollisions(ref Vector3 currPos, bool forward, bool left, bool back, bool right, string stringPrefix)
 		{
-			int sides = (forward ? 1 : 0) + (left ? 1 : 0) + (backward ? 1 : 0) + (right ? 1 : 0);
+			int sides = (forward ? 1 : 0) + (left ? 1 : 0) + (back ? 1 : 0) + (right ? 1 : 0);
 
 			string directionString = "";
 
@@ -282,33 +282,33 @@ namespace ClockBlockers.MapData.MarkerGenerators
 				case 3:
 					if (!forward)
 					{
-						directionString = "Backward, Left, and Right";
+						directionString = "Back, Left, and Right";
 						currPos.z += boxCheckDistanceIncreasePerAttempt;
 					}
 					else if (!left)
 					{
-						directionString = "Forward, Backward, and Right";
+						directionString = "Forward, Back, and Right";
 						currPos.x += boxCheckDistanceIncreasePerAttempt;
 					}
-					else if (!backward)
+					else if (!back)
 					{
 						directionString = "Forward, Left, and Right";
 						currPos.z -= boxCheckDistanceIncreasePerAttempt;
 					}
 					else
 					{
-						directionString = "Forward, Backward, and Left";
+						directionString = "Forward, Back, and Left";
 						currPos.x -= boxCheckDistanceIncreasePerAttempt;
 					}
 					break;
 				case 2: 
-					if (forward && backward)
+					if (forward && back)
 					{
-						directionString = "Forward and backwards";
+						directionString = "Forward and Back";
 					}
 					else if (left && right)
 					{
-						directionString = "Left and right";
+						directionString = "Left and Right";
 					}
 					else
 					{
@@ -318,27 +318,27 @@ namespace ClockBlockers.MapData.MarkerGenerators
 
 							if (left)
 							{
-								directionString = "Forward and left";
+								directionString = "Forward and Left";
 								currPos.x += boxCheckDistanceIncreasePerAttempt;
 							}
 							else
 							{
-								directionString = "Forward and right";
+								directionString = "Forward and Right";
 								currPos.x -= boxCheckDistanceIncreasePerAttempt;
 							}
 						}
-						else if (backward)
+						else if (back)
 						{
 							currPos.z += boxCheckDistanceIncreasePerAttempt;
 
 							if (left)
 							{
-								directionString = "Backward and left";
+								directionString = "Back and left";
 								currPos.x += boxCheckDistanceIncreasePerAttempt;
 							}
 							else
 							{
-								directionString = "Backward and right";
+								directionString = "Back and Right";
 								currPos.x -= boxCheckDistanceIncreasePerAttempt;
 							}
 						}
@@ -347,34 +347,34 @@ namespace ClockBlockers.MapData.MarkerGenerators
 				case 1:
 					if (forward)
 					{
-						directionString = "forward";
+						directionString = "Forward";
 						currPos.z -= boxCheckDistanceIncreasePerAttempt;
 					}
 
 					else if (left)
 					{
-						directionString = "left";
+						directionString = "Left";
 
 						currPos.x += boxCheckDistanceIncreasePerAttempt;
 					}
 
-					else if (backward)
+					else if (back)
 					{
-						directionString = "backward";
+						directionString = "Back";
 
 						currPos.z += boxCheckDistanceIncreasePerAttempt;
 					}
 
 					else if (right)
 					{
-						directionString = "right";
+						directionString = "Right";
 
 						currPos.x -= boxCheckDistanceIncreasePerAttempt;
 					}
 
 					break;
 				case 0:
-					directionString = "none";
+					directionString = "None";
 					break;
 				default:
 					Logging.LogError("This can literally never be called - I do not see how [4 * (0 xor 1)] can ever be outside the range 0-4");
@@ -388,9 +388,9 @@ namespace ClockBlockers.MapData.MarkerGenerators
 		/// <summary>
 		/// Returns true if it resized
 		/// </summary>
-		private bool ResizeBasedOnCollisions(ref Vector3 currSize, bool forward, bool left, bool backward, bool right, string stringPrefix)
+		private bool ResizeBasedOnCollisions(ref Vector3 currSize, bool forward, bool left, bool back, bool right, string stringPrefix)
 		{
-			int sides = (forward ? 1 : 0) + (left ? 1 : 0) + (backward ? 1 : 0) + (right ? 1 : 0);
+			int sides = (forward ? 1 : 0) + (left ? 1 : 0) + (back ? 1 : 0) + (right ? 1 : 0);
 
 			string directionString = "";
 
@@ -401,35 +401,35 @@ namespace ClockBlockers.MapData.MarkerGenerators
 				case 3:
 					if (!forward)
 					{
-						directionString = "Backward, Left, and Right";
+						directionString = "Back, Left, and Right";
 						currSize.z += boxCheckDistanceIncreasePerAttempt;
 					}
 					else if (!left)
 					{
-						directionString = "Forward, Backward, and Right";
+						directionString = "Forward, Back, and Right";
 						currSize.x += boxCheckDistanceIncreasePerAttempt;
 					}
-					else if (!backward)
+					else if (!back)
 					{
 						directionString = "Forward, Left, and Right";
 						currSize.z += boxCheckDistanceIncreasePerAttempt;
 					}
 					else
 					{
-						directionString = "Forward, Backward, and Left";
+						directionString = "Forward, Back, and Left";
 						currSize.x += boxCheckDistanceIncreasePerAttempt;
 					}
 					break;
 				case 2: 
-					if (forward && backward)
+					if (forward && back)
 					{
-						directionString = "Forward and backwards";
+						directionString = "Forward and Back";
 						currSize.x += boxCheckDistanceIncreasePerAttempt;
 
 					}
 					else if (left && right)
 					{
-						directionString = "Left and right";
+						directionString = "Left and Right";
 						currSize.z += boxCheckDistanceIncreasePerAttempt;
 
 					}
@@ -443,22 +443,22 @@ namespace ClockBlockers.MapData.MarkerGenerators
 						{
 							if (left)
 							{
-								directionString = "Forward and left";
+								directionString = "Forward and Left";
 							}
 							else
 							{
-								directionString = "Forward and right";
+								directionString = "Forward and Right";
 							}
 						}
-						else if (backward)
+						else if (back)
 						{
 							if (left)
 							{
-								directionString = "Backward and left";
+								directionString = "Back and Left";
 							}
 							else
 							{
-								directionString = "Backward and right";
+								directionString = "Back and Right";
 							}
 						}
 					}
@@ -467,27 +467,27 @@ namespace ClockBlockers.MapData.MarkerGenerators
 				case 1:
 					if (forward)
 					{
-						directionString = "forward";
+						directionString = "Forward";
 					}
 
 					else if (left)
 					{
-						directionString = "left";
+						directionString = "Left";
 					}
 
-					else if (backward)
+					else if (back)
 					{
-						directionString = "backward";
+						directionString = "Back";
 					}
 
 					else if (right)
 					{
-						directionString = "right";
+						directionString = "Right";
 					}
 
 					break;
 				case 0:
-					directionString = "none";
+					directionString = "None";
 					break;
 				default:
 					Logging.LogError("This can literally never be called - I do not see how [4 * (0 xor 1)] can ever be outside the range 0-4");
@@ -502,7 +502,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 		{
 			if (currPos.z + (grid.minimumOpenAreaAroundMarkers.z / 2) <= grid.ZEndPos)
 			{
-				Logging.Log("Too far backward. Moved back into map.");
+				Logging.Log("Too far back. Moved back into map.");
 				currPos.z = grid.ZEndPos + (grid.minimumOpenAreaAroundMarkers.z / 2);
 			}
 			else if (currPos.z - (grid.minimumOpenAreaAroundMarkers.z / 2) >= grid.ZStartPos)
@@ -550,13 +550,13 @@ namespace ClockBlockers.MapData.MarkerGenerators
 		/// <summary>
 		/// Returns false if it could not decipher a direction, which means it's probably inside the object.
 		/// </summary>
-		private static bool CheckCollidingDirections(ref Vector3 currMarkerPos, Collider collider, ref bool collForward, ref bool collLeft, ref bool collBackward, ref bool collRight, bool allowMultipleDirections, bool logging)
+		private static bool CheckCollidingDirections(ref Vector3 currMarkerPos, Collider collider, ref bool collForward, ref bool collLeft, ref bool collBack, ref bool collRight, bool allowMultipleDirections, bool logging)
 		{
 			Vector3 colliderPos = collider.ClosestPointOnBounds(currMarkerPos);
-			return CheckCollidingDirections(ref currMarkerPos, colliderPos, ref collForward, ref collLeft, ref collBackward, ref collRight, collider.gameObject, allowMultipleDirections, logging);
+			return CheckCollidingDirections(ref currMarkerPos, colliderPos, ref collForward, ref collLeft, ref collBack, ref collRight, collider.gameObject, allowMultipleDirections, logging);
 		}
 
-		private static bool CheckCollidingDirections(ref Vector3 currMarkerPos, Vector3 hitPos, ref bool collForward, ref bool collLeft, ref bool collBackward, ref bool collRight, GameObject gObjHit,  bool allowMultipleDirections, bool logging)
+		private static bool CheckCollidingDirections(ref Vector3 currMarkerPos, Vector3 hitPos, ref bool collForward, ref bool collLeft, ref bool collBack, ref bool collRight, GameObject gObjHit,  bool allowMultipleDirections, bool logging)
 		{
 			var collidedWithSomething = false;
 			
@@ -567,14 +567,14 @@ namespace ClockBlockers.MapData.MarkerGenerators
 
 			if (allowMultipleDirections)
 			{
-				CheckIfCollidedOnZAxis(hitPos, ref collForward, ref collBackward, gObjHit, logging, zDist, floatLeniency, ref collidedWithSomething);
+				CheckIfCollidedOnZAxis(hitPos, ref collForward, ref collBack, gObjHit, logging, zDist, floatLeniency, ref collidedWithSomething);
 				CheckIfCollidedOnXAxis(hitPos, ref collLeft, ref collRight, gObjHit, logging, xDist, floatLeniency, ref collidedWithSomething);
 			}
 			else
 			{
 				if ( Mathf.Abs(zDist) >= Mathf.Abs(xDist))
 				{
-					CheckIfCollidedOnZAxis(hitPos, ref collForward, ref collBackward, gObjHit, logging, zDist, floatLeniency, ref collidedWithSomething);
+					CheckIfCollidedOnZAxis(hitPos, ref collForward, ref collBack, gObjHit, logging, zDist, floatLeniency, ref collidedWithSomething);
 				}
 				else 
 				{
@@ -602,7 +602,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			}
 		}
 
-		private static void CheckIfCollidedOnZAxis(Vector3 hitPos, ref bool collForward, ref bool collBackward, GameObject gObjHit, bool logging, float zDist, float floatLeniency, ref bool collidedWithSomething)
+		private static void CheckIfCollidedOnZAxis(Vector3 hitPos, ref bool collForward, ref bool collBack, GameObject gObjHit, bool logging, float zDist, float floatLeniency, ref bool collidedWithSomething)
 		{
 			if (!(Math.Abs(zDist) > floatLeniency)) return;
 			if (Math.Sign(zDist) == 1)
@@ -613,8 +613,8 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			}
 			else
 			{
-				if (logging) Logging.Log(gObjHit.name + " Collided backward at position: " + hitPos.ToString("F4"));
-				collBackward = true;
+				if (logging) Logging.Log(gObjHit.name + " Collided back at position: " + hitPos.ToString("F4"));
+				collBack = true;
 				collidedWithSomething = true;
 			}
 		}

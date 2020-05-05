@@ -10,6 +10,7 @@ namespace ClockBlockers.MapData.MarkerGenerators.Editor
 		{
 			myScript = (OrbitalRayMarkerGenerator) target;
 			base.OnInspectorGUI();
+			
 		}
 	}
 }

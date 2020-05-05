@@ -11,6 +11,8 @@ namespace ClockBlockers.AI.AiControllers
 {
 	public abstract class AiController : MonoBehaviour
 	{
+		
+		// TODO: Look into the 'Command Pattern'
 		public AiState currentState;
 
 		public String CurrentStateString => currentState.GetType().Name;

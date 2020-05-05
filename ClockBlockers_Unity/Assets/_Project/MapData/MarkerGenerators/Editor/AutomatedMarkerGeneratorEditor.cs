@@ -23,14 +23,19 @@ namespace ClockBlockers.MapData.MarkerGenerators.Editor
 				Logging.Log("Please create a custom Editor for " + GetType() + ".");
 				return;
 			}
+			
+			// GUILayout.BeginHorizontal("box");
 
-			// myScript = (MarkerGeneratorBase) target;	
-
-			CreateButton(() => myScript.GenerateAllMarkers(), "Generate markers");
-
+			CreateButton(myScript.GenerateAllMarkers, "Generate markers");
+			// CreateButton(myScript.MergeMarkers, "Merge Markers");
+			
+			// GUILayout.EndHorizontal();
+			
 			CreateButton(myScript.ClearMarkers, "Remove all markers");
 			
 			CreateButton(myScript.GenerateMarkerAdjacencies, "Generate marker adjacencies");
+
+			
 		}
 
 		protected static void CreateButton(Action action, string buttonText)

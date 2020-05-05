@@ -17,14 +17,6 @@ namespace ClockBlockers.MapData
 	public class PathfindingGrid : MonoBehaviour
 	{
 		[Header("Marker Gizmos")]
-		[Tooltip("Less than this, and it will be classified as 'Few'")]
-		public int fewAdjacentNodesAmount = 3;
-		[Tooltip("Less than this, and it will be classified as 'some'.\nMore than this, but less than 'tooMany', and it will be classified as 'Many'")]
-		public int someAdjacentNodesAmount = 10;
-		
-		[Tooltip("More than this, and it will be classified as 'tooMany', and it will not create ray gizmos.")]
-		public int tooManyAdjacentNodesAmount = 50;
-		
 		[Space(5)]
 		public bool alwaysDrawNodes = true;
 		public bool alwaysDrawRays = true;
@@ -53,7 +45,7 @@ namespace ClockBlockers.MapData
 
 		[Header("Grid Generation")]
 		public Transform floorPlane;
-		
+
 		[SerializeField]
 		public Vector3 minimumOpenAreaAroundMarkers;
 
@@ -69,7 +61,7 @@ namespace ClockBlockers.MapData
 
 		public List<PathfindingMarker> markers;
 
-		private Vector3 PlaneLocalScale => floorPlane.transform.localScale;
+		private Vector3 PlaneLocalScale => floorPlane.transform.localScale * 10;
 		public float XLength => PlaneLocalScale.x;
 		public float ZLength => PlaneLocalScale.z;
 

@@ -13,29 +13,35 @@ namespace ClockBlockers.MapData
     [ExecuteInEditMode]
     public class PathfindingMarker : MonoBehaviour
     {
-        // DONE: Create a 'pathfinding master' class that stores the transforms of all the 'Pathfinding Marker' objects in the scene
-
-        // Potentially, instead of storing the Marker objects, you could just store the position, and then you could even possibly delete the objects to save on performance(?)
 
         // TODO: During pathfinding, find the Marker closest to the 'destination', and then recursive find the marker that's closest to you
 
-
         [SerializeReference]
-        public List<MarkerStats> connectedMarkers;
+        public List<PathfindingMarker> connectedMarkers;
 
-        public PathfindingGrid Grid
+        public int ConnMarkerCount
         {
-            get => grid;
-            set => grid = value;
-        }
+            get
+            {
+                if (connectedMarkers == null) return -1;
 
-        private bool tooManyAdjacencies = false;
+                return connectedMarkers.Count(marker => marker != null);
+            }
+        }
 
         public float scale = 0.5f;
 
-        private static readonly Color DefaultDrawColor = new Color(137, 0, 255, 255); // purple
+        // private static readonly Color DefaultDrawColor = new Color(137, 0, 255, 255); // purple
+        private static readonly Color DefaultDrawColor = Color.white;
 
         private Color drawColor = DefaultDrawColor;
+
+        // TODO: Remove this
+        public Color DrawColor
+        {
+            set => drawColor = value;
+            get => drawColor;
+        }
 
         [SerializeField]
         [HideInInspector]
@@ -46,26 +52,25 @@ namespace ClockBlockers.MapData
 
         private void OnDrawGizmos()
         {
-            if (grid.alwaysDrawRays && !tooManyAdjacencies) DrawTransparentRays();
+            if (grid.alwaysDrawRays) DrawTransparentRays();
 
             if (grid.alwaysDrawNodes) DrawCubeGizmoOnPosition();
 
             if (grid.alwaysDrawCollisionArea) DrawCollisionArea();
-
         }
 
         private void DrawCollisionArea()
         {
             Vector3 markerPos = transform.position;
-            var newPos = new Vector3(markerPos.x, markerPos.y + Grid.minimumOpenAreaAroundMarkers.y / 2, markerPos.z);
+            var newPos = new Vector3(markerPos.x, markerPos.y + grid.minimumOpenAreaAroundMarkers.y / 2, markerPos.z);
 
-            Gizmos.DrawWireCube(newPos, Grid.minimumOpenAreaAroundMarkers);
+            Gizmos.DrawWireCube(newPos, grid.minimumOpenAreaAroundMarkers);
         }
 
         private void OnDrawGizmosSelected()
         {
             if (Selection.activeGameObject != gameObject) return;
-            Grid.ResetMarkerGizmos();
+            grid.ResetMarkerGizmos();
             DrawSingleSelectedMarker();
 
             // TODO: If multiples are selected, instead check if there is an available path between the two. This requires a rework of the adjacency system.
@@ -75,33 +80,29 @@ namespace ClockBlockers.MapData
         {
             drawColor = Color.black;
 
-            if (Grid.selectionDrawRays) DrawTransparentRays();
+            if (grid.selectionDrawRays) DrawTransparentRays();
 
-            if (!Grid.AffectNodes) return;
+            if (!grid.AffectNodes) return;
 
-            scale = Grid.selectionNodeScale;
+            scale = grid.selectionNodeScale;
 
             if (connectedMarkers == null) return;
 
-            foreach (MarkerStats markerStat in connectedMarkers)
+            foreach (PathfindingMarker marker in connectedMarkers)
             {
-                PathfindingMarker marker = markerStat.marker;
+                // PathfindingMarker marker = markerStat.marker;
 
-                if (marker == null)
-                {
-                    Logging.Log("Marker is null? Dafuq");
-                    return;
-                }
+                if (marker == null) continue;
 
-                if (Grid.selectionChangeNodeColors) marker.drawColor = Color.magenta;
+                if (grid.selectionChangeNodeColors) marker.drawColor = Color.magenta;
 
-                marker.scale = Grid.selectionChangeScale ? Grid.selectionNodeScale : Grid.nodeScale;
+                marker.scale = grid.selectionChangeScale ? grid.selectionNodeScale : grid.nodeScale;
             }
         }
 
-        private bool CheckIfAdjacent(PathfindingMarker marker)
+        private bool CheckIfConnected(PathfindingMarker marker)
         {
-            return connectedMarkers != null && connectedMarkers.Any(markerStat => markerStat.marker == marker);
+            return connectedMarkers != null && connectedMarkers.Any(connMarker => connMarker == marker);
         }
 
         private void DrawTransparentRays()
@@ -111,37 +112,35 @@ namespace ClockBlockers.MapData
             var transparentDrawColor = new Color(drawColor.a, drawColor.g, drawColor.b, drawColor.a * rayTransparency);
 
             Gizmos.color = transparentDrawColor;
-            DrawRayGizmosToAdjacentMarkersFromList();
+            DrawRayGizmosToConnectedMarkers();
         }
 
-        public void PickAColor()
+        private void PickAColor()
         {
+            const int fewAdjacentNodesAmount = 3;
+            const int someAdjacentNodesAmount = 6;
+
             drawColor = DefaultDrawColor;
 
-            if (connectedMarkers == null) return;
+            int connMarkersAmount = ConnMarkerCount;
 
-            int adjacentNodesAmount = connectedMarkers.Count;
+            if (ConnMarkerCount == -1) return;
 
-            if (adjacentNodesAmount == 0)
+            if (connMarkersAmount == 0)
             {
-                drawColor = Color.white;
+                drawColor = new Color(137, 0, 255, 255); // purple
             }
-            else if (adjacentNodesAmount > 0 && adjacentNodesAmount < Grid.fewAdjacentNodesAmount)
+            else if (connMarkersAmount > 0 && connMarkersAmount < fewAdjacentNodesAmount)
             {
                 drawColor = Color.green;
             }
-            else if (adjacentNodesAmount >= Grid.fewAdjacentNodesAmount && adjacentNodesAmount < Grid.someAdjacentNodesAmount)
+            else if (connMarkersAmount >= fewAdjacentNodesAmount && connMarkersAmount < someAdjacentNodesAmount)
             {
                 drawColor = Color.blue;
             }
-            else if (adjacentNodesAmount >= Grid.someAdjacentNodesAmount && adjacentNodesAmount < Grid.tooManyAdjacentNodesAmount)
+            else
             {
                 drawColor = Color.yellow;
-            }
-            else if (adjacentNodesAmount >= Grid.tooManyAdjacentNodesAmount)
-            {
-                drawColor = Color.red;
-                tooManyAdjacencies = true;
             }
         }
 
@@ -150,19 +149,19 @@ namespace ClockBlockers.MapData
             Gizmos.color = drawColor;
 
             Vector3 position = transform.position;
-            position.y += (Grid.drawHeightAboveFloor - creationHeightAboveFloor) + (scale/2);
+            position.y += (grid.drawHeightAboveFloor - creationHeightAboveFloor) + (scale/2);
 
             Gizmos.DrawCube(position, Vector3.one * scale);
         }
 
 
-        private void DrawRayGizmosToAdjacentMarkersFromList()
+        private void DrawRayGizmosToConnectedMarkers()
         {
             // if (adjacentMarkers == null || adjacentMarkers.Count == 0) return;
 
-            foreach (MarkerStats markerStat in connectedMarkers)
+            foreach (PathfindingMarker marker in connectedMarkers)
             {
-                PathfindingMarker marker = markerStat.marker;
+                // PathfindingMarker marker = markerStat.marker;
                 if (marker == null)
                 {
                     Logging.Log("Marker in list does not exist for some reason..");
@@ -183,10 +182,10 @@ namespace ClockBlockers.MapData
             PickAColor();
         }
 
-        public static PathfindingMarker CreateInstance(string markerName, ref PathfindingGrid grid, ref Vector3 markerPos, ref Transform parent, ref float creationYPosAboveFloor)
+        public static PathfindingMarker CreateInstance(string markerName, PathfindingGrid grid, Vector3 markerPos, Transform parent, float creationYPosAboveFloor)
         {
             var newMarker = new GameObject(markerName).AddComponent<PathfindingMarker>();
-            newMarker.connectedMarkers = new List<MarkerStats>();
+            // newMarker.connectedMarkers = new List<MarkerStats>();
 
             newMarker.transform.position = markerPos;
             newMarker.transform.SetParent(parent);
@@ -202,19 +201,13 @@ namespace ClockBlockers.MapData
         public static PathfindingMarker CreateInstance(string markerName, ref PathfindingGrid grid)
         {
             var newMarker = new GameObject(markerName).AddComponent<PathfindingMarker>();
-            newMarker.connectedMarkers = new List<MarkerStats>();
+            // newMarker.connectedMarkers = new List<MarkerStats>();
 
             newMarker.grid = grid;
             
             grid.markers.Add(newMarker);
 
             return newMarker;
-        }
-
-        public void SetAdjacentMarkers(List<MarkerStats> connectedMarkers)
-        {
-            Logging.Log("Hey");
-            this.connectedMarkers = connectedMarkers;
         }
     }
 }

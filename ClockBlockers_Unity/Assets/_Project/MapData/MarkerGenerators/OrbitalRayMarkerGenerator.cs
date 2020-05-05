@@ -38,13 +38,13 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			if (rayCastFloor > rayCastCeiling) rayCastFloor = rayCastCeiling;
 		}
 
-		protected override bool CreateMarker(int j, float xPos, Transform newColumn)
+		protected override bool CreateMarker(float xPos, int rowIndex, Transform newColumn, int columnIndex)
 		{
-			float zPos = MarkerSizeAdjustedZStartPos - (zDistanceBetweenMarkers * j);
+			float zPos = MarkerSizeAdjustedZStartPos - (zDistanceBetweenCreatedMarkers * rowIndex);
 			
 			if (!CheckValidMarkerHeights(xPos, zPos, out RaycastHit[] allCollisions)) return false;
 
-			bool createdAtLeastOne = CreateAMarkerOnEachValidHeight(allCollisions, j, xPos, newColumn, zPos);
+			bool createdAtLeastOne = CreateAMarkerOnEachValidHeight(allCollisions, xPos, zPos, rowIndex, newColumn, columnIndex);
 			
 			return createdAtLeastOne;
 		}
@@ -59,7 +59,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			return allCollisions.Length != 0;
 		}
 
-		private bool CreateAMarkerOnEachValidHeight(IReadOnlyList<RaycastHit> allCollisions, int j, float xPos, Transform newRow, float zPos)
+		private bool CreateAMarkerOnEachValidHeight(IReadOnlyList<RaycastHit> allCollisions, float xPos, float zPos, int rowIndex, Transform parentColumn, int columnIndex)
 		{
 			bool createdAtLeastOne = false;
 			for (var i = 0; i < allCollisions.Count; i++)
@@ -85,13 +85,13 @@ namespace ClockBlockers.MapData.MarkerGenerators
 					if (!(overlappingColliders.Length == 1 && (overlappingColliders[0] = hit.collider))) continue;
 				}
 
-				string markerName = "Row " + j + (i > 0 ? "(" + i + ")" : "");
+				string markerName = $"Column {columnIndex} Row {rowIndex}{(i > 0 ? "(" + i + ")" : "")}";
 
 				// markerPos.y += creationHeightAboveFloor + (grid.minimumOpenAreaAroundMarkers.y / 2);
 
 				markerPos.y += creationHeightAboveFloor;
 
-				InstantiateMarker(markerName, markerPos, ref newRow);
+				InstantiateMarker(markerName, markerPos, parentColumn);
 				createdAtLeastOne = true;
 			}
 			return createdAtLeastOne;
