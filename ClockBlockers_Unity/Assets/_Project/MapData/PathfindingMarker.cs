@@ -13,11 +13,14 @@ namespace ClockBlockers.MapData
     [ExecuteInEditMode]
     public class PathfindingMarker : MonoBehaviour
     {
-
         // TODO: During pathfinding, find the Marker closest to the 'destination', and then recursive find the marker that's closest to you
 
         [SerializeReference]
         public List<PathfindingMarker> connectedMarkers;
+
+        // public List<MarkerStats> connectedMarkers;
+
+        // public List<Node> connectedMarkers;
 
         public int ConnMarkerCount
         {
@@ -25,7 +28,7 @@ namespace ClockBlockers.MapData
             {
                 if (connectedMarkers == null) return -1;
 
-                return connectedMarkers.Count(marker => marker != null);
+                return connectedMarkers.Count(node => node != null);
             }
         }
 
@@ -36,20 +39,19 @@ namespace ClockBlockers.MapData
 
         private Color drawColor = DefaultDrawColor;
 
-        // TODO: Remove this
-        public Color DrawColor
-        {
-            set => drawColor = value;
-            get => drawColor;
-        }
-
-        [SerializeField]
         [HideInInspector]
-        private PathfindingGrid grid;
+        public PathfindingGrid grid;
 
         // _Exclusively_ for equalizing the 'Draw Height Above Floor' gizmo drawing.
         public float creationHeightAboveFloor;
 
+
+        
+        private PathfindingMarker otherSelectedMarker;
+        private List<PathfindingMarker> pathToOtherSelectMarker;
+
+        
+        
         private void OnDrawGizmos()
         {
             if (grid.alwaysDrawRays) DrawTransparentRays();
@@ -70,10 +72,54 @@ namespace ClockBlockers.MapData
         private void OnDrawGizmosSelected()
         {
             if (Selection.activeGameObject != gameObject) return;
-            grid.ResetMarkerGizmos();
-            DrawSingleSelectedMarker();
+            // DrawSingleSelectedMarker();
+            
 
-            // TODO: If multiples are selected, instead check if there is an available path between the two. This requires a rework of the adjacency system.
+            // // var gameObjects = Selection.GetFiltered(typeof(PathfindingMarker),SelectionMode.TopLevel | SelectionMode.ExcludePrefab | SelectionMode.Editable) as GameObject[];
+            
+            var transforms = Selection.GetTransforms(SelectionMode.TopLevel | SelectionMode.ExcludePrefab | SelectionMode.Editable);
+            
+            if (transforms == null)
+            {
+                Logging.LogWarning("How could this possibly be null, assuming the selection is this gameObject");
+                return;
+            }
+
+            var selectedMarkers = new List<PathfindingMarker>();
+
+            PathfindingMarker otherMarker = null;
+            
+            foreach (Transform currTrans in transforms)
+            {
+                var currMarker = currTrans.GetComponent<PathfindingMarker>();
+                if (currMarker == null) continue;
+
+                selectedMarkers.Add(currMarker);
+
+                if (currMarker != this) otherMarker = currMarker;
+            }
+
+            grid.ResetMarkerGizmos();
+            if (selectedMarkers.Count == 1) DrawSingleSelectedMarker();
+            else if (selectedMarkers.Count == 2 && otherMarker != null) DrawPathToSelectedMarker(otherMarker);
+        }
+
+        private void DrawPathToSelectedMarker(PathfindingMarker marker)
+        {
+            if (marker != otherSelectedMarker)
+            {
+                otherSelectedMarker = marker;
+                Logging.Log("Selected different markers");
+                pathToOtherSelectMarker = GetPathFrom(marker);
+            }
+            
+
+            Logging.Log("Drawing path between markers");
+            AffectDrawOfMarkers(pathToOtherSelectMarker);
+            
+            
+            otherSelectedMarker.drawColor = Color.black;
+            drawColor = Color.black;
         }
 
         private void DrawSingleSelectedMarker()
@@ -88,12 +134,13 @@ namespace ClockBlockers.MapData
 
             if (connectedMarkers == null) return;
 
-            foreach (PathfindingMarker marker in connectedMarkers)
+            AffectDrawOfMarkers(connectedMarkers);
+        }
+
+        private void AffectDrawOfMarkers(IReadOnlyCollection<PathfindingMarker> markerList)
+        {
+            foreach (PathfindingMarker marker in markerList.Where(marker => marker != null))
             {
-                // PathfindingMarker marker = markerStat.marker;
-
-                if (marker == null) continue;
-
                 if (grid.selectionChangeNodeColors) marker.drawColor = Color.magenta;
 
                 marker.scale = grid.selectionChangeScale ? grid.selectionNodeScale : grid.nodeScale;
@@ -102,7 +149,7 @@ namespace ClockBlockers.MapData
 
         private bool CheckIfConnected(PathfindingMarker marker)
         {
-            return connectedMarkers != null && connectedMarkers.Any(connMarker => connMarker == marker);
+            return grid.GetPath(this, marker) != null;
         }
 
         private void DrawTransparentRays()
@@ -206,8 +253,22 @@ namespace ClockBlockers.MapData
             newMarker.grid = grid;
             
             grid.markers.Add(newMarker);
-
+            
             return newMarker;
+        }
+
+        public void GetOrAddToGridDictionary()
+        {
+            Node node = grid.GetOrAddMarkerToDictionary(this, -1, -1);
+        }
+
+        private List<PathfindingMarker> GetPathTo(PathfindingMarker marker)
+        {
+            return grid.GetPath(this, marker);
+        }
+        private List<PathfindingMarker> GetPathFrom(PathfindingMarker marker)
+        {
+            return grid.GetPath(marker, this);
         }
     }
 }

@@ -4,8 +4,6 @@ using System.Linq;
 
 using ClockBlockers.Utility;
 
-using Sisus.OdinSerializer.Utilities;
-
 using UnityEngine;
 
 
@@ -61,8 +59,9 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			{
 				DestroyImmediate(marker.gameObject);
 			}
-			
-			grid.markers.Clear();
+
+			grid.ClearMarkerList();
+			grid.ClearDictionary();
 		}
 
 		public override void GenerateMarkerAdjacencies()

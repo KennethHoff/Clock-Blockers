@@ -1,5 +1,8 @@
 using System.Collections.Generic;
 
+using ClockBlockers.MapData.Pathfinding;
+using ClockBlockers.Utility;
+
 using UnityEditor;
 
 using UnityEngine;
@@ -60,14 +63,78 @@ namespace ClockBlockers.MapData
 		// public LayerMask pathfindingLayer;
 
 		public List<PathfindingMarker> markers;
+		public List<Node> markerNodes;
+
+		private Dictionary<int, Node> markerNodeDictionary;
 
 		private Vector3 PlaneLocalScale => floorPlane.transform.localScale * 10;
 		public float XLength => PlaneLocalScale.x;
 		public float ZLength => PlaneLocalScale.z;
+		
+		public IPathfinder pathfinder;
 
 		private void OnDrawGizmos()
 		{
 			if (Selection.GetFiltered<PathfindingMarker>(SelectionMode.TopLevel).Length == 0) ResetMarkerGizmos();
+		}
+
+		private void CheckPathfinder()
+		{
+			if (pathfinder != null) return;
+			
+			pathfinder = GetComponent<IPathfinder>();
+			pathfinder.Grid = this;
+		}
+
+		private void AddToMarkerNodeDictionary(PathfindingMarker marker, Node node)
+		{
+			CheckIfDictionaryExists();
+			markerNodeDictionary.Add(marker.GetInstanceID(), node);
+		}
+
+		private bool CheckIfDictionaryExists()
+		{
+			if (markerNodeDictionary != null) return true;
+			
+			markerNodeDictionary = new Dictionary<int, Node>();
+			return false;
+		}
+
+		public Node GetNodeFromMarker(PathfindingMarker marker)
+		{
+			if (!CheckIfDictionaryExists()) return null;
+			
+			markerNodeDictionary.TryGetValue(marker.GetInstanceID(), out Node node);
+			return node;
+		}
+
+		public Node GetOrAddMarkerToDictionary(PathfindingMarker marker, float checkedDistToStart, float checkedDistToEnd)
+		{
+			Node node = GetNodeFromMarker(marker);
+			if (node != null)
+			{
+				node.SetDistances(checkedDistToStart, checkedDistToEnd);
+				return node;
+			}
+			
+			node = new Node(marker, checkedDistToStart, checkedDistToEnd);
+			AddToMarkerNodeDictionary(marker, node);
+			return node;
+		}
+
+		public void ClearDictionary()
+		{
+			if (!CheckIfDictionaryExists()) return;
+			
+			markerNodeDictionary.Clear();
+		}
+
+		public void ResetDictionary()
+		{
+			foreach (KeyValuePair<int,Node> keyValuePair in markerNodeDictionary)
+			{
+				keyValuePair.Value.Reset();
+			}
 		}
 
 		// TODO: Create a new 'Marker Generator' that does not actually create markers, but rather adjusts pre-placed markers.
@@ -79,8 +146,27 @@ namespace ClockBlockers.MapData
 		{
 			foreach (PathfindingMarker marker in markers)
 			{
-				marker.ResetGizmo();
+				if (marker != null)
+				{
+					marker.ResetGizmo();
+					continue;
+				}
+				
+				Logging.LogWarning("A marker was null, which means they're all probably null. Clearing list");
+				markers.Clear();
+				break;
 			}
+		}
+
+		public List<PathfindingMarker> GetPath(PathfindingMarker marker1, PathfindingMarker marker2)
+		{
+			CheckPathfinder();
+			return pathfinder.GetPath(marker1, marker2);
+		}
+
+		public void ClearMarkerList()
+		{
+			markers.Clear();
 		}
 	}
 }

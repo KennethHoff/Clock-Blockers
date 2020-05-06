@@ -31,13 +31,6 @@ namespace ClockBlockers.MapData.MarkerGenerators
 		[Range(MinDistance, MaxDistance)]
 		public int zDistanceBetweenCreatedMarkers;
 
-		[Space(5)]
-		[Range(MinDistance, MaxDistance)]
-		public int xDistanceBetweenMergedMarkers;
-
-		[Range(MinDistance, MaxDistance)]
-		public int zDistanceBetweenMergedMarkers;
-
 		private const float MinDistance = 1f;
 		private const float MaxDistance = 100f;
 		private float MarkerSizeAdjustedXStartPos => Mathf.Ceil(-grid.XLength / 2 + XDistanceBetweenCreatedMarkers/2);
@@ -46,10 +39,6 @@ namespace ClockBlockers.MapData.MarkerGenerators
 		private float ZDistanceBetweenCreatedMarkers => zDistanceBetweenCreatedMarkers;
 		private int NumberOfColumns => Mathf.FloorToInt(grid.XLength / xDistanceBetweenCreatedMarkers)-1;
 		private int NumberOfRows => Mathf.FloorToInt(grid.ZLength / zDistanceBetweenCreatedMarkers)-1;
-
-		private List<PathfindingMarker> mergedMarkers;
-
-		private List<PathfindingMarker> preMergedMarkers;
 
 		public sealed override void GenerateAllMarkers()
 		{
@@ -75,9 +64,46 @@ namespace ClockBlockers.MapData.MarkerGenerators
 				DestroyImmediate(marker.transform.parent.gameObject);
 			}
 
-			grid.markers.Clear();
+			grid.ClearMarkerList();
+			grid.ClearDictionary();
 		}
 
+		private void CreateMarkerColumn(int i)
+		{
+			float xPos = MarkerSizeAdjustedXStartPos + (xDistanceBetweenCreatedMarkers * i);
+
+			Transform newColumn = new GameObject("Column " + i).transform;
+
+			newColumn.position = new Vector3(xPos, 0, 0);
+
+			newColumn.SetParent(gridTransform);
+
+			var createdNothing = true;
+
+			for (var j = 0; j <= NumberOfRows; j++)
+			{
+				if (CreateMarker(xPos, j, newColumn, i)) createdNothing = false;
+				else Logging.Log("Did not create any markers on column " + i + ", row " + j);
+			}
+
+			if (!createdNothing) return;
+			DestroyImmediate(newColumn.gameObject);
+			Logging.Log("Did not create any Markers on column " + i);
+		}
+
+		protected abstract bool CreateMarker(float xPos, int rowIndex, Transform newColumn, int columnIndex);
+		
+		protected PathfindingMarker InstantiateMarker(string markerName, Vector3 markerPos, Transform parent)
+		{
+			var newMarker = PathfindingMarker.CreateInstance(markerName, grid, markerPos, parent, creationHeightAboveFloor);
+			
+			return newMarker;
+		}
+		#region Marker Adjacency
+
+		
+
+		// Does not work well with too large 'Distance between Created Markers'[Basically, anything except 1/2, and even then that's debatable - it's fine for now, I'll probably use 2 anyways]
 		public sealed override void GenerateMarkerAdjacencies()
 		{
 			foreach (PathfindingMarker marker in grid.markers)
@@ -190,15 +216,12 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			{
 				case AdjacencyDirection.Forward:
 				case AdjacencyDirection.Back:
-					// Logging.Log("Colliding Forwards or Back");
 					zColl = CheckIfCollidingOnZ(point, zDist);
 					xColl = false;
 					break;
 
 				case AdjacencyDirection.Left:
 				case AdjacencyDirection.Right:
-					// Logging.Log("Colliding Left or Right");
-
 					xColl = CheckIfCollidingOnX(point, xDist);
 					zColl = false;
 					break;
@@ -219,27 +242,22 @@ namespace ClockBlockers.MapData.MarkerGenerators
 
 		private bool CheckIfCollidingOnASingleAxis(Vector3 pos, float dist, Vector3 direction)
 		{
-			var hitSomething = Physics.Raycast(pos, direction, out RaycastHit hit,Mathf.Abs(dist));
+			bool hitSomething = Physics.Raycast(pos, direction, out RaycastHit hit,Mathf.Abs(dist));
 			return hitSomething;
 		}
 
 		private bool CheckIfCollidingOnY(Vector3 pos, float dist)
 		{
-			// Logging.Log("Checking if colliding on Y");
-
 			return CheckIfCollidingOnASingleAxis(pos, dist, dist > 0 ? Vector3.up : Vector3.down);
 		}
 
 		private bool CheckIfCollidingOnZ(Vector3 pos, float dist)
 		{
-			// Logging.Log("Checking if colliding on Z");
 			return CheckIfCollidingOnASingleAxis(pos, dist, dist > 0 ? Vector3.forward : Vector3.back);
 		}
 		
 		private bool CheckIfCollidingOnX(Vector3 pos, float dist)
 		{
-			// Logging.Log("Checking if colliding on X");
-
 			return CheckIfCollidingOnASingleAxis(pos, dist, dist > 0 ? Vector3.right : Vector3.left);
 		}
 
@@ -275,37 +293,6 @@ namespace ClockBlockers.MapData.MarkerGenerators
 
 			return AdjacencyDirection.Unknown;
 		}
-
-		private void CreateMarkerColumn(int i)
-		{
-			float xPos = MarkerSizeAdjustedXStartPos + (xDistanceBetweenCreatedMarkers * i);
-
-			Transform newColumn = new GameObject("Column " + i).transform;
-
-			newColumn.position = new Vector3(xPos, 0, 0);
-
-			newColumn.SetParent(gridTransform);
-
-			var createdNothing = true;
-
-			for (var j = 0; j <= NumberOfRows; j++)
-			{
-				if (CreateMarker(xPos, j, newColumn, i)) createdNothing = false;
-				else Logging.Log("Did not create any markers on column " + i + ", row " + j);
-			}
-
-			if (!createdNothing) return;
-			DestroyImmediate(newColumn.gameObject);
-			Logging.Log("Did not create any Markers on column " + i);
-		}
-
-		protected abstract bool CreateMarker(float xPos, int rowIndex, Transform newColumn, int columnIndex);
-		
-		protected PathfindingMarker InstantiateMarker(string markerName, Vector3 markerPos, Transform parent)
-		{
-			var newMarker = PathfindingMarker.CreateInstance(markerName, grid, markerPos, parent, creationHeightAboveFloor);
-			
-			return newMarker;
-		}
+		#endregion
 	}
 }
