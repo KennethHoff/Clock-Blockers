@@ -4,117 +4,94 @@ using System.Linq;
 
 using ClockBlockers.Utility;
 
-using Sisus.OdinSerializer.Utilities;
+using Unity.Burst;
 
 using UnityEngine;
 
 
 namespace ClockBlockers.MapData.Pathfinding
 {
-	// https://web.archive.org/web/20170505034417/http://blog.two-cats.com/2014/06/a-star-example/
-	[DisallowMultipleComponent]
-	internal class AStarPathFinder : MonoBehaviour, IPathfinder
+	// https://medium.com/@nicholas.w.swift/easy-a-star-pathfinding-7e6689c7f7b2
+
+
+	[BurstCompile]
+	public class AStarPathFinder : IPathfinder
 	{
-		private class Node
-		{
-			public enum NodeState
-			{
-				Untested,
-				Open,
-				Closed
-			}
 
-			public Node(PathfindingMarker newMarker, float newG, float newH)
-			{
-				marker = newMarker;
-				g = newG;
-				h = newH;
-				parentNode = null;
-				state = NodeState.Untested;
-			}
+		private readonly IPathRequester pathRequester;
+		private readonly PathfindingMarker startMarker;
+		private readonly PathfindingMarker endMarker;
 
-			public Node(PathfindingMarker newMarker)
-			{
-				marker = newMarker;
-				Reset();
-			}
+		private readonly int checksPerFrame;
 
-			public void Reset()
-			{
-				g = float.MaxValue;
-				h = float.MaxValue;
-				parentNode = null;
-				state = NodeState.Untested;
-			}
+		private int totalChecks;
+		private int framesTaken;
 
-			public void SetDistances(float newG, float newH)
-			{
-				g = newG;
-				h = newH;
-			}
-
-			public readonly PathfindingMarker marker;
-
-			private float g;
-			private float h;
-
-			public NodeState state;
-
-			public Node parentNode;
-
-			public float F => g + h;
-
-			public float G
-			{
-				get => g;
-				set => g = value;
-			}
-
-			public float H
-			{
-				get => h;
-				set => h = value;
-			}
-		}
-
+		private List<PathfindingMarker> path;
+		private List<PathfindingMarker> Path => path.Count > 0 ? path : null;
+		
 		private Dictionary<int, Node> markerNodeDictionary;
+
+		public List<Node> OpenList { get; set; }
+
+		private readonly List<Node> closedList;
+
+		private bool isComplete;
+		public bool IsComplete => isComplete;
+
+
+		public static AStarPathFinder CreateInstance(PathRequest pathRequest, int checksPerFrame)
+		{
+			return new AStarPathFinder(pathRequest.pathRequester, pathRequest.startMarker, pathRequest.endMarker, checksPerFrame);
+		}
+		
+		private AStarPathFinder(IPathRequester pathRequester, PathfindingMarker startMarker, PathfindingMarker endMarker, int checksPerFrame)
+		{
+			this.pathRequester = pathRequester;
+			
+			this.startMarker = startMarker;
+			this.endMarker = endMarker;
+			
+			this.checksPerFrame = checksPerFrame;
+			
+			isComplete = false;
+
+			totalChecks = 0;
+			
+			path = new List<PathfindingMarker>();
+			
+			markerNodeDictionary = new Dictionary<int, Node>();
+
+			Logging.Log($"New instance of AStarPathFinder was constructed!");
+			OpenList = new List<Node>();
+			closedList = new List<Node>();
+		}
+		~AStarPathFinder()
+		{
+			Logging.Log($"An instance of AStarPathFinder was deconstructed!");
+		}
 		
 		private void AddToMarkerNodeDictionary(PathfindingMarker marker, Node node)
 		{
-			CheckIfDictionaryExists();
 			markerNodeDictionary.Add(marker.GetInstanceID(), node);
 		}
-
-		private bool CheckIfDictionaryExists()
+		
+		private void ResetDictionary()
 		{
-			if (markerNodeDictionary != null) return true;
-			
-			markerNodeDictionary = new Dictionary<int, Node>();
-			return false;
+			if (markerNodeDictionary == null)
+			{
+				markerNodeDictionary = new Dictionary<int, Node>();
+				return;
+			}
+			markerNodeDictionary.Clear();
 		}
-
+		
 		private Node GetNodeFromMarker(PathfindingMarker marker)
 		{
-			if (!CheckIfDictionaryExists()) return null;
-			
 			markerNodeDictionary.TryGetValue(marker.GetInstanceID(), out Node node);
 			return node;
 		}
-
-		private Node GetOrAddMarkerToDictionary(PathfindingMarker marker, float checkedDistToStart, float checkedDistToEnd)
-		{
-			Node node = GetNodeFromMarker(marker);
-			if (node != null)
-			{
-				node.SetDistances(checkedDistToStart, checkedDistToEnd);
-				return node;
-			}
-			
-			node = new Node(marker, checkedDistToStart, checkedDistToEnd);
-			AddToMarkerNodeDictionary(marker, node);
-			return node;
-		}
-
+		
 		private Node GetOrAddMarkerToDictionary(PathfindingMarker marker)
 		{
 			Node node = GetNodeFromMarker(marker);
@@ -127,148 +104,112 @@ namespace ClockBlockers.MapData.Pathfinding
 			AddToMarkerNodeDictionary(marker, node);
 			return node;
 		}
-
-		private void ResetDictionary()
-		{
-			if (markerNodeDictionary == null)
-			{
-				markerNodeDictionary = new Dictionary<int, Node>();
-				return;
-			}
-			foreach (KeyValuePair<int,Node> keyValuePair in markerNodeDictionary)
-			{
-				keyValuePair.Value.Reset();
-			}
-		}
 		
-		private List<Node> TurnConnectedMarkersIntoNodes(PathfindingMarker startMarker, Vector3 startPos, Vector3 endPos)
+		private IEnumerable<Node> TurnConnectedMarkersIntoNodes(PathfindingMarker marker)
 		{
-			var result = new List<Node>(startMarker.ConnMarkerCount);
-
-			startMarker.connectedMarkers.Where(currMarker => currMarker != null).ForEach(connMarker =>
-			{
-				Vector3 currMarkerPos = connMarker.transform.position;
-				
-				// float currDistToStart = Vector3.Distance(currMarkerPos, startPos);
-				// float currDistToEnd = Vector3.Distance(currMarkerPos, endPos);
-
-				Node currNode = GetOrAddMarkerToDictionary(connMarker);
-				// Node node = Grid.GetOrAddMarkerToDictionary(connMarker);
-
-				result.Add(currNode);
-			});
-			return result;
+			return from currMarker in marker.connectedMarkers
+				where currMarker != null
+				select GetOrAddMarkerToDictionary(currMarker);
 		}
-		
-		private List<Node> GetAvailableConnectedNodes(Node fromNode, List<Node> tempNodes, Vector3 endPos)
+		public IEnumerator FindPathCoroutine()
 		{
-			var result = new List<Node>();
-			
-			foreach (Node node in tempNodes)
-			{
-				// If it's closed, that means it has been in a path at some point (Current path, or rejected). If it's in the current path, then obviously don't check it, and if it's not in the current path, that means the rejected path is worse.
-				if (node.state == Node.NodeState.Closed) continue;
-
-				Vector3 fromNodePos = fromNode.marker.transform.position;
-				
-				// If it's open, that means it's open for consideration; Only added if the new path is shorter than the previous
-				if (node.state == Node.NodeState.Open)
-				{
-					float gTemp = fromNode.G + Vector3.Distance(fromNodePos, node.marker.transform.position);
-					if (gTemp >= node.G) continue;
-					
-					node.parentNode = fromNode;
-					result.Add(node);
-				}
-				// If it hasn't been checked before, that means the new path has to be shorter than the previous.
-				else
-				{
-					node.parentNode = fromNode;
-					node.state = Node.NodeState.Open;
-					
-					Vector3 nodePos = node.marker.transform.position;
-					node.G = fromNode.G + Vector3.Distance(fromNodePos, nodePos);
-					node.H = Vector3.Distance(nodePos, endPos);
-					result.Add(node);
-				}
-			}
-			return result;
-		}
-		
-		private List<Node> GetConnectedNodes(Node startNode, Vector3 startPos, Vector3 endPos)
-		{
-			List<Node> tempNodes = TurnConnectedMarkersIntoNodes(startNode.marker, startPos, endPos);
-
-			List<Node> nextNodes = GetAvailableConnectedNodes(startNode, tempNodes, endPos);
-			return nextNodes;
-		}
-
-		public List<PathfindingMarker> GetPath(PathfindingMarker startMarker, PathfindingMarker endMarker)
-		{
-			// This will perform really badly, but it should work.
-			// The problem is that the states and other values don't ever reset, so "closed" will always be "closed" even in new checks.
-			// Ideally I would probably create a completely separate list for each 'instance' of the PathFinder (and also have separate PathFinders for each agent looking for a path, and have it run on their own separate threads)
-			// TODO: Refactor pathfinder to run in parallel, and give each Agent their own instance of the Pathfinder, instead of on the Grid
-			
 			ResetDictionary();
-			
-			Vector3 startPos = startMarker.transform.position;
-			Vector3 endPos = endMarker.transform.position;
-			float startDistToEnd = Vector3.Distance(startPos, endPos);
-			
-			Node startNode = GetOrAddMarkerToDictionary(startMarker, 0, startDistToEnd);
-			Node endNode = GetOrAddMarkerToDictionary(endMarker, startDistToEnd, 0);
-			
-			bool success = Search(startNode, endNode, startPos, endPos);
 
-			var path = new List<PathfindingMarker>();
+			Node startNode = GetOrAddMarkerToDictionary(startMarker);
+			Node endNode = GetOrAddMarkerToDictionary(endMarker);
 
-			if (!success)
+			float distFromStartToEnd = Vector3.Distance(startMarker.transform.position, endMarker.transform.position);
+
+			startNode.G = 0;
+			startNode.H = distFromStartToEnd;
+
+			endNode.G = distFromStartToEnd;
+			endNode.H = 0;
+
+			OpenList.Add(startNode);
+
+			while (OpenList.Count > 0)
 			{
-				Logging.Log($"Failed to move from {startMarker.name} to {endMarker.name}");
-				return path;
-			}
-			
-			Node node = endNode;
-			while (node.parentNode != null)
-			{
-				path.Add(node.marker);
-				node = node.parentNode;
-			}
-			
-			// Because the startNode will not have a 'parent node', you have to end by adding the parentNode to the end of the list
-			if (node == startNode) path.Add(node.marker);
-			
-			path.Reverse();
+				totalChecks++;
 				
-			Logging.Log($"Moving from {startMarker.name} to {endMarker.name} uses the path:");
-			path.ForEach(marker =>
-			{
-				Logging.Log(marker.name);
-			});
+				if (totalChecks % checksPerFrame == 0 )
+				{
+					framesTaken++;
+					yield return null;
+				}
 
-			return path;
+				if (OpenList.Count > 1)
+				{
+					OpenList.Sort((node1, node2) => node1.F.CompareTo(node2.F));
+				}
+
+				Node currNode = OpenList.First();
+
+				OpenList.Remove(currNode);
+				closedList.Add(currNode);
+
+				if (currNode == endNode)
+				{
+					Node current = currNode;
+
+					while (current != null)
+					{
+						path.Add(current.marker);
+						current = current.parentNode;
+					}
+
+					path.Reverse();
+					break;
+				}
+
+				Vector3 currMarkerPos = currNode.marker.transform.position;
+
+				currNode.childNodes = TurnConnectedMarkersIntoNodes(currNode.marker);
+
+				foreach (Node childNode in currNode.childNodes)
+				{
+					if (closedList.Contains(childNode)) continue;
+
+					Vector3 childMarkerPos = childNode.marker.transform.position;
+
+					// TODO: Redo this into something .. better (Currently it randomly goes diagonally back and forth, since that's equally "good")
+					float tempG = currNode.G + Vector3.Distance(childMarkerPos, currMarkerPos);
+
+					float tempH = Vector3.Distance(childMarkerPos, endNode.marker.transform.position).Round(4);
+
+					if (OpenList.Contains(childNode))
+					{
+						// If not set, then it should be float.MaxValue (Although, it shouldn't not be set if it's in the openList)
+						if (childNode.G > tempG)
+						{
+							childNode.parentNode = currNode;
+							childNode.G = tempG;
+						}
+
+						continue;
+					}
+
+					childNode.parentNode = currNode;
+					childNode.G = tempG;
+					childNode.H = tempH;
+
+					OpenList.Add(childNode);
+				}
+			}
+			
+			// End of search
+
+			Logging.Log($"Checked {totalChecks}. It took {framesTaken} frames to complete.");
+
+
+			isComplete = true;
+
+			if (pathRequester == null) yield break;
+			
+			pathRequester.CurrentPathfinder = null;
+			pathRequester.PathCallback(Path);
+
 		}
 
-		private bool Search(Node currNode, Node endNode, Vector3 startPos, Vector3 endPos)
-		{
-			currNode.state = Node.NodeState.Closed;
-			currNode.marker.DrawColor = Color.cyan;
-
-			List<Node> nextNodes = GetConnectedNodes(currNode, startPos, endPos);
-			
-			nextNodes.Sort((node1, node2) => node1.F.CompareTo(node2.F));
-			foreach (Node nextNode in nextNodes)
-			{
-				// If it found the end, return true.
-				if (nextNode == endNode) return true;
-				
-				// If the next search returns true (meaning somewhere down the recursion the end has been found), return true.
-				// If it returns false, then try again on the next node in the list.
-				if (Search(nextNode, endNode, startPos, endPos)) return true;
-			}
-			// If the list is empty (Meaning 'currNode' has no non-closed adjacent nodes, return false
-			return false;
-		}
 	}
 }

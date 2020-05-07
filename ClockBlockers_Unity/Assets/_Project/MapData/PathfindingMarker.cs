@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
+using ClockBlockers.MapData.Pathfinding;
 using ClockBlockers.Utility;
+
+using Unity.Burst;
 
 using UnityEditor;
 
@@ -10,54 +13,32 @@ using UnityEngine;
 
 namespace ClockBlockers.MapData
 {
-    [ExecuteInEditMode]
-    public class PathfindingMarker : MonoBehaviour
+    [ExecuteInEditMode][BurstCompile]
+    public class PathfindingMarker : MonoBehaviour, IPathRequester
     {
         // TODO: During pathfinding, find the Marker closest to the 'destination', and then recursive find the marker that's closest to you
 
         [SerializeReference]
         public List<PathfindingMarker> connectedMarkers;
 
-        // public List<MarkerStats> connectedMarkers;
+        public IPathfinder CurrentPathfinder { get; set; }
 
-        // public List<Node> connectedMarkers;
-
-        public int ConnMarkerCount
-        {
-            get
-            {
-                if (connectedMarkers == null) return -1;
-
-                return connectedMarkers.Count(node => node != null);
-            }
-        }
+        public int ConnMarkerCount => connectedMarkers?.Count(node => node != null) ?? 0;
 
         public float scale = 0.5f;
 
-        // private static readonly Color DefaultDrawColor = new Color(137, 0, 255, 255); // purple
         private static readonly Color DefaultDrawColor = Color.white;
 
-        public Color DrawColor
-        {
-            get => drawColor;
-            set => drawColor = value;
-        }
-        
         private Color drawColor = DefaultDrawColor;
 
         [HideInInspector]
         public PathfindingGrid grid;
 
-        // _Exclusively_ for equalizing the 'Draw Height Above Floor' gizmo drawing.
         public float creationHeightAboveFloor;
 
-
-        
         private PathfindingMarker otherSelectedMarker;
         private List<PathfindingMarker> pathToOtherSelectMarker;
 
-        
-        
         private void OnDrawGizmos()
         {
             if (grid.alwaysDrawRays) DrawTransparentRays();
@@ -78,8 +59,16 @@ namespace ClockBlockers.MapData
         private void OnDrawGizmosSelected()
         {
             if (Selection.activeGameObject != gameObject) return;
+
+            if (CurrentPathfinder != null)
+            {
+                AffectDrawOfMarkers(CurrentPathfinder.OpenList, Color.red, grid.searchedNodeScale);
+                return;
+            }
+
+            const SelectionMode selectionMode = SelectionMode.TopLevel | SelectionMode.ExcludePrefab | SelectionMode.Editable;
             
-            Transform[] transforms = Selection.GetTransforms(SelectionMode.TopLevel | SelectionMode.ExcludePrefab | SelectionMode.Editable);
+            Transform[] transforms = Selection.GetTransforms(selectionMode);
             
             if (transforms == null)
             {
@@ -102,9 +91,8 @@ namespace ClockBlockers.MapData
             }
 
             grid.ResetMarkerGizmos();
-            if (selectedMarkers.Count == 1) DrawSingleSelectedMarker();
-            else
-            if (selectedMarkers.Count == 2 && otherMarker != null) DrawPathToSelectedMarker(otherMarker);
+            if (selectedMarkers.Count == 1) {DrawSingleSelectedMarker();}
+            else if (selectedMarkers.Count == 2 && otherMarker != null) DrawPathToSelectedMarker(otherMarker);
         }
 
         private void DrawPathToSelectedMarker(PathfindingMarker marker)
@@ -113,14 +101,14 @@ namespace ClockBlockers.MapData
             {
                 otherSelectedMarker = marker;
                 Logging.Log("Selected different markers");
-                pathToOtherSelectMarker = GetPathFrom(marker);
+                RequestPathFrom(marker);
             }
-            
 
+            if (pathToOtherSelectMarker == null || pathToOtherSelectMarker.Count == 0) return;
+            
             Logging.Log("Drawing path between markers");
             AffectDrawOfMarkers(pathToOtherSelectMarker);
-            
-            
+
             otherSelectedMarker.drawColor = Color.black;
             drawColor = Color.black;
         }
@@ -140,19 +128,23 @@ namespace ClockBlockers.MapData
             AffectDrawOfMarkers(connectedMarkers);
         }
 
-        private void AffectDrawOfMarkers(IReadOnlyCollection<PathfindingMarker> markerList)
+        private void AffectDrawOfMarkers(IEnumerable<PathfindingMarker> markerList)
+        {
+            AffectDrawOfMarkers(markerList, Color.magenta, grid.nodeScale);
+        }
+
+        private void AffectDrawOfMarkers(List<Node> nodeList, Color newColor, float newScale)
+        {
+            AffectDrawOfMarkers(nodeList.ConvertAll(node => node.marker), newColor, newScale);
+        }
+        private void AffectDrawOfMarkers(IEnumerable<PathfindingMarker> markerList, Color newColor, float newScale)
         {
             foreach (PathfindingMarker marker in markerList.Where(marker => marker != null))
             {
-                if (grid.selectionChangeNodeColors) marker.drawColor = Color.magenta;
+                if (grid.selectionChangeNodeColors) marker.drawColor = newColor;
 
-                marker.scale = grid.selectionChangeScale ? grid.selectionNodeScale : grid.nodeScale;
+                if (grid.selectionChangeScale) marker.scale = newScale;
             }
-        }
-
-        private bool CheckIfConnected(PathfindingMarker marker)
-        {
-            return grid.GetPath(this, marker) != null;
         }
 
         private void DrawTransparentRays()
@@ -235,7 +227,6 @@ namespace ClockBlockers.MapData
         public static PathfindingMarker CreateInstance(string markerName, PathfindingGrid grid, Vector3 markerPos, Transform parent, float creationYPosAboveFloor)
         {
             var newMarker = new GameObject(markerName).AddComponent<PathfindingMarker>();
-            // newMarker.connectedMarkers = new List<MarkerStats>();
 
             newMarker.transform.position = markerPos;
             newMarker.transform.SetParent(parent);
@@ -251,7 +242,6 @@ namespace ClockBlockers.MapData
         public static PathfindingMarker CreateInstance(string markerName, ref PathfindingGrid grid)
         {
             var newMarker = new GameObject(markerName).AddComponent<PathfindingMarker>();
-            // newMarker.connectedMarkers = new List<MarkerStats>();
 
             newMarker.grid = grid;
             
@@ -260,13 +250,25 @@ namespace ClockBlockers.MapData
             return newMarker;
         }
 
-        private List<PathfindingMarker> GetPathTo(PathfindingMarker marker)
+        private void RequestPathTo(PathfindingMarker marker)
         {
-            return grid.GetPath(this, marker);
+            Logging.Log($"Finding path to {marker.name} from {this.name}");
+            
+            grid.GetPath(this, this, marker);
         }
-        private List<PathfindingMarker> GetPathFrom(PathfindingMarker marker)
+        private void RequestPathFrom(PathfindingMarker marker)
         {
-            return grid.GetPath(marker, this);
+            Logging.Log($"Finding path from {marker.name} to {this.name}");
+            
+            grid.GetPath(this, marker, this);
         }
+
+        
+        public void PathCallback(List<PathfindingMarker> pathFinderPath)
+        {
+            pathToOtherSelectMarker = pathFinderPath;
+            Logging.Log("Path Callback");
+        }
+
     }
 }

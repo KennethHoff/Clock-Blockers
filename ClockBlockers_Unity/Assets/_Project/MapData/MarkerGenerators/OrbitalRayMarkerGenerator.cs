@@ -61,7 +61,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 
 		private bool CreateAMarkerOnEachValidHeight(IReadOnlyList<RaycastHit> allCollisions, float xPos, float zPos, int rowIndex, Transform parentColumn, int columnIndex)
 		{
-			bool createdAtLeastOne = false;
+			var createdAtLeastOne = false;
 			for (var i = 0; i < allCollisions.Count; i++)
 			{
 				RaycastHit hit = allCollisions[i];

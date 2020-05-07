@@ -49,8 +49,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			} 
 			
 			if (grid.markers == null) grid.markers = new List<PathfindingMarker>(NumberOfColumns * NumberOfRows);
-			
-			
+
 			for (var i = 0; i <= NumberOfColumns; i ++)
 			{
 				CreateMarkerColumn(i);

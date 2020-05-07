@@ -56,6 +56,7 @@ MonoBehaviour:
   floorPlane: {fileID: 0}
   minimumOpenAreaAroundMarkers: {x: 1, y: 2, z: 1}
   markers: []
+  searchedNodeScale: 0.75
 --- !u!114 &3609927531256765598
 MonoBehaviour:
   m_ObjectHideFlags: 0

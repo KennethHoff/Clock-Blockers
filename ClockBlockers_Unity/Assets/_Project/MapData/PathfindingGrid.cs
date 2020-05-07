@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 
-using ClockBlockers.MapData.Pathfinding;
+using ClockBlockers.MapData.Pathfinding.PathfindingManagement;
 using ClockBlockers.Utility;
+
+using Unity.Burst;
 
 using UnityEditor;
 
@@ -16,7 +18,7 @@ namespace ClockBlockers.MapData
 	// Any larger agent might be able to follow it, but no guarantees. It might simply be too large to follow accurately
 	
 	// TODO: Remove the idea of 'row' entirely, and make it more manual. Currently there are significant issues with altitude changes. << Do this after making the pathfinding work between 'connected nodes'.
-	[ExecuteAlways]
+	[ExecuteAlways][BurstCompile]
 	public class PathfindingGrid : MonoBehaviour
 	{
 		[Header("Marker Gizmos")]
@@ -55,7 +57,6 @@ namespace ClockBlockers.MapData
 		public float XStartPos => transform.position.x - XLength / 2;
 		public float XEndPos => transform.position.x + XLength / 2;
 
-		
 		public float ZStartPos => transform.position.z + ZLength / 2;
 		public float ZEndPos => transform.position.z - ZLength / 2;
 
@@ -68,20 +69,27 @@ namespace ClockBlockers.MapData
 		public float XLength => PlaneLocalScale.x;
 		public float ZLength => PlaneLocalScale.z;
 		
-		public IPathfinder pathfinder;
+		public IPathfindingManager pathfindingManager;
+
+		[Tooltip("The scale of the node when it's being searched for by a Pathfinder")]
+		[Header("Pathfinding Gizmo")]
+		public float searchedNodeScale = 0.75f;
 
 		private void OnDrawGizmos()
 		{
 			if (Selection.GetFiltered<PathfindingMarker>(SelectionMode.TopLevel).Length == 0) ResetMarkerGizmos();
-		}
-
-		private void CheckPathfinder()
-		{
-			if (pathfinder != null) return;
 			
-			pathfinder = GetComponent<IPathfinder>();
+			if (CheckPathfindingManager()) pathfindingManager.FindPaths();
 		}
 
+		private bool CheckPathfindingManager()
+		{
+			if (pathfindingManager != null) return true;
+			
+			pathfindingManager = GetComponent<IPathfindingManager>();
+
+			return pathfindingManager != null;
+		}
 
 		// TODO: Create a new 'Marker Generator' that does not actually create markers, but rather adjusts pre-placed markers.
 		
@@ -104,10 +112,10 @@ namespace ClockBlockers.MapData
 			}
 		}
 
-		public List<PathfindingMarker> GetPath(PathfindingMarker marker1, PathfindingMarker marker2)
+		public void GetPath(IPathRequester pathRequester, PathfindingMarker marker1, PathfindingMarker marker2)
 		{
-			CheckPathfinder();
-			return pathfinder.GetPath(marker1, marker2);
+			CheckPathfindingManager();
+			pathfindingManager.RequestPath(pathRequester, marker1, marker2);
 		}
 
 		public void ClearMarkerList()

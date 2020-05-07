@@ -57,6 +57,7 @@
               <e p="PathfindingGridEditor.cs" t="Include" />
               <e p="PathfindingMarkerEditor.cs" t="Include" />
             </e>
+            <e p="IPathRequester.cs" t="Include" />
             <e p="MarkerGenerators" t="Include">
               <e p="AlongFloorMarkerGenerator.cs" t="Include" />
               <e p="AutomatedMarkerGenerator.cs" t="Include" />
@@ -74,8 +75,17 @@
             <e p="MarkerStats.cs" t="Include" />
             <e p="Pathfinding" t="Include">
               <e p="AStarPathFinder.cs" t="Include" />
-              <e p="AStarPathFinderTwo.cs" t="Include" />
+              <e p="AStarPathFinderJob.cs" t="Include" />
               <e p="IPathfinder.cs" t="Include" />
+              <e p="Node.cs" t="Include" />
+              <e p="PathfindingManagement" t="Include">
+                <e p="AStarPathfindingManager.cs" t="Include" />
+                <e p="IPathfindingManager.cs" t="Include" />
+                <e p="Job" t="Include">
+                  <e p="AStarPathFinderOld.cs" t="Include" />
+                </e>
+              </e>
+              <e p="PathRequest.cs" t="Include" />
             </e>
             <e p="PathfindingGrid.cs" t="Include" />
             <e p="PathfindingMarker.cs" t="Include" />
