@@ -15,8 +15,6 @@ namespace ClockBlockers.MapData.Editor
 			base.OnInspectorGUI();
 			
 			var myScript = (PathfindingMarker) target;
-
-			CreateButton(myScript.GetOrAddToGridDictionary, "Get Or Add Marker To Dictionary");
 		}
 		
 		private static void CreateButton(Action action, string buttonText)

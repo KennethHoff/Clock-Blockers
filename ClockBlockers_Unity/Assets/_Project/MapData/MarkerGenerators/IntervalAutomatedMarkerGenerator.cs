@@ -65,7 +65,6 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			}
 
 			grid.ClearMarkerList();
-			grid.ClearDictionary();
 		}
 
 		private void CreateMarkerColumn(int i)

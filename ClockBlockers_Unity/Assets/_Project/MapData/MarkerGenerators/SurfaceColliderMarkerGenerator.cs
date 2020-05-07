@@ -61,7 +61,6 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			}
 
 			grid.ClearMarkerList();
-			grid.ClearDictionary();
 		}
 
 		public override void GenerateMarkerAdjacencies()

@@ -63,9 +63,6 @@ namespace ClockBlockers.MapData
 		// public LayerMask pathfindingLayer;
 
 		public List<PathfindingMarker> markers;
-		public List<Node> markerNodes;
-
-		private Dictionary<int, Node> markerNodeDictionary;
 
 		private Vector3 PlaneLocalScale => floorPlane.transform.localScale * 10;
 		public float XLength => PlaneLocalScale.x;
@@ -83,59 +80,8 @@ namespace ClockBlockers.MapData
 			if (pathfinder != null) return;
 			
 			pathfinder = GetComponent<IPathfinder>();
-			pathfinder.Grid = this;
 		}
 
-		private void AddToMarkerNodeDictionary(PathfindingMarker marker, Node node)
-		{
-			CheckIfDictionaryExists();
-			markerNodeDictionary.Add(marker.GetInstanceID(), node);
-		}
-
-		private bool CheckIfDictionaryExists()
-		{
-			if (markerNodeDictionary != null) return true;
-			
-			markerNodeDictionary = new Dictionary<int, Node>();
-			return false;
-		}
-
-		public Node GetNodeFromMarker(PathfindingMarker marker)
-		{
-			if (!CheckIfDictionaryExists()) return null;
-			
-			markerNodeDictionary.TryGetValue(marker.GetInstanceID(), out Node node);
-			return node;
-		}
-
-		public Node GetOrAddMarkerToDictionary(PathfindingMarker marker, float checkedDistToStart, float checkedDistToEnd)
-		{
-			Node node = GetNodeFromMarker(marker);
-			if (node != null)
-			{
-				node.SetDistances(checkedDistToStart, checkedDistToEnd);
-				return node;
-			}
-			
-			node = new Node(marker, checkedDistToStart, checkedDistToEnd);
-			AddToMarkerNodeDictionary(marker, node);
-			return node;
-		}
-
-		public void ClearDictionary()
-		{
-			if (!CheckIfDictionaryExists()) return;
-			
-			markerNodeDictionary.Clear();
-		}
-
-		public void ResetDictionary()
-		{
-			foreach (KeyValuePair<int,Node> keyValuePair in markerNodeDictionary)
-			{
-				keyValuePair.Value.Reset();
-			}
-		}
 
 		// TODO: Create a new 'Marker Generator' that does not actually create markers, but rather adjusts pre-placed markers.
 		

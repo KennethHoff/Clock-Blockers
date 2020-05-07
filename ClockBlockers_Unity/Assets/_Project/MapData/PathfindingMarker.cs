@@ -37,6 +37,12 @@ namespace ClockBlockers.MapData
         // private static readonly Color DefaultDrawColor = new Color(137, 0, 255, 255); // purple
         private static readonly Color DefaultDrawColor = Color.white;
 
+        public Color DrawColor
+        {
+            get => drawColor;
+            set => drawColor = value;
+        }
+        
         private Color drawColor = DefaultDrawColor;
 
         [HideInInspector]
@@ -72,12 +78,8 @@ namespace ClockBlockers.MapData
         private void OnDrawGizmosSelected()
         {
             if (Selection.activeGameObject != gameObject) return;
-            // DrawSingleSelectedMarker();
             
-
-            // // var gameObjects = Selection.GetFiltered(typeof(PathfindingMarker),SelectionMode.TopLevel | SelectionMode.ExcludePrefab | SelectionMode.Editable) as GameObject[];
-            
-            var transforms = Selection.GetTransforms(SelectionMode.TopLevel | SelectionMode.ExcludePrefab | SelectionMode.Editable);
+            Transform[] transforms = Selection.GetTransforms(SelectionMode.TopLevel | SelectionMode.ExcludePrefab | SelectionMode.Editable);
             
             if (transforms == null)
             {
@@ -101,7 +103,8 @@ namespace ClockBlockers.MapData
 
             grid.ResetMarkerGizmos();
             if (selectedMarkers.Count == 1) DrawSingleSelectedMarker();
-            else if (selectedMarkers.Count == 2 && otherMarker != null) DrawPathToSelectedMarker(otherMarker);
+            else
+            if (selectedMarkers.Count == 2 && otherMarker != null) DrawPathToSelectedMarker(otherMarker);
         }
 
         private void DrawPathToSelectedMarker(PathfindingMarker marker)
@@ -255,11 +258,6 @@ namespace ClockBlockers.MapData
             grid.markers.Add(newMarker);
             
             return newMarker;
-        }
-
-        public void GetOrAddToGridDictionary()
-        {
-            Node node = grid.GetOrAddMarkerToDictionary(this, -1, -1);
         }
 
         private List<PathfindingMarker> GetPathTo(PathfindingMarker marker)

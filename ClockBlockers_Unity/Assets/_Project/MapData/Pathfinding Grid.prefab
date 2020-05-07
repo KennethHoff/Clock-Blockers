@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 149534689774175846}
   - component: {fileID: 149534689774175845}
-  - component: {fileID: 8960680088463003108}
   - component: {fileID: 3609927531256765598}
   m_Layer: 0
   m_Name: Pathfinding Grid
@@ -57,18 +56,6 @@ MonoBehaviour:
   floorPlane: {fileID: 0}
   minimumOpenAreaAroundMarkers: {x: 1, y: 2, z: 1}
   markers: []
---- !u!114 &8960680088463003108
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 149534689774175847}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a06cd7b8eb1427ca32a7c2b6bb20326, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &3609927531256765598
 MonoBehaviour:
   m_ObjectHideFlags: 0

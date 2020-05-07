@@ -72,9 +72,9 @@
               <e p="SurfaceColliderMarkerGenerator.cs" t="Include" />
             </e>
             <e p="MarkerStats.cs" t="Include" />
-            <e p="Node.cs" t="Include" />
             <e p="Pathfinding" t="Include">
               <e p="AStarPathFinder.cs" t="Include" />
+              <e p="AStarPathFinderTwo.cs" t="Include" />
               <e p="IPathfinder.cs" t="Include" />
             </e>
             <e p="PathfindingGrid.cs" t="Include" />

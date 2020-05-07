@@ -20,7 +20,6 @@ namespace ClockBlockers.MapData.Editor
 			var myScript = (PathfindingGrid) target;
 			
 			CreateButton(myScript.ResetMarkerGizmos, "Reset Marker Gizmos");
-			CreateButton(myScript.ClearDictionary, "Clear Dictionary");
 		}
 		
 		private static void CreateButton(Action action, string buttonText)

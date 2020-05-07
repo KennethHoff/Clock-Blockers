@@ -15,6 +15,132 @@ namespace ClockBlockers.MapData.Pathfinding
 	[DisallowMultipleComponent]
 	internal class AStarPathFinder : MonoBehaviour, IPathfinder
 	{
+		private class Node
+		{
+			public enum NodeState
+			{
+				Untested,
+				Open,
+				Closed
+			}
+
+			public Node(PathfindingMarker newMarker, float newG, float newH)
+			{
+				marker = newMarker;
+				g = newG;
+				h = newH;
+				parentNode = null;
+				state = NodeState.Untested;
+			}
+
+			public Node(PathfindingMarker newMarker)
+			{
+				marker = newMarker;
+				Reset();
+			}
+
+			public void Reset()
+			{
+				g = float.MaxValue;
+				h = float.MaxValue;
+				parentNode = null;
+				state = NodeState.Untested;
+			}
+
+			public void SetDistances(float newG, float newH)
+			{
+				g = newG;
+				h = newH;
+			}
+
+			public readonly PathfindingMarker marker;
+
+			private float g;
+			private float h;
+
+			public NodeState state;
+
+			public Node parentNode;
+
+			public float F => g + h;
+
+			public float G
+			{
+				get => g;
+				set => g = value;
+			}
+
+			public float H
+			{
+				get => h;
+				set => h = value;
+			}
+		}
+
+		private Dictionary<int, Node> markerNodeDictionary;
+		
+		private void AddToMarkerNodeDictionary(PathfindingMarker marker, Node node)
+		{
+			CheckIfDictionaryExists();
+			markerNodeDictionary.Add(marker.GetInstanceID(), node);
+		}
+
+		private bool CheckIfDictionaryExists()
+		{
+			if (markerNodeDictionary != null) return true;
+			
+			markerNodeDictionary = new Dictionary<int, Node>();
+			return false;
+		}
+
+		private Node GetNodeFromMarker(PathfindingMarker marker)
+		{
+			if (!CheckIfDictionaryExists()) return null;
+			
+			markerNodeDictionary.TryGetValue(marker.GetInstanceID(), out Node node);
+			return node;
+		}
+
+		private Node GetOrAddMarkerToDictionary(PathfindingMarker marker, float checkedDistToStart, float checkedDistToEnd)
+		{
+			Node node = GetNodeFromMarker(marker);
+			if (node != null)
+			{
+				node.SetDistances(checkedDistToStart, checkedDistToEnd);
+				return node;
+			}
+			
+			node = new Node(marker, checkedDistToStart, checkedDistToEnd);
+			AddToMarkerNodeDictionary(marker, node);
+			return node;
+		}
+
+		private Node GetOrAddMarkerToDictionary(PathfindingMarker marker)
+		{
+			Node node = GetNodeFromMarker(marker);
+			if (node != null)
+			{
+				return node;
+			}
+			
+			node = new Node(marker);
+			AddToMarkerNodeDictionary(marker, node);
+			return node;
+		}
+
+		private void ResetDictionary()
+		{
+			if (markerNodeDictionary == null)
+			{
+				markerNodeDictionary = new Dictionary<int, Node>();
+				return;
+			}
+			foreach (KeyValuePair<int,Node> keyValuePair in markerNodeDictionary)
+			{
+				keyValuePair.Value.Reset();
+			}
+		}
+		
 		private List<Node> TurnConnectedMarkersIntoNodes(PathfindingMarker startMarker, Vector3 startPos, Vector3 endPos)
 		{
 			var result = new List<Node>(startMarker.ConnMarkerCount);
@@ -23,10 +149,10 @@ namespace ClockBlockers.MapData.Pathfinding
 			{
 				Vector3 currMarkerPos = connMarker.transform.position;
 				
-				float currDistToStart = Vector3.Distance(currMarkerPos, startPos);
-				float currDistToEnd = Vector3.Distance(currMarkerPos, endPos);
+				// float currDistToStart = Vector3.Distance(currMarkerPos, startPos);
+				// float currDistToEnd = Vector3.Distance(currMarkerPos, endPos);
 
-				Node currNode = Grid.GetOrAddMarkerToDictionary(connMarker, currDistToStart, currDistToEnd);
+				Node currNode = GetOrAddMarkerToDictionary(connMarker);
 				// Node node = Grid.GetOrAddMarkerToDictionary(connMarker);
 
 				result.Add(currNode);
@@ -34,7 +160,7 @@ namespace ClockBlockers.MapData.Pathfinding
 			return result;
 		}
 		
-		private List<Node> GetAvailableConnectedNodes(Node fromNode, List<Node> tempNodes)
+		private List<Node> GetAvailableConnectedNodes(Node fromNode, List<Node> tempNodes, Vector3 endPos)
 		{
 			var result = new List<Node>();
 			
@@ -43,10 +169,12 @@ namespace ClockBlockers.MapData.Pathfinding
 				// If it's closed, that means it has been in a path at some point (Current path, or rejected). If it's in the current path, then obviously don't check it, and if it's not in the current path, that means the rejected path is worse.
 				if (node.state == Node.NodeState.Closed) continue;
 
+				Vector3 fromNodePos = fromNode.marker.transform.position;
+				
 				// If it's open, that means it's open for consideration; Only added if the new path is shorter than the previous
 				if (node.state == Node.NodeState.Open)
 				{
-					float gTemp = fromNode.G + Vector3.Distance(fromNode.marker.transform.position, node.marker.transform.position);
+					float gTemp = fromNode.G + Vector3.Distance(fromNodePos, node.marker.transform.position);
 					if (gTemp >= node.G) continue;
 					
 					node.parentNode = fromNode;
@@ -57,6 +185,10 @@ namespace ClockBlockers.MapData.Pathfinding
 				{
 					node.parentNode = fromNode;
 					node.state = Node.NodeState.Open;
+					
+					Vector3 nodePos = node.marker.transform.position;
+					node.G = fromNode.G + Vector3.Distance(fromNodePos, nodePos);
+					node.H = Vector3.Distance(nodePos, endPos);
 					result.Add(node);
 				}
 			}
@@ -67,7 +199,7 @@ namespace ClockBlockers.MapData.Pathfinding
 		{
 			List<Node> tempNodes = TurnConnectedMarkersIntoNodes(startNode.marker, startPos, endPos);
 
-			List<Node> nextNodes = GetAvailableConnectedNodes(startNode, tempNodes);
+			List<Node> nextNodes = GetAvailableConnectedNodes(startNode, tempNodes, endPos);
 			return nextNodes;
 		}
 
@@ -78,15 +210,14 @@ namespace ClockBlockers.MapData.Pathfinding
 			// Ideally I would probably create a completely separate list for each 'instance' of the PathFinder (and also have separate PathFinders for each agent looking for a path, and have it run on their own separate threads)
 			// TODO: Refactor pathfinder to run in parallel, and give each Agent their own instance of the Pathfinder, instead of on the Grid
 			
-			
-			Grid.ResetDictionary();
+			ResetDictionary();
 			
 			Vector3 startPos = startMarker.transform.position;
 			Vector3 endPos = endMarker.transform.position;
 			float startDistToEnd = Vector3.Distance(startPos, endPos);
 			
-			Node startNode = Grid.GetOrAddMarkerToDictionary(startMarker, 0, startDistToEnd);
-			Node endNode = Grid.GetOrAddMarkerToDictionary(endMarker, startDistToEnd, 0);
+			Node startNode = GetOrAddMarkerToDictionary(startMarker, 0, startDistToEnd);
+			Node endNode = GetOrAddMarkerToDictionary(endMarker, startDistToEnd, 0);
 			
 			bool success = Search(startNode, endNode, startPos, endPos);
 
@@ -97,7 +228,6 @@ namespace ClockBlockers.MapData.Pathfinding
 				Logging.Log($"Failed to move from {startMarker.name} to {endMarker.name}");
 				return path;
 			}
-			
 			
 			Node node = endNode;
 			while (node.parentNode != null)
@@ -111,7 +241,6 @@ namespace ClockBlockers.MapData.Pathfinding
 			
 			path.Reverse();
 				
-			
 			Logging.Log($"Moving from {startMarker.name} to {endMarker.name} uses the path:");
 			path.ForEach(marker =>
 			{
@@ -123,22 +252,23 @@ namespace ClockBlockers.MapData.Pathfinding
 
 		private bool Search(Node currNode, Node endNode, Vector3 startPos, Vector3 endPos)
 		{
-			List<Node> nextNodes = GetConnectedNodes(currNode, startPos, endPos);
-
 			currNode.state = Node.NodeState.Closed;
+			currNode.marker.DrawColor = Color.cyan;
 
+			List<Node> nextNodes = GetConnectedNodes(currNode, startPos, endPos);
+			
 			nextNodes.Sort((node1, node2) => node1.F.CompareTo(node2.F));
 			foreach (Node nextNode in nextNodes)
 			{
+				// If it found the end, return true.
 				if (nextNode == endNode) return true;
-				else
-				{
-					if (Search(nextNode, endNode, startPos, endPos)) return true;
-				}
+				
+				// If the next search returns true (meaning somewhere down the recursion the end has been found), return true.
+				// If it returns false, then try again on the next node in the list.
+				if (Search(nextNode, endNode, startPos, endPos)) return true;
 			}
+			// If the list is empty (Meaning 'currNode' has no non-closed adjacent nodes, return false
 			return false;
 		}
-
-		public PathfindingGrid Grid { get; set; }
 	}
 }
