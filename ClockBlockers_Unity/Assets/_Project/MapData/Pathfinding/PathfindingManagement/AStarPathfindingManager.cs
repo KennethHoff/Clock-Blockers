@@ -13,7 +13,11 @@ namespace ClockBlockers.MapData.Pathfinding.PathfindingManagement
 		[SerializeField]
 		private int pathfindingChecksPerFramePerFinder = 100;
 
-		
+
+		private void OnValidate()
+		{
+			if (pathfindingChecksPerFramePerFinder < 1) pathfindingChecksPerFramePerFinder = 1;
+		}
 		private List<PathRequest> pathRequests = new List<PathRequest>();
 
 		private void FixedUpdate()

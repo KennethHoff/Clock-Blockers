@@ -61,7 +61,7 @@ namespace ClockBlockers.Utility
 		}
 
 
-		public static int GetLayerIntFromLayerMask(LayerMask aMask)
+		public static int GetLayerInt(this LayerMask aMask)
 		{
 			var val = (uint)aMask.value;
 			if (val  == 0) return -1;

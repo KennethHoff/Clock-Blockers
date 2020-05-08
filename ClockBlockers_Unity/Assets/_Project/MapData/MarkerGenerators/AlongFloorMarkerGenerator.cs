@@ -6,7 +6,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 	[ExecuteInEditMode]
 	public class AlongFloorMarkerGenerator : IntervalAutomatedMarkerGenerator
 	{
-		protected override bool CreateMarker(float xPos, int rowIndex, Transform newColumn, int columnIndex)
+		protected override int CreateMarker(float xPos, int rowIndex, Transform newColumn, int columnIndex)
 		{
 			float zPos = MarkerSizeAdjustedZStartPos - (zDistanceBetweenCreatedMarkers * rowIndex); 
 			
@@ -18,12 +18,12 @@ namespace ClockBlockers.MapData.MarkerGenerators
 				checkPos.y += grid.minimumOpenAreaAroundMarkers.y / 2;
 				if (Physics.CheckBox(checkPos, grid.minimumOpenAreaAroundMarkers * 0.5f))
 				{
-					return false;
+					return 0;
 				}
 			}
 				
 			InstantiateMarker("Column " + rowIndex, markerPos, newColumn);
-			return true;
+			return 1;
 		}
 	}
 }

@@ -10,64 +10,48 @@ namespace ClockBlockers.MapData.MarkerGenerators
 	[ExecuteInEditMode]
 	public class OrbitalRayMarkerGenerator : IntervalAutomatedMarkerGenerator
 	{
-		[SerializeField]
-		private float rayCastCeiling = 20f;
-		
-		[SerializeField]
-		private float rayCastFloor = -0.5f;
-		
-		private float RayCastHeight => rayCastCeiling - rayCastFloor;
-		private float MarkerCreationDistanceCheck => rayCastCeiling - rayCastFloor;
-
 		private void OnDrawGizmos()
 		{
 			if (!showAffectedArea) return;
 			
 			Gizmos.color = Color.red;
 			
-			var wireCubePos = new Vector3(0, (rayCastFloor + rayCastCeiling) / 2, 0);
-			
-			var wireCubeSize = new Vector3(grid.XLength, RayCastHeight, grid.ZLength);
+			var wireCubePos = new Vector3(0, (grid.YStartPos + grid.YEndPos) / 2, 0);
+
+			var wireCubeSize = new Vector3(grid.XLength, grid.MapHeight, grid.ZLength);
 			
 			Gizmos.DrawWireCube(wireCubePos, wireCubeSize);
 		}
 
-		private void OnValidate()
-		{
-			if (rayCastCeiling < rayCastFloor) rayCastCeiling = rayCastFloor;
-			if (rayCastFloor > rayCastCeiling) rayCastFloor = rayCastCeiling;
-		}
-
-		protected override bool CreateMarker(float xPos, int rowIndex, Transform newColumn, int columnIndex)
+		protected override int CreateMarker(float xPos, int rowIndex, Transform newColumn, int columnIndex)
 		{
 			float zPos = MarkerSizeAdjustedZStartPos - (zDistanceBetweenCreatedMarkers * rowIndex);
 			
-			if (!CheckValidMarkerHeights(xPos, zPos, out RaycastHit[] allCollisions)) return false;
+			if (!CheckValidMarkerHeights(xPos, zPos, out RaycastHit[] allCollisions)) return 0;
 
-			bool createdAtLeastOne = CreateAMarkerOnEachValidHeight(allCollisions, xPos, zPos, rowIndex, newColumn, columnIndex);
+			int markersCreated = CreateAMarkerOnEachValidHeight(allCollisions, xPos, zPos, rowIndex, newColumn, columnIndex);
 			
-			return createdAtLeastOne;
+			return markersCreated;
 		}
 
 		private bool CheckValidMarkerHeights(float xPos, float zPos, out RaycastHit[] allCollisions)
 		{
-			var rayOriginPos = new Vector3(xPos, rayCastCeiling, zPos);
+			var rayOriginPos = new Vector3(xPos, grid.YEndPos, zPos);
 			Vector3 rayDirection = Vector3.down;
 			
-			allCollisions = Physics.RaycastAll(rayOriginPos, rayDirection, MarkerCreationDistanceCheck);
+			allCollisions = Physics.RaycastAll(rayOriginPos, rayDirection, grid.MapHeight);
 
 			return allCollisions.Length != 0;
 		}
 
-		private bool CreateAMarkerOnEachValidHeight(IReadOnlyList<RaycastHit> allCollisions, float xPos, float zPos, int rowIndex, Transform parentColumn, int columnIndex)
+		private int CreateAMarkerOnEachValidHeight(IReadOnlyList<RaycastHit> allCollisions, float xPos, float zPos, int rowIndex, Transform parentColumn, int columnIndex)
 		{
-			var createdAtLeastOne = false;
+			var markersCreated = 0;
 			for (var i = 0; i < allCollisions.Count; i++)
 			{
 				RaycastHit hit = allCollisions[i];
 
 				var markerPos = new Vector3(xPos, hit.point.y.Round(3), zPos);
-				// var markerPos = new Vector3(xPos, hit.point.y.Round(3) + (grid.minimumOpenAreaAroundMarkers.y/2), zPos);
 
 				if (!createMarkerNearOrInsideCollisions)
 				{
@@ -77,7 +61,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 
 					// newPos.y += 0.1f;
 
-					var halfExtents = grid.minimumOpenAreaAroundMarkers / 2;
+					Vector3 halfExtents = grid.minimumOpenAreaAroundMarkers / 2;
 					halfExtents.x *= 0.975f;
 					halfExtents.z *= 0.975f;
 
@@ -92,9 +76,10 @@ namespace ClockBlockers.MapData.MarkerGenerators
 				markerPos.y += creationHeightAboveFloor;
 
 				InstantiateMarker(markerName, markerPos, parentColumn);
-				createdAtLeastOne = true;
+				markersCreated++;
 			}
-			return createdAtLeastOne;
+
+			return markersCreated;
 		}
 	}
 }

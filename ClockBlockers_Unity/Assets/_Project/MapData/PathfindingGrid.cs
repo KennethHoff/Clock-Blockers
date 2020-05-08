@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 
+using ClockBlockers.MapData.MarkerGenerators;
 using ClockBlockers.MapData.Pathfinding.PathfindingManagement;
 using ClockBlockers.Utility;
 
@@ -47,21 +49,33 @@ namespace ClockBlockers.MapData
 
 		[Range(0, 2)]
 		public float selectionNodeScale = 1f;
+		
+		[Tooltip("The scale of the node when it's being searched for by a Pathfinder")]
+		[Header("Pathfinding Gizmo")]
+		public float searchedNodeScale = 0.75f;
 
 		[Header("Grid Generation")]
 		public Transform floorPlane;
 
+		private Vector3 FloorPlanePosition => floorPlane.transform.position;
+
 		[SerializeField]
 		public Vector3 minimumOpenAreaAroundMarkers;
 
-		public float XStartPos => transform.position.x - XLength / 2;
-		public float XEndPos => transform.position.x + XLength / 2;
+		public float XStartPos => FloorPlanePosition.x - XLength / 2;
+		public float XEndPos => FloorPlanePosition.x + XLength / 2;
 
-		public float ZStartPos => transform.position.z + ZLength / 2;
-		public float ZEndPos => transform.position.z - ZLength / 2;
+		public float ZStartPos => FloorPlanePosition.z + ZLength / 2;
+		public float ZEndPos => FloorPlanePosition.z - ZLength / 2;
 
-		// [Tooltip("Only creates markers on top of items with these Layers")]
-		// public LayerMask pathfindingLayer;
+		[SerializeField]
+		private float mapHeight = 20;
+
+		public float MapHeight => mapHeight;
+
+		public float YStartPos => FloorPlanePosition.y;
+		public float YEndPos => YStartPos + MapHeight;
+
 
 		public List<PathfindingMarker> markers;
 
@@ -69,11 +83,11 @@ namespace ClockBlockers.MapData
 		public float XLength => PlaneLocalScale.x;
 		public float ZLength => PlaneLocalScale.z;
 		
+		[HideInInspector]
 		public IPathfindingManager pathfindingManager;
-
-		[Tooltip("The scale of the node when it's being searched for by a Pathfinder")]
-		[Header("Pathfinding Gizmo")]
-		public float searchedNodeScale = 0.75f;
+		
+		[HideInInspector]
+		public MarkerGeneratorBase markerGenerator;
 
 		private void OnDrawGizmos()
 		{
@@ -91,10 +105,13 @@ namespace ClockBlockers.MapData
 			return pathfindingManager != null;
 		}
 
-		// TODO: Create a new 'Marker Generator' that does not actually create markers, but rather adjusts pre-placed markers.
-		
-		// Basically, instead of trying to find a way to create markers programatically, instead you have to manually place them around the room,
-		// and then use a program to change their size, and do minor positional adjustments
+		private bool CheckMarkerGenerator()
+		{
+			if (markerGenerator != null) return false;
+			markerGenerator = GetComponent<MarkerGeneratorBase>();
+			
+			return markerGenerator != null;
+		}
 
 		public void ResetMarkerGizmos()
 		{
@@ -121,6 +138,27 @@ namespace ClockBlockers.MapData
 		public void ClearMarkerList()
 		{
 			markers.Clear();
+		}
+
+		public PathfindingMarker FindNearestMarker(Vector3 point)
+		{
+			if (!CheckMarkerGenerator()) return null;
+
+			return markerGenerator.FindNearestMarker(point);
+		}
+
+		public bool CheckIfPointIsInsideMap(Vector3 point)
+		{
+			if (point.x > XEndPos) return false;
+			if (point.x < XStartPos) return false;
+			
+			if (point.z < ZEndPos) return false;
+			if (point.z > ZStartPos) return false;
+
+			if (point.y < YStartPos) return false;
+			if (point.y > YEndPos) return false;
+
+			return true;
 		}
 	}
 }

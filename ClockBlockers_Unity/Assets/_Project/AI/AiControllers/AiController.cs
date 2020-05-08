@@ -15,8 +15,6 @@ namespace ClockBlockers.AI.AiControllers
 		// TODO: Look into the 'Command Pattern'
 		public AiState currentState;
 
-		public String CurrentStateString => currentState.GetType().Name;
-
 		[NonSerialized]
 		public ReplayRunner replayRunner;
 

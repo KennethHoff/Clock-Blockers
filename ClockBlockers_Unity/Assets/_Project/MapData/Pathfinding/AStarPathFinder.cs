@@ -8,7 +8,6 @@ using Unity.Burst;
 
 using UnityEngine;
 
-
 namespace ClockBlockers.MapData.Pathfinding
 {
 	// https://medium.com/@nicholas.w.swift/easy-a-star-pathfinding-7e6689c7f7b2
@@ -36,10 +35,6 @@ namespace ClockBlockers.MapData.Pathfinding
 
 		private readonly List<Node> closedList;
 
-		private bool isComplete;
-		public bool IsComplete => isComplete;
-
-
 		public static AStarPathFinder CreateInstance(PathRequest pathRequest, int checksPerFrame)
 		{
 			return new AStarPathFinder(pathRequest.pathRequester, pathRequest.startMarker, pathRequest.endMarker, checksPerFrame);
@@ -53,8 +48,6 @@ namespace ClockBlockers.MapData.Pathfinding
 			this.endMarker = endMarker;
 			
 			this.checksPerFrame = checksPerFrame;
-			
-			isComplete = false;
 
 			totalChecks = 0;
 			
@@ -199,14 +192,13 @@ namespace ClockBlockers.MapData.Pathfinding
 			
 			// End of search
 
-			Logging.Log($"Checked {totalChecks}. It took {framesTaken} frames to complete.");
+			Logging.Log($"Checked {totalChecks}. It took {framesTaken+1} frames to complete.");
 
-
-			isComplete = true;
 
 			if (pathRequester == null) yield break;
 			
 			pathRequester.CurrentPathfinder = null;
+			
 			pathRequester.PathCallback(Path);
 
 		}

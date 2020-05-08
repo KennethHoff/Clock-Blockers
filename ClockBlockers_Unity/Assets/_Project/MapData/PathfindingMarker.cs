@@ -22,7 +22,7 @@ namespace ClockBlockers.MapData
         public List<PathfindingMarker> connectedMarkers;
 
         public IPathfinder CurrentPathfinder { get; set; }
-
+        
         public int ConnMarkerCount => connectedMarkers?.Count(node => node != null) ?? 0;
 
         public float scale = 0.5f;
@@ -170,7 +170,7 @@ namespace ClockBlockers.MapData
 
             if (connMarkersAmount == 0)
             {
-                drawColor = new Color(137, 0, 255, 255); // purple
+                drawColor = Color.black;
             }
             else if (connMarkersAmount > 0 && connMarkersAmount < fewAdjacentNodesAmount)
             {
@@ -201,15 +201,8 @@ namespace ClockBlockers.MapData
         {
             // if (adjacentMarkers == null || adjacentMarkers.Count == 0) return;
 
-            foreach (PathfindingMarker marker in connectedMarkers)
+            foreach (PathfindingMarker marker in connectedMarkers.Where(marker => marker != null))
             {
-                // PathfindingMarker marker = markerStat.marker;
-                if (marker == null)
-                {
-                    Logging.Log("Marker in list does not exist for some reason..");
-                    return;
-                }
-
                 Vector3 markerPos = marker.transform.position;
                 Vector3 position = transform.position;
 

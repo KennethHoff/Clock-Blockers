@@ -1,16 +1,33 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 using ClockBlockers.Utility;
 
+using Unity.Burst;
+
 using UnityEngine;
+
+using Vector3 = UnityEngine.Vector3;
 
 
 namespace ClockBlockers.MapData.MarkerGenerators
 {
+	[BurstCompile]
 	public abstract class IntervalAutomatedMarkerGenerator : AutomatedMarkerGenerator
 	{
+
+		[Serializable]
+		private struct MarkerAndDistanceToZero
+		{
+			public float distanceToZero;
+			public PathfindingMarker marker;
+			public MarkerAndDistanceToZero(float distanceToZero, PathfindingMarker marker)
+			{
+				this.distanceToZero = distanceToZero;
+				this.marker = marker;
+			}
+		}
 
 		enum AdjacencyDirection
 		{
@@ -24,6 +41,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			ForwardLeft = 7,
 			Unknown = -1
 		}
+		
 		[Space(10)]
 		[Range(MinDistance, MaxDistance)]
 		public int xDistanceBetweenCreatedMarkers;
@@ -37,8 +55,10 @@ namespace ClockBlockers.MapData.MarkerGenerators
 		protected float MarkerSizeAdjustedZStartPos => Mathf.Floor(grid.ZLength / 2 - ZDistanceBetweenCreatedMarkers/2);
 		private float XDistanceBetweenCreatedMarkers => xDistanceBetweenCreatedMarkers;
 		private float ZDistanceBetweenCreatedMarkers => zDistanceBetweenCreatedMarkers;
-		private int NumberOfColumns => Mathf.FloorToInt(grid.XLength / xDistanceBetweenCreatedMarkers)-1;
-		private int NumberOfRows => Mathf.FloorToInt(grid.ZLength / zDistanceBetweenCreatedMarkers)-1;
+
+		private int Columns => Mathf.FloorToInt(grid.XLength / xDistanceBetweenCreatedMarkers);
+		private int Rows => Mathf.FloorToInt(grid.ZLength / zDistanceBetweenCreatedMarkers);
+
 
 		public sealed override void GenerateAllMarkers()
 		{
@@ -48,12 +68,13 @@ namespace ClockBlockers.MapData.MarkerGenerators
 				return;
 			} 
 			
-			if (grid.markers == null) grid.markers = new List<PathfindingMarker>(NumberOfColumns * NumberOfRows);
+			if (grid.markers == null) grid.markers = new List<PathfindingMarker>(Columns * Rows);
 
-			for (var i = 0; i <= NumberOfColumns; i ++)
+			for (var i = 0; i < Columns; i ++)
 			{
 				CreateMarkerColumn(i);
 			}
+
 		}
 
 		public sealed override void ClearMarkers()
@@ -66,7 +87,10 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			grid.ClearMarkerList();
 		}
 
-		private void CreateMarkerColumn(int i)
+		/// <summary>
+		/// Returns the amount of markers created on this column
+		/// </summary>
+		private int CreateMarkerColumn(int i)
 		{
 			float xPos = MarkerSizeAdjustedXStartPos + (xDistanceBetweenCreatedMarkers * i);
 
@@ -76,30 +100,59 @@ namespace ClockBlockers.MapData.MarkerGenerators
 
 			newColumn.SetParent(gridTransform);
 
-			var createdNothing = true;
-
-			for (var j = 0; j <= NumberOfRows; j++)
+			var markersCreatedThisColumn = 0;
+			
+			for (var j = 0; j < Rows; j++)
 			{
-				if (CreateMarker(xPos, j, newColumn, i)) createdNothing = false;
-				else Logging.Log("Did not create any markers on column " + i + ", row " + j);
+				int markersCreatedThisRow = CreateMarker(xPos, j, newColumn, i);
+				if (markersCreatedThisRow == 0)
+				{
+					Logging.Log("Did not create any markers on column " + i + ", row " + j);
+					continue;
+				}
+				
+				markersCreatedThisColumn += markersCreatedThisRow;
 			}
 
-			if (!createdNothing) return;
-			DestroyImmediate(newColumn.gameObject);
-			Logging.Log("Did not create any Markers on column " + i);
+			if (markersCreatedThisColumn == 0)
+			{
+				DestroyImmediate(newColumn.gameObject);
+				Logging.Log("Did not create any Markers on column " + i);
+			}
+
+			return markersCreatedThisColumn;
+
 		}
 
-		protected abstract bool CreateMarker(float xPos, int rowIndex, Transform newColumn, int columnIndex);
+		/// <summary>
+		/// Returns the number of markers created on this x/z-Pos
+		/// </summary>
+		/// <param name="xPos"></param>
+		/// <param name="rowIndex"></param>
+		/// <param name="newColumn"></param>
+		/// <param name="columnIndex"></param>
+		/// <returns></returns>
+		protected abstract int CreateMarker(float xPos, int rowIndex, Transform newColumn, int columnIndex);
 		
 		protected PathfindingMarker InstantiateMarker(string markerName, Vector3 markerPos, Transform parent)
 		{
 			var newMarker = PathfindingMarker.CreateInstance(markerName, grid, markerPos, parent, creationHeightAboveFloor);
 			
+			GameObject newGObj = newMarker.gameObject;
+			
+			var boxCollider = newGObj.AddComponent<BoxCollider>();
+			boxCollider.size = grid.minimumOpenAreaAroundMarkers / 2;
+			boxCollider.isTrigger = true;
+
+			newGObj.layer = markerLayerMask.GetLayerInt();
+
 			return newMarker;
 		}
+		
 		#region Marker Adjacency
 
 		
+		// TODO: MOST IMPORTANT >> Fix up/Down adjacency. << 
 
 		// Does not work well with too large 'Distance between Created Markers'[Basically, anything except 1/2, and even then that's debatable - it's fine for now, I'll probably use 2 anyways]
 		public sealed override void GenerateMarkerAdjacencies()
@@ -240,7 +293,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 
 		private bool CheckIfCollidingOnASingleAxis(Vector3 pos, float dist, Vector3 direction)
 		{
-			bool hitSomething = Physics.Raycast(pos, direction, out RaycastHit hit,Mathf.Abs(dist));
+			bool hitSomething = Physics.Raycast(pos, direction, out RaycastHit hit,Mathf.Abs(dist), markerLayerMask.GetLayerInt());
 			return hitSomething;
 		}
 
@@ -292,5 +345,27 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			return AdjacencyDirection.Unknown;
 		}
 		#endregion
+
+
+		// TODO: Is this even necessary? Assuming the agent uses these markers to move, surely they would store where the marker they're currently standing on?
+		public override PathfindingMarker FindNearestMarker(Vector3 point)
+		{
+
+			// TODO: It does not feel nice using colliders on the markers. Ideally I wouldn't need the markers at all, but that's not for now.
+			
+			Vector3 increasePerTime = grid.minimumOpenAreaAroundMarkers / 2;
+			Vector3 currSize = Vector3.zero;
+			
+			while (true)
+			{
+				currSize += increasePerTime;
+				if (currSize.x >= 50) return null;
+				
+				Collider[] overlaps = Physics.OverlapBox(point, currSize, Quaternion.identity, markerLayerMask);
+				if (overlaps.Length == 0) continue;
+
+				return overlaps[0].GetComponent<PathfindingMarker>();
+			}
+		}
 	}
 }

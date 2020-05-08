@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 
 using ClockBlockers.Characters;
+using ClockBlockers.MapData;
+using ClockBlockers.MapData.Pathfinding;
 using ClockBlockers.ReplaySystem;
 using ClockBlockers.Utility;
 
@@ -9,7 +11,7 @@ using UnityEngine;
 
 namespace ClockBlockers.AI
 {
-	public abstract class AiPathfinder : MonoBehaviour
+	public abstract class AiPathfinder : MonoBehaviour, IPathRequester
 	{
 		protected CharacterMovement characterMovement;
 		
@@ -46,5 +48,11 @@ namespace ClockBlockers.AI
 		{
 			pathFind = false;
 		}
+
+		public void PathCallback(List<PathfindingMarker> pathFinderPath)
+		{
+			Logging.Log($"{name} successfully received their path");
+		}
+		public IPathfinder CurrentPathfinder { get; set; }
 	}
 }
