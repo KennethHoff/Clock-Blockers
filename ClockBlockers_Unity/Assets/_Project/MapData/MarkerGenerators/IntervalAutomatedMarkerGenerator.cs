@@ -1,10 +1,12 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 using ClockBlockers.Utility;
 
 using Unity.Burst;
+using Unity.EditorCoroutines.Editor;
 
 using UnityEngine;
 
@@ -29,40 +31,36 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			}
 		}
 
-		enum AdjacencyDirection
-		{
-			Forward = 0, 
-			ForwardRight = 1,
-			Right = 2,
-			BackRight = 3,
-			Back = 4,
-			BackLeft = 5,
-			Left = 6,
-			ForwardLeft = 7,
-			Unknown = -1
-		}
-		
 		[Space(10)]
 		[Range(MinDistance, MaxDistance)]
-		public int xDistanceBetweenCreatedMarkers;
+		public int distanceBetweenCreatedMarkers;
 
-		[Range(MinDistance, MaxDistance)]
-		public int zDistanceBetweenCreatedMarkers;
+		// [SerializeField][Range(0, 100)]
+		// private int maxSlopePercentToBeCountedAsFlat = 10;
+
+		// private float MaxSlopeAmountToBeCountedAsFlat =>(grid.minimumOpenAreaAroundMarkers.y / distanceBetweenCreatedMarkers) * maxSlopePercentToBeCountedAsFlat/100;
+
+		[SerializeField][Header("Performance")]
+		private int markerConnectionsToGeneratePerFrame;
 
 		private const float MinDistance = 1f;
 		private const float MaxDistance = 100f;
-		private float MarkerSizeAdjustedXStartPos => Mathf.Ceil(-grid.XLength / 2 + XDistanceBetweenCreatedMarkers/2);
-		protected float MarkerSizeAdjustedZStartPos => Mathf.Floor(grid.ZLength / 2 - ZDistanceBetweenCreatedMarkers/2);
-		private float XDistanceBetweenCreatedMarkers => xDistanceBetweenCreatedMarkers;
-		private float ZDistanceBetweenCreatedMarkers => zDistanceBetweenCreatedMarkers;
+		private float MarkerSizeAdjustedXStartPos => Mathf.Ceil(-grid.XLength / 2 + DistanceBetweenCreatedMarkers/2);
+		protected float MarkerSizeAdjustedZStartPos => Mathf.Floor(grid.ZLength / 2 - DistanceBetweenCreatedMarkers/2);
+		private float DistanceBetweenCreatedMarkers => distanceBetweenCreatedMarkers;
 
-		private int Columns => Mathf.FloorToInt(grid.XLength / xDistanceBetweenCreatedMarkers);
-		private int Rows => Mathf.FloorToInt(grid.ZLength / zDistanceBetweenCreatedMarkers);
-
+		private int Columns => Mathf.FloorToInt(grid.XLength / DistanceBetweenCreatedMarkers);
+		private int Rows => Mathf.FloorToInt(grid.ZLength / DistanceBetweenCreatedMarkers);
+		
+		
+		private void OnValidate()
+		{
+			if (markerConnectionsToGeneratePerFrame < 1) markerConnectionsToGeneratePerFrame = 1;
+		}
 
 		public sealed override void GenerateAllMarkers()
 		{
-			if (xDistanceBetweenCreatedMarkers < MinDistance || zDistanceBetweenCreatedMarkers < MinDistance)
+			if (distanceBetweenCreatedMarkers < MinDistance)
 			{
 				Logging.LogWarning("X/Z Distance Between Markers is unset.");
 				return;
@@ -72,7 +70,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 
 			for (var i = 0; i < Columns; i ++)
 			{
-				CreateMarkerColumn(i);
+				int _ = CreateMarkerColumn(i);
 			}
 
 		}
@@ -92,7 +90,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 		/// </summary>
 		private int CreateMarkerColumn(int i)
 		{
-			float xPos = MarkerSizeAdjustedXStartPos + (xDistanceBetweenCreatedMarkers * i);
+			float xPos = MarkerSizeAdjustedXStartPos + (distanceBetweenCreatedMarkers * i);
 
 			Transform newColumn = new GameObject("Column " + i).transform;
 
@@ -155,10 +153,34 @@ namespace ClockBlockers.MapData.MarkerGenerators
 		// TODO: MOST IMPORTANT >> Fix up/Down adjacency. << 
 
 		// Does not work well with too large 'Distance between Created Markers'[Basically, anything except 1/2, and even then that's debatable - it's fine for now, I'll probably use 2 anyways]
-		public sealed override void GenerateMarkerAdjacencies()
+		
+		// Of note:
+		// Because marker connections are uni-directional (Basically, an agent can fall down further than they can jump up), this has to be calculated on each marker for each other marker
+		public sealed override void GenerateMarkerConnections()
 		{
+			
+#if UNITY_EDITOR
+			 EditorCoroutineUtility.StartCoroutine(GenerateMarkerConnectionsWithCoroutines(), this);
+#else
+// I can't think of a scenario where this would ever be called outside of the Unity_editor, but :shrug:
+			StartCoroutine(GenerateMarkerConnectionsWithCoroutines());
+#endif
+			Logging.Log("Finished creating Marker Connections");
+		}
+
+		// This will throw an error if you delete the markers during the coroutine, but that's entirely user-error, and I'm fine with that for now.
+		private IEnumerator GenerateMarkerConnectionsWithCoroutines()
+		{
+			var generationsThisFrame = 0;
+			
 			foreach (PathfindingMarker marker in grid.markers)
 			{
+				generationsThisFrame++;
+
+				if (generationsThisFrame % markerConnectionsToGeneratePerFrame == 0)
+				{
+					yield return null;
+				}
 				// F	^ = 0 
 				// F/R	^> = 1
 				// R	> = 2
@@ -167,53 +189,54 @@ namespace ClockBlockers.MapData.MarkerGenerators
 				// B/L	<v = 5
 				// L	< = 6
 				// F/L	<^ = 7
-				
+
 				// NULL = 'Out of Bounds', or 'Inside Wall'
 
-				var connectedMarkers = new PathfindingMarker[8];
-				
+				var connectedMarkers = new List<MarkerStats>();
+
 				Vector3 markerPos = marker.transform.position;
-				
+
 				foreach (PathfindingMarker marker2 in grid.markers)
 				{
 					if (marker2 == marker) continue;
-					
+
 					Vector3 marker2Pos = marker2.transform.position;
-					
 
 					float xDist = marker2Pos.x - markerPos.x;
-					if (Mathf.Abs(xDist) > xDistanceBetweenCreatedMarkers) continue;
-					
+					if (Mathf.Abs(xDist) > distanceBetweenCreatedMarkers) continue;
+
 					float zDist = marker2Pos.z - markerPos.z;
-					if (Mathf.Abs(zDist) > xDistanceBetweenCreatedMarkers) continue;
+					if (Mathf.Abs(zDist) > distanceBetweenCreatedMarkers) continue;
 
 					if (Math.Abs(xDist) < 0.1f && Math.Abs(zDist) < 0.1f) continue;
 
-					
+
 					float yDist = marker2Pos.y - markerPos.y;
 
 					// Have to be checked prior to the x and y, because those would depend on this. If it's too far above, then it's a fail, but if it's too far below, then it's fine (up to a point - You can fall a lot further than you can jump)
-					if (!CheckValidHeightDifference(yDist)) continue;
+					// if (!CheckValidHeightDifference(yDist)) continue;
 
 					AdjacencyDirection direction = FindRelativeDirection(xDist, zDist);
 					if (direction == AdjacencyDirection.Unknown)
 					{
 						Logging.LogWarning($"Unknown direction");
-						return;
+						yield break;
 					}
 					
-					if (connectedMarkers[(int)direction] != null)
-					{
-						Logging.LogWarning($"Somehow there's already a marker on {marker}'s connectedMarker {direction} direction");
-						continue;
-					}
-
 					if (CheckIfColliding(markerPos, direction, xDist, zDist, yDist)) continue;
-					
-					connectedMarkers[(int)direction] = marker2;
+
+					// if (connectedMarkers[(int) direction] != null)
+					// {
+					// 	Logging.LogWarning($"Somehow there's already a marker on {marker}'s connectedMarker {direction} direction");
+					// 	continue;
+					// }
+
+					connectedMarkers.Add(new MarkerStats(marker2, yDist, direction));
+
+					// connectedMarkers[(int) direction] = new MarkerStats(marker2, yDist);
 				}
-				
-				marker.connectedMarkers = connectedMarkers.ToList();
+
+				marker.connectedMarkers = connectedMarkers;
 			}
 		}
 
@@ -230,33 +253,44 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			bool xCollides = false;
 			bool zCollides = false;
 
-			// If negative, that means 'Marker' is above.
-			
-			// 'Marker' is underneath
-			if (Mathf.Abs(yDist-grid.minimumOpenAreaAroundMarkers.y) < 0.1f)
-			{
-				// y first
-				yCollides = CheckIfCollidingOnY(markerPos, yDist);
-				
-				Vector3 newPos = markerPos;
-				newPos.y += yDist;
-				
-				CheckIfCollidingOnXOrZ(newPos, direction, xDist, zDist, ref zCollides, ref xCollides);
 
-			}
-			
-			// 'Marker' is above
-			else
-			{
-				// x or z first
-				CheckIfCollidingOnXOrZ(markerPos, direction, xDist, zDist, ref zCollides, ref xCollides);
-				
-				Vector3 newPos = markerPos;
-				newPos.x += xDist;
-				newPos.z += zDist;
+			// if (Mathf.Abs(yDist) < MaxSlopeAmountToBeCountedAsFlat)
+			// {
+				// CheckIfCollidingOnXOrZ(markerPos, direction, xDist, zDist, ref zCollides, ref xCollides);
+			// }
+			// else
+			// {
+				// If negative, that means 'Marker' is above.
 
-				yCollides = CheckIfCollidingOnY(newPos, yDist);
-			}
+				// 'Marker' is underneath
+				if (yDist > 0)
+				{
+					// y first
+					yCollides = CheckIfCollidingOnY(markerPos, yDist);
+				
+					Vector3 newPos = markerPos;
+					newPos.y += yDist;
+				
+					CheckIfCollidingOnXOrZ(newPos, direction, xDist, zDist, ref zCollides, ref xCollides);
+
+				}
+			
+				// 'Marker' is above
+				else
+				{
+					// x or z first
+					CheckIfCollidingOnXOrZ(markerPos, direction, xDist, zDist, ref zCollides, ref xCollides);
+
+					if (zCollides || xCollides) return true;
+				
+					Vector3 newPos = markerPos;
+					newPos.x += xDist;
+					newPos.z += zDist;
+
+					yCollides = CheckIfCollidingOnY(newPos, yDist);
+				}
+			// }
+
 			
 			return yCollides || xCollides || zCollides;
 		}
@@ -291,31 +325,40 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			}
 		}
 
-		private bool CheckIfCollidingOnASingleAxis(Vector3 pos, float dist, Vector3 direction)
+		private static bool CheckIfCollidingOnASingleAxis(Ray ray, float dist)
 		{
-			bool hitSomething = Physics.Raycast(pos, direction, out RaycastHit hit,Mathf.Abs(dist), markerLayerMask.GetLayerInt());
+			// For some reason I need to give a LayerMask to use the QueryTriggerInteraction parameter, so I just put it '~0'(Bitwise NOT)
+			// That basically means it'll hit everything that has *any* LayerMask (Which, if not given, is set to '0' - ergo, everything(??))
+			
+			// I assume something with the layer "Default" (LayerMask 0) is (Bit) 000...0001, and LayerMask 5 == 000....0100000
+
+
+			bool hitSomething = Physics.Raycast(ray, out RaycastHit hit, dist, ~0, QueryTriggerInteraction.Ignore);
 			return hitSomething;
 		}
 
-		private bool CheckIfCollidingOnY(Vector3 pos, float dist)
+		private static bool CheckIfCollidingOnY(Vector3 pos, float dist)
 		{
-			return CheckIfCollidingOnASingleAxis(pos, dist, dist > 0 ? Vector3.up : Vector3.down);
+			var ray = new Ray(pos, dist > 0 ? Vector3.up : Vector3.down);
+			return CheckIfCollidingOnASingleAxis(ray, Mathf.Abs(dist));
 		}
 
-		private bool CheckIfCollidingOnZ(Vector3 pos, float dist)
+		private static bool CheckIfCollidingOnZ(Vector3 pos, float dist)
 		{
-			return CheckIfCollidingOnASingleAxis(pos, dist, dist > 0 ? Vector3.forward : Vector3.back);
+			var ray = new Ray(pos, dist > 0 ? Vector3.forward : Vector3.back);
+			return CheckIfCollidingOnASingleAxis(ray, Mathf.Abs(dist));
 		}
 		
-		private bool CheckIfCollidingOnX(Vector3 pos, float dist)
+		private static bool CheckIfCollidingOnX(Vector3 pos, float dist)
 		{
-			return CheckIfCollidingOnASingleAxis(pos, dist, dist > 0 ? Vector3.right : Vector3.left);
+			var ray = new Ray(pos, dist > 0 ? Vector3.right : Vector3.left);
+
+			return CheckIfCollidingOnASingleAxis(ray, Mathf.Abs(dist));
 		}
 
 		private bool CheckValidHeightDifference(float yDist)
 		{
-			if (yDist > grid.minimumOpenAreaAroundMarkers.y)
-				return false;
+			if (yDist > grid.minimumOpenAreaAroundMarkers.y) return false;
 			
 			return true;
 		}

@@ -160,14 +160,15 @@ namespace ClockBlockers.MapData.Pathfinding
 		{
 			var result = new List<Node>(startMarker.ConnMarkerCount);
 
-			startMarker.connectedMarkers.Where(currMarker => currMarker != null).ForEach(connMarker =>
+			startMarker.connectedMarkers.Where(currMarkerStat => currMarkerStat != null).ForEach(currMarkerStat =>
 			{
-				Vector3 currMarkerPos = connMarker.transform.position;
+				PathfindingMarker currMarker = currMarkerStat.marker;
+				Vector3 currMarkerPos = currMarker.transform.position;
 				
 				// float currDistToStart = Vector3.Distance(currMarkerPos, startPos);
 				// float currDistToEnd = Vector3.Distance(currMarkerPos, endPos);
 
-				Node currNode = GetOrAddMarkerToDictionary(connMarker);
+				Node currNode = GetOrAddMarkerToDictionary(currMarker);
 				// Node node = Grid.GetOrAddMarkerToDictionary(connMarker);
 
 				result.Add(currNode);

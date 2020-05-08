@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 
+using Between_Names.Property_References;
+
 using ClockBlockers.MapData.MarkerGenerators;
 using ClockBlockers.MapData.Pathfinding.PathfindingManagement;
 using ClockBlockers.Utility;
@@ -73,6 +75,8 @@ namespace ClockBlockers.MapData
 
 		public float MapHeight => mapHeight;
 
+		public FloatReference defaultJumpHeight;
+
 		public float YStartPos => FloorPlanePosition.y;
 		public float YEndPos => YStartPos + MapHeight;
 
@@ -129,10 +133,10 @@ namespace ClockBlockers.MapData
 			}
 		}
 
-		public void GetPath(IPathRequester pathRequester, PathfindingMarker marker1, PathfindingMarker marker2)
+		public void GetPath(IPathRequester pathRequester, PathfindingMarker marker1, PathfindingMarker marker2, float maxJumpHeight)
 		{
 			CheckPathfindingManager();
-			pathfindingManager.RequestPath(pathRequester, marker1, marker2);
+			pathfindingManager.RequestPath(pathRequester, marker1, marker2, maxJumpHeight);
 		}
 
 		public void ClearMarkerList()

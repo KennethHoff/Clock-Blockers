@@ -1,6 +1,5 @@
 ﻿using System;
 
-
 namespace ClockBlockers.MapData
 {
 	// DONE: Find out why these don't save across editor reloads
@@ -11,12 +10,14 @@ namespace ClockBlockers.MapData
 		// TODO: New name for this class.
 		
 		public PathfindingMarker marker;
-		public float distance;
+		public float yDistance;
+		public AdjacencyDirection relativeDirection;
 
-		public MarkerStats(PathfindingMarker marker, float distance)
+		public MarkerStats(PathfindingMarker marker, float yDist, AdjacencyDirection direction)
 		{
 			this.marker = marker;
-			this.distance = distance;
+			yDistance = yDist;
+			relativeDirection = direction;
 		}
 	}
 }

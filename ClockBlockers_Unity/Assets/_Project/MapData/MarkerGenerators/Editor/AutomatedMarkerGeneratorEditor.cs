@@ -33,7 +33,7 @@ namespace ClockBlockers.MapData.MarkerGenerators.Editor
 			
 			CreateButton(myScript.ClearMarkers, "Remove all markers");
 			
-			CreateButton(myScript.GenerateMarkerAdjacencies, "Generate marker adjacencies");
+			CreateButton(myScript.GenerateMarkerConnections, "Generate marker adjacencies");
 
 			
 		}

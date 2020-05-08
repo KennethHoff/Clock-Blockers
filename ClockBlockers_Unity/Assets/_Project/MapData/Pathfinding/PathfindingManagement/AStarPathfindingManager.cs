@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 
+using ClockBlockers.Utility;
+
 using Unity.Burst;
 using Unity.EditorCoroutines.Editor;
 
@@ -25,11 +27,9 @@ namespace ClockBlockers.MapData.Pathfinding.PathfindingManagement
 			FindPaths();
 		}
 
-		public List<PathfindingMarker> RequestPath(IPathRequester pathRequester, PathfindingMarker marker1, PathfindingMarker marker2)
+		public void RequestPath(IPathRequester pathRequester, PathfindingMarker marker1, PathfindingMarker marker2, float maxJumpHeight)
 		{
-			pathRequests.Add(PathRequest.CreateInstance(pathRequester, marker1, marker2));
-
-			return null;
+			pathRequests.Add(PathRequest.CreateInstance(pathRequester, marker1, marker2, maxJumpHeight));
 		}
 		
 		public void FindPaths()

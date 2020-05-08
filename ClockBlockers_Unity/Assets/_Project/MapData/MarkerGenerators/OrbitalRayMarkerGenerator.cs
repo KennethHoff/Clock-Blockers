@@ -25,7 +25,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 
 		protected override int CreateMarker(float xPos, int rowIndex, Transform newColumn, int columnIndex)
 		{
-			float zPos = MarkerSizeAdjustedZStartPos - (zDistanceBetweenCreatedMarkers * rowIndex);
+			float zPos = MarkerSizeAdjustedZStartPos - (distanceBetweenCreatedMarkers * rowIndex);
 			
 			if (!CheckValidMarkerHeights(xPos, zPos, out RaycastHit[] allCollisions)) return 0;
 
@@ -46,10 +46,12 @@ namespace ClockBlockers.MapData.MarkerGenerators
 
 		private int CreateAMarkerOnEachValidHeight(IReadOnlyList<RaycastHit> allCollisions, float xPos, float zPos, int rowIndex, Transform parentColumn, int columnIndex)
 		{
-			var markersCreated = 0;
-			for (var i = 0; i < allCollisions.Count; i++)
+			var markersCreated = new List<PathfindingMarker>();
+			int collCount = allCollisions.Count;
+			for (int i = 0; i < collCount; i++)
 			{
-				RaycastHit hit = allCollisions[i];
+				// I want to get the upper-most hit first
+				RaycastHit hit = allCollisions[collCount-1-i];
 
 				var markerPos = new Vector3(xPos, hit.point.y.Round(3), zPos);
 
@@ -69,17 +71,29 @@ namespace ClockBlockers.MapData.MarkerGenerators
 					if (!(overlappingColliders.Length == 1 && (overlappingColliders[0] = hit.collider))) continue;
 				}
 
-				string markerName = $"Column {columnIndex} Row {rowIndex}{(i > 0 ? "(" + i + ")" : "")}";
+				string markerName = $"Column {columnIndex} Row {rowIndex}";
 
 				// markerPos.y += creationHeightAboveFloor + (grid.minimumOpenAreaAroundMarkers.y / 2);
 
 				markerPos.y += creationHeightAboveFloor;
 
-				InstantiateMarker(markerName, markerPos, parentColumn);
-				markersCreated++;
+				PathfindingMarker newMarker = InstantiateMarker(markerName, markerPos, parentColumn);
+				
+				markersCreated.Add(newMarker);
 			}
 
-			return markersCreated;
+			int markersCreatedCount = markersCreated.Count;
+			
+			if (markersCreatedCount > 1)
+			{
+				for (var i = 0; i < markersCreatedCount; i++)
+				{
+					var marker = markersCreated[i];
+					marker.name += $"({i})";
+				}
+			}
+
+			return markersCreatedCount;
 		}
 	}
 }

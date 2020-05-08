@@ -25,7 +25,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			Logging.Log("ClearMarkers is not implemented in " + GetType());
 		}
 		
-		public virtual void GenerateMarkerAdjacencies()
+		public virtual void GenerateMarkerConnections()
 		{
 			Logging.Log("GenerateMarkerAdjacencies is not implemented in " + GetType());
 		}

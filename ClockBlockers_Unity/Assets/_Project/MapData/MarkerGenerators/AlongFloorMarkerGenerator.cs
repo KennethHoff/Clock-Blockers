@@ -8,7 +8,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 	{
 		protected override int CreateMarker(float xPos, int rowIndex, Transform newColumn, int columnIndex)
 		{
-			float zPos = MarkerSizeAdjustedZStartPos - (zDistanceBetweenCreatedMarkers * rowIndex); 
+			float zPos = MarkerSizeAdjustedZStartPos - (distanceBetweenCreatedMarkers * rowIndex); 
 			
 			var markerPos = new Vector3(xPos, creationHeightAboveFloor, zPos);
 

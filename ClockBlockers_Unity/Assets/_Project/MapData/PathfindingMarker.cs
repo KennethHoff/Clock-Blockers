@@ -19,10 +19,10 @@ namespace ClockBlockers.MapData
         // TODO: During pathfinding, find the Marker closest to the 'destination', and then recursive find the marker that's closest to you
 
         [SerializeReference]
-        public List<PathfindingMarker> connectedMarkers;
+        public List<MarkerStats> connectedMarkers;
 
         public IPathfinder CurrentPathfinder { get; set; }
-        
+
         public int ConnMarkerCount => connectedMarkers?.Count(node => node != null) ?? 0;
 
         public float scale = 0.5f;
@@ -37,6 +37,7 @@ namespace ClockBlockers.MapData
         public float creationHeightAboveFloor;
 
         private PathfindingMarker otherSelectedMarker;
+
         private List<PathfindingMarker> pathToOtherSelectMarker;
 
         private void OnDrawGizmos()
@@ -91,8 +92,16 @@ namespace ClockBlockers.MapData
             }
 
             grid.ResetMarkerGizmos();
-            if (selectedMarkers.Count == 1) {DrawSingleSelectedMarker();}
-            else if (selectedMarkers.Count == 2 && otherMarker != null) DrawPathToSelectedMarker(otherMarker);
+            switch (selectedMarkers.Count)
+            {
+                case 1:
+                    DrawSingleSelectedMarker();
+                    break;
+
+                case 2 when otherMarker != null:
+                    DrawPathToSelectedMarker(otherMarker);
+                    break;
+            }
         }
 
         private void DrawPathToSelectedMarker(PathfindingMarker marker)
@@ -101,7 +110,7 @@ namespace ClockBlockers.MapData
             {
                 otherSelectedMarker = marker;
                 Logging.Log("Selected different markers");
-                RequestPathFrom(marker);
+                RequestPathFrom(marker, grid.defaultJumpHeight);
             }
 
             if (pathToOtherSelectMarker == null || pathToOtherSelectMarker.Count == 0) return;
@@ -125,12 +134,17 @@ namespace ClockBlockers.MapData
 
             if (connectedMarkers == null) return;
 
-            AffectDrawOfMarkers(connectedMarkers);
+            AffectDrawOfMarkers(GetAvailableConnectedMarkers(grid.defaultJumpHeight));
+        }
+
+        private void AffectDrawOfMarkers(List<MarkerStats> markerStatList)
+        {
+            AffectDrawOfMarkers(markerStatList.ConvertAll(markerStat => markerStat.marker));
         }
 
         private void AffectDrawOfMarkers(IEnumerable<PathfindingMarker> markerList)
         {
-            AffectDrawOfMarkers(markerList, Color.magenta, grid.nodeScale);
+            AffectDrawOfMarkers(markerList, Color.magenta, grid.selectionNodeScale);
         }
 
         private void AffectDrawOfMarkers(List<Node> nodeList, Color newColor, float newScale)
@@ -196,13 +210,14 @@ namespace ClockBlockers.MapData
             Gizmos.DrawCube(position, Vector3.one * scale);
         }
 
-
         private void DrawRayGizmosToConnectedMarkers()
         {
             // if (adjacentMarkers == null || adjacentMarkers.Count == 0) return;
 
-            foreach (PathfindingMarker marker in connectedMarkers.Where(marker => marker != null))
+            foreach (MarkerStats markerStat in connectedMarkers.Where(markerStat => markerStat != null))
             {
+                PathfindingMarker marker = markerStat.marker;
+                
                 Vector3 markerPos = marker.transform.position;
                 Vector3 position = transform.position;
 
@@ -243,25 +258,32 @@ namespace ClockBlockers.MapData
             return newMarker;
         }
 
-        private void RequestPathTo(PathfindingMarker marker)
+        private void RequestPathTo(PathfindingMarker marker, float maxJumpHeight)
         {
             Logging.Log($"Finding path to {marker.name} from {this.name}");
             
-            grid.GetPath(this, this, marker);
+            grid.GetPath(this, this, marker, maxJumpHeight);
         }
-        private void RequestPathFrom(PathfindingMarker marker)
+
+        private void RequestPathFrom(PathfindingMarker marker, float maxJumpHeight)
         {
             Logging.Log($"Finding path from {marker.name} to {this.name}");
             
-            grid.GetPath(this, marker, this);
+            grid.GetPath(this, marker, this, maxJumpHeight);
         }
 
-        
+
         public void PathCallback(List<PathfindingMarker> pathFinderPath)
         {
             pathToOtherSelectMarker = pathFinderPath;
             Logging.Log("Path Callback");
         }
 
+        public IEnumerable<PathfindingMarker> GetAvailableConnectedMarkers(float jumpHeight)
+        {
+            return (from connectedMarker in connectedMarkers
+                where !(connectedMarker.yDistance > jumpHeight)
+                select connectedMarker.marker).ToList();
+        }
     }
 }

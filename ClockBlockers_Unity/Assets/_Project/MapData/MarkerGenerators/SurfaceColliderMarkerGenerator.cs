@@ -63,7 +63,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			grid.ClearMarkerList();
 		}
 
-		public override void GenerateMarkerAdjacencies()
+		public override void GenerateMarkerConnections()
 		{
 			Logging.Log("Surface Collider Marker Generator has not implemented GenerateMarkerAdjacencies");
 		}

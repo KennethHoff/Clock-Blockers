@@ -12,6 +12,7 @@ namespace ClockBlockers.MapData.Pathfinding
 {
 	// https://medium.com/@nicholas.w.swift/easy-a-star-pathfinding-7e6689c7f7b2
 
+	// TODO: Remove the entire dictionary thing. It's not necessary.
 
 	[BurstCompile]
 	public class AStarPathFinder : IPathfinder
@@ -20,6 +21,8 @@ namespace ClockBlockers.MapData.Pathfinding
 		private readonly IPathRequester pathRequester;
 		private readonly PathfindingMarker startMarker;
 		private readonly PathfindingMarker endMarker;
+
+		private readonly float maxJumpHeight; 
 
 		private readonly int checksPerFrame;
 
@@ -37,15 +40,17 @@ namespace ClockBlockers.MapData.Pathfinding
 
 		public static AStarPathFinder CreateInstance(PathRequest pathRequest, int checksPerFrame)
 		{
-			return new AStarPathFinder(pathRequest.pathRequester, pathRequest.startMarker, pathRequest.endMarker, checksPerFrame);
+			return new AStarPathFinder(pathRequest.pathRequester, pathRequest.startMarker, pathRequest.endMarker, pathRequest.maxJumpHeight, checksPerFrame);
 		}
 		
-		private AStarPathFinder(IPathRequester pathRequester, PathfindingMarker startMarker, PathfindingMarker endMarker, int checksPerFrame)
+		private AStarPathFinder(IPathRequester pathRequester, PathfindingMarker startMarker, PathfindingMarker endMarker, float jumpHeight, int checksPerFrame)
 		{
 			this.pathRequester = pathRequester;
 			
 			this.startMarker = startMarker;
 			this.endMarker = endMarker;
+
+			maxJumpHeight = jumpHeight;
 			
 			this.checksPerFrame = checksPerFrame;
 
@@ -98,10 +103,9 @@ namespace ClockBlockers.MapData.Pathfinding
 			return node;
 		}
 		
-		private IEnumerable<Node> TurnConnectedMarkersIntoNodes(PathfindingMarker marker)
+		private IEnumerable<Node> TurnAvailableConnectedMarkersIntoNodes(PathfindingMarker marker)
 		{
-			return from currMarker in marker.connectedMarkers
-				where currMarker != null
+			return from currMarker in marker.GetAvailableConnectedMarkers(maxJumpHeight)
 				select GetOrAddMarkerToDictionary(currMarker);
 		}
 		public IEnumerator FindPathCoroutine()
@@ -157,7 +161,7 @@ namespace ClockBlockers.MapData.Pathfinding
 
 				Vector3 currMarkerPos = currNode.marker.transform.position;
 
-				currNode.childNodes = TurnConnectedMarkersIntoNodes(currNode.marker);
+				currNode.childNodes = TurnAvailableConnectedMarkersIntoNodes(currNode.marker);
 
 				foreach (Node childNode in currNode.childNodes)
 				{
