@@ -4,6 +4,8 @@ using Between_Names.Property_References;
 
 using TMPro;
 
+using Unity.Burst;
+
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,6 +13,7 @@ using UnityEngine.UI;
 namespace ClockBlockers.UI.Main_Menu
 {
 	
+	[BurstCompile]
 	// TODO: Split up each 'section' into separate classes..
 	public class OptionsMenu : BaseGameMenu
 	{

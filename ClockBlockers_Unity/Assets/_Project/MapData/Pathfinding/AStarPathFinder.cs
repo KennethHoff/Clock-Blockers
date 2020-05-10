@@ -12,24 +12,20 @@ namespace ClockBlockers.MapData.Pathfinding
 {
 	// https://medium.com/@nicholas.w.swift/easy-a-star-pathfinding-7e6689c7f7b2
 
-	// TODO: Remove the entire dictionary thing. It's not necessary.
+	// TODO: Remove the entire dictionary. It feels unnecessary.
 
 	[BurstCompile]
 	public class AStarPathFinder : IPathfinder
 	{
-
-		private readonly IPathRequester pathRequester;
-		private readonly PathfindingMarker startMarker;
-		private readonly PathfindingMarker endMarker;
-
-		private readonly float maxJumpHeight; 
+		private readonly PathRequest pathRequest;
 
 		private readonly int checksPerFrame;
 
 		private int totalChecks;
 		private int framesTaken;
 
-		private List<PathfindingMarker> path;
+
+		private readonly List<PathfindingMarker> path;
 		private List<PathfindingMarker> Path => path.Count > 0 ? path : null;
 		
 		private Dictionary<int, Node> markerNodeDictionary;
@@ -40,17 +36,12 @@ namespace ClockBlockers.MapData.Pathfinding
 
 		public static AStarPathFinder CreateInstance(PathRequest pathRequest, int checksPerFrame)
 		{
-			return new AStarPathFinder(pathRequest.pathRequester, pathRequest.startMarker, pathRequest.endMarker, pathRequest.maxJumpHeight, checksPerFrame);
+			return new AStarPathFinder(pathRequest, checksPerFrame);
 		}
 		
-		private AStarPathFinder(IPathRequester pathRequester, PathfindingMarker startMarker, PathfindingMarker endMarker, float jumpHeight, int checksPerFrame)
+		private AStarPathFinder(PathRequest pathRequest, int checksPerFrame)
 		{
-			this.pathRequester = pathRequester;
-			
-			this.startMarker = startMarker;
-			this.endMarker = endMarker;
-
-			maxJumpHeight = jumpHeight;
+			this.pathRequest = pathRequest;
 			
 			this.checksPerFrame = checksPerFrame;
 
@@ -60,9 +51,10 @@ namespace ClockBlockers.MapData.Pathfinding
 			
 			markerNodeDictionary = new Dictionary<int, Node>();
 
-			Logging.Log($"New instance of AStarPathFinder was constructed!");
 			OpenList = new List<Node>();
 			closedList = new List<Node>();
+			
+			Logging.Log($"New instance of AStarPathFinder was constructed!");
 		}
 		~AStarPathFinder()
 		{
@@ -105,17 +97,19 @@ namespace ClockBlockers.MapData.Pathfinding
 		
 		private IEnumerable<Node> TurnAvailableConnectedMarkersIntoNodes(PathfindingMarker marker)
 		{
-			return from currMarker in marker.GetAvailableConnectedMarkers(maxJumpHeight)
+			IEnumerable<PathfindingMarker> availableConnectedMarkers = marker.GetAvailableConnectedMarkers(pathRequest.maxJumpHeight);
+			if (availableConnectedMarkers == null) return null;
+			return from currMarker in availableConnectedMarkers
 				select GetOrAddMarkerToDictionary(currMarker);
 		}
 		public IEnumerator FindPathCoroutine()
 		{
 			ResetDictionary();
 
-			Node startNode = GetOrAddMarkerToDictionary(startMarker);
-			Node endNode = GetOrAddMarkerToDictionary(endMarker);
+			Node startNode = GetOrAddMarkerToDictionary(pathRequest.startMarker);
+			Node endNode = GetOrAddMarkerToDictionary(pathRequest.endMarker);
 
-			float distFromStartToEnd = Vector3.Distance(startMarker.transform.position, endMarker.transform.position);
+			float distFromStartToEnd = Vector3.Distance(pathRequest.startMarker.transform.position, pathRequest.endMarker.transform.position);
 
 			startNode.G = 0;
 			startNode.H = distFromStartToEnd;
@@ -163,6 +157,8 @@ namespace ClockBlockers.MapData.Pathfinding
 
 				currNode.childNodes = TurnAvailableConnectedMarkersIntoNodes(currNode.marker);
 
+				if (currNode.childNodes == null) continue;
+				
 				foreach (Node childNode in currNode.childNodes)
 				{
 					if (closedList.Contains(childNode)) continue;
@@ -196,16 +192,13 @@ namespace ClockBlockers.MapData.Pathfinding
 			
 			// End of search
 
-			Logging.Log($"Checked {totalChecks}. It took {framesTaken+1} frames to complete.");
-
-
-			if (pathRequester == null) yield break;
+			Logging.Log($"Pathfinding completed {(path.Count > 0 ? "Successfully" : "Unsuccessfully" )}. Checked {totalChecks} markers for {pathRequest.pathRequester}. It took {framesTaken+1} frames to complete.");
 			
-			pathRequester.CurrentPathfinder = null;
+			if (pathRequest.pathRequester == null) yield break;
 			
-			pathRequester.PathCallback(Path);
-
+			pathRequest.pathRequester.PathCallback(Path);
+			
+			pathRequest.pathRequester.CurrentPathfinder = null;
 		}
-
 	}
 }

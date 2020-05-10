@@ -1,11 +1,13 @@
 ﻿using System;
 
+using Unity.Burst;
+
 using UnityEngine;
 
 
 namespace ClockBlockers.ReplaySystem
 {
-	[Serializable]
+	[Serializable][BurstCompile]
 	public struct Translation
 	{
 		public Vector3 position;

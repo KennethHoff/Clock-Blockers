@@ -1,0 +1,20 @@
+{
+    "name": "ClockBlockers",
+    "references": [
+        "GUID:1217c75065e53bf4f8d5769cad174016",
+        "GUID:691c7e776bc0e004390ba3139c4cde8b",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:75469ad4d38634e559750d17036d5f7c",
+        "GUID:478a2357cc57436488a56e564b08d223",
+        "GUID:2665a8d13d1b3f18800f46e256720795"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

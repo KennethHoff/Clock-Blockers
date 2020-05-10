@@ -6,11 +6,14 @@ using ClockBlockers.Characters;
 using ClockBlockers.ReplaySystem.ReplayStorage;
 using ClockBlockers.Weapons;
 
+using Unity.Burst;
+
 using UnityEngine;
 
 
 namespace ClockBlockers.ReplaySystem.ReplayRunner
 {
+	[BurstCompile]
 	public class ActionReplayRunner : MonoBehaviour
 	{
 		private Character _character;

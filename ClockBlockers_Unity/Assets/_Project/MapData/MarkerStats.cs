@@ -1,10 +1,13 @@
 ﻿using System;
 
+using Unity.Burst;
+
+
 namespace ClockBlockers.MapData
 {
 	// DONE: Find out why these don't save across editor reloads
 		// Apparently, 'Readonly' makes them non-serialized?
-	[Serializable]
+	[Serializable][BurstCompile]
 	public class MarkerStats
 	{
 		// TODO: New name for this class.

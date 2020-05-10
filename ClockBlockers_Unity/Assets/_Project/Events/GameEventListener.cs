@@ -1,8 +1,11 @@
-﻿using UnityEngine;
+﻿using Unity.Burst;
+
+using UnityEngine;
 using UnityEngine.Events;
 
 
 namespace ClockBlockers.Events {
+	[BurstCompile]
 	public class GameEventListener : MonoBehaviour
 	{
 		public GameEvent @event;

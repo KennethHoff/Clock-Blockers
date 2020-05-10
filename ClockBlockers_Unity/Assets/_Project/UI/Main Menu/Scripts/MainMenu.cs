@@ -1,8 +1,11 @@
-﻿using UnityEngine.SceneManagement;
+﻿using Unity.Burst;
+
+using UnityEngine.SceneManagement;
 
 
 namespace ClockBlockers.UI.Main_Menu
 {
+	[BurstCompile]
 	public class MainMenu : BaseGameMenu
 	{
 		private BaseGameMenu _optionsMenu;

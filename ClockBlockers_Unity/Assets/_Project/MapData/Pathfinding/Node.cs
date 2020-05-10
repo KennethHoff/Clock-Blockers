@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
 
+using Unity.Burst;
+
 
 namespace ClockBlockers.MapData.Pathfinding
 {
+	[BurstCompile]
 	public class Node
 	{
 		public Node(PathfindingMarker newMarker, float newG = float.MaxValue, float newH = float.MaxValue)

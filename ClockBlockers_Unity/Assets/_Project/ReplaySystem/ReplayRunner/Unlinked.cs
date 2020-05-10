@@ -4,6 +4,8 @@ using ClockBlockers.AI.AiControllers;
 using ClockBlockers.AI.States;
 using ClockBlockers.Utility;
 
+using Unity.Burst;
+
 using UnityEngine;
 
 
@@ -15,6 +17,8 @@ namespace ClockBlockers.ReplaySystem.ReplayRunner
 	/// After unlinking, this is the first 'AI controlled' state.
 	/// The character should look like he just woke up - while being fully energized - and teleported somewhere he didn't recognize. 
 	/// </summary>
+	
+	[BurstCompile]
 	public class Unlinked : AiState
 	{
 		public override IEnumerator Begin()

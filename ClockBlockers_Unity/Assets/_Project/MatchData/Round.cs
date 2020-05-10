@@ -2,13 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using ClockBlockers.MapData;
 using ClockBlockers.Utility;
+
+using Unity.Burst;
 
 using UnityEngine;
 using UnityEngine.Events;
 
 
 namespace ClockBlockers.MatchData {
+	[BurstCompile]
 	public class Round : MonoBehaviour
 	{
 
@@ -62,7 +66,6 @@ namespace ClockBlockers.MatchData {
 		{
 			// Look at leaderboard etc..
 			
-			
 			roundEndedEvent.Invoke();
 		}
 
@@ -81,6 +84,7 @@ namespace ClockBlockers.MatchData {
 		public void StartNewAct()
 		{
 			Act newAct = Instantiate(actPrefab, transform, true);
+			
 			newAct.round = this;
 
 			if (allActs.Count > 0)

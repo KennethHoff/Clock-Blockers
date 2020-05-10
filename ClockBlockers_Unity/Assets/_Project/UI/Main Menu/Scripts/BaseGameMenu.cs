@@ -1,8 +1,11 @@
-﻿using UnityEngine;
+﻿using Unity.Burst;
+
+using UnityEngine;
 
 
 namespace ClockBlockers.UI.Main_Menu
 {
+	[BurstCompile]
 	public abstract class BaseGameMenu : MonoBehaviour
 	{
 		[SerializeField]

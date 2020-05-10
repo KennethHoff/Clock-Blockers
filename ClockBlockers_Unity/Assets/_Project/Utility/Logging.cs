@@ -3,13 +3,15 @@ using System.IO;
 
 using ClockBlockers.ReplaySystem.ReplayRunner;
 
+using Unity.Burst;
+
 using UnityEngine;
 
 using Object = UnityEngine.Object;
 
 namespace ClockBlockers.Utility
 {
-	[ExecuteAlways]
+	[ExecuteAlways][BurstCompile]
 	public class Logging : MonoBehaviour
 	{
 

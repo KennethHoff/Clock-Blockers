@@ -1,76 +1,31 @@
-﻿using System.Collections.Generic;
-
-using ClockBlockers.ReplaySystem;
-using ClockBlockers.Utility;
+﻿using Unity.Burst;
 
 using UnityEngine;
 
 
 namespace ClockBlockers.AI
 {
+	[BurstCompile]
 	public class StandardAiPathfinder : AiPathfinder
 	{
-		
-		// The path to the 'final destination'
-		private List<Vector3> waypoints;
 
-		protected override void Awake()
+		public override void MoveTowardsNextWaypoint()
 		{
-			base.Awake();
-			waypoints = new List<Vector3>();
-		}
-
-		private int currentWaypointIndex = 0;
-		
-		private Vector3 NextWaypoint => waypoints[currentWaypointIndex];
-		
-		public override void ChangeDestination(Translation newDestination) 
-		{
-			base.ChangeDestination(newDestination);
+			Vector3 direction = (CurrentPathMarker.transform.position - transform.position).normalized;
 			
-			CreateWaypoints();
-		}
-		
-		protected override void MoveTowardsNextWaypoint()
-		{
-			// Vector3 newPos = Vector3.SmoothDamp(_transform.position, NextWaypoint.position, ref currVelocity, TimeLeftUntilNextInterval);
-			// _transform.position = newPos;
-
-			Vector3 currPos = transform.position;
-			Vector3 waypointPos = destination.position;
-
-			if (Vector3.Distance(currPos, waypointPos) < characterMovement.MoveSpd * Time.deltaTime) return;
-
-			Vector2 newDirection = new Vector2(waypointPos.x - currPos.x, waypointPos.z - currPos.z).normalized;
-
-			characterMovement.AddVelocityFromInputVector(newDirection);
-
-
-			// _characterMovement.RotateTo(nextTranslation.position.y);
-
-			// _characterMovement.AddVelocityRelativeToForward();
-
-		}
-		
-		private void CreateWaypoints()
-		{
-			waypoints.Clear();
-			if (CheckIfCollisionBetweenCurrentPosAndDestination())
-			{
-				Logging.Log("Collision between current position and destination");
-			}
-
-			CreateValidWaypoints();
+			characterMovement.SetForwardInputVelocity(direction);
 		}
 
-		private void CreateValidWaypoints()
+		public override void RunPathfinding()
 		{
-			waypoints.Add(destination.position);
+			base.RunPathfinding();
+			
+			MoveTowardsNextWaypoint();
 		}
 
-		private bool CheckIfCollisionBetweenCurrentPosAndDestination()
+		public override void RequestPath(Vector3 destination)
 		{
-			return Physics.Linecast(transform.position, destination.position);
+			pathfindingManager.RequestPath(this, transform.position, destination, highestReachableRelativeAltitude);
 		}
 	}
 }

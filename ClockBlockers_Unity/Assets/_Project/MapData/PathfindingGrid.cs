@@ -9,19 +9,11 @@ using ClockBlockers.Utility;
 
 using Unity.Burst;
 
-using UnityEditor;
-
 using UnityEngine;
-
 namespace ClockBlockers.MapData
 {
-	// TODO: Clean up this, separate into components
 	
-	// This currently only allows one size of agent, or rather; It creates nodes based on a size.
-	// Any smaller agent will be able to follow it, albeit stupidly - It might go around somewhere where it could realistically go through.
-	// Any larger agent might be able to follow it, but no guarantees. It might simply be too large to follow accurately
-	
-	// TODO: Remove the idea of 'row' entirely, and make it more manual. Currently there are significant issues with altitude changes. << Do this after making the pathfinding work between 'connected nodes'.
+	// TODO: Separate into smaller components
 	[ExecuteAlways][BurstCompile]
 	public class PathfindingGrid : MonoBehaviour
 	{
@@ -29,7 +21,6 @@ namespace ClockBlockers.MapData
 		[Space(5)]
 		public bool alwaysDrawNodes = true;
 		public bool alwaysDrawRays = true;
-		public bool alwaysDrawCollisionArea = false;
 
 		[Space(5)]
 		public float drawHeightAboveFloor = 0.25f;
@@ -79,42 +70,55 @@ namespace ClockBlockers.MapData
 
 		public float YStartPos => FloorPlanePosition.y;
 		public float YEndPos => YStartPos + MapHeight;
-
-
+		
 		public List<PathfindingMarker> markers;
 
 		private Vector3 PlaneLocalScale => floorPlane.transform.localScale * 10;
 		public float XLength => PlaneLocalScale.x;
 		public float ZLength => PlaneLocalScale.z;
-		
-		[HideInInspector]
+
+		[NonSerialized]
 		public IPathfindingManager pathfindingManager;
 		
-		[HideInInspector]
-		public MarkerGeneratorBase markerGenerator;
+		private MarkerGeneratorBase markerGenerator;
 
+		private void Start()
+		{
+			if (markers != null && markers.Count > 0) return;
+			
+			RetrieveMarkers();
+
+			if (markers.Count == 0)
+			{
+				GenerateMarkers();
+			}
+		}
+
+
+
+		// private void Start()
+		// {
+		// 	if (!Application.isPlaying) return;
+		// 	
+		// 	
+		// 	// As a band-aid solution to a problem I've found about serialization: You can't Serialize a List of GameObjects
+		// 	// I tried storing the instance ID of all the GameObjects, but you can't retrieve objects based on their InstanceID, so it's pointless.
+		// 	
+		// 	// This is far from ideal, but it works fine *for now*.
+		// 	
+		//
+		// 	// Logging.Log("Start! Yay");
+		// 	// ClearMarkers();
+		// 	// GenerateMarkers();
+		// 	// GenerateMarkerConnections();
+		// }
+		
+#if UNITY_EDITOR
 		private void OnDrawGizmos()
 		{
-			if (Selection.GetFiltered<PathfindingMarker>(SelectionMode.TopLevel).Length == 0) ResetMarkerGizmos();
+			if (UnityEditor.Selection.GetFiltered<PathfindingMarker>(UnityEditor.SelectionMode.TopLevel).Length == 0) ResetMarkerGizmos();
 			
 			if (CheckPathfindingManager()) pathfindingManager.FindPaths();
-		}
-
-		private bool CheckPathfindingManager()
-		{
-			if (pathfindingManager != null) return true;
-			
-			pathfindingManager = GetComponent<IPathfindingManager>();
-
-			return pathfindingManager != null;
-		}
-
-		private bool CheckMarkerGenerator()
-		{
-			if (markerGenerator != null) return false;
-			markerGenerator = GetComponent<MarkerGeneratorBase>();
-			
-			return markerGenerator != null;
 		}
 
 		public void ResetMarkerGizmos()
@@ -128,27 +132,65 @@ namespace ClockBlockers.MapData
 				}
 				
 				Logging.LogWarning("A marker was null, which means they're all probably null. Clearing list");
-				markers.Clear();
+				ClearMarkers();
 				break;
 			}
 		}
 
-		public void GetPath(IPathRequester pathRequester, PathfindingMarker marker1, PathfindingMarker marker2, float maxJumpHeight)
+
+#endif
+		private bool CheckPathfindingManager()
+		{
+			if (pathfindingManager != null) return true;
+			
+			pathfindingManager = GetComponent<IPathfindingManager>();
+
+			return pathfindingManager != null;
+		}
+
+		private bool CheckMarkerGenerator()
+		{
+			if (markerGenerator != null) return true;
+			markerGenerator = GetComponent<MarkerGeneratorBase>();
+			
+			return markerGenerator != null;
+		}
+
+		public void ClearMarkers()
+		{
+			ClearMarkerList();
+			DestroyAllChildGameObjects();
+		}
+
+		private void DestroyAllChildGameObjects()
+		{
+			for(int x = transform.childCount -1; x >= 0;x--)
+			{
+				GameObject child = transform.GetChild(x).gameObject;
+#if UNITY_EDITOR
+				if (!Application.isPlaying)
+				{
+					DestroyImmediate(child);
+				}
+				else
+				{
+					Destroy(child);
+				}
+#else
+				Destroy(child);
+#endif
+			}
+		}
+
+		public void GetPath(PathfindingMarker marker1, PathfindingMarker marker2, IPathRequester pathRequester, float maxJumpHeight)
 		{
 			CheckPathfindingManager();
 			pathfindingManager.RequestPath(pathRequester, marker1, marker2, maxJumpHeight);
 		}
 
-		public void ClearMarkerList()
+		private void ClearMarkerList()
 		{
 			markers.Clear();
-		}
-
-		public PathfindingMarker FindNearestMarker(Vector3 point)
-		{
-			if (!CheckMarkerGenerator()) return null;
-
-			return markerGenerator.FindNearestMarker(point);
 		}
 
 		public bool CheckIfPointIsInsideMap(Vector3 point)
@@ -163,6 +205,48 @@ namespace ClockBlockers.MapData
 			if (point.y > YEndPos) return false;
 
 			return true;
+		}
+
+
+		// [ContextMenu("Request Path from Every Node to Every Other Node")]
+		// public void RequestPathFromEveryNodeToEveryOtherNode()
+		// {
+		// 	Logging.Log("Starting the Request:");
+		// 	foreach (PathfindingMarker marker1 in markers)
+		// 	{
+		// 		foreach (PathfindingMarker marker2 in markers)
+		// 		{
+		// 			GetPath(marker1, marker2, marker1, defaultJumpHeight);
+		// 		}
+		//
+		// 	}
+		// }
+
+		public PathfindingMarker FindNearestMarker(Vector3 point)
+		{
+			if (!CheckMarkerGenerator()) return null;
+
+			return markerGenerator.FindNearestMarker(point);
+		}
+
+		public void GenerateMarkers()
+		{
+			if (!CheckMarkerGenerator()) return;
+			
+			markerGenerator.GenerateAllMarkers();
+		}
+
+		public void GenerateMarkerConnections()
+		{
+			if (!CheckMarkerGenerator()) return;
+			
+			markerGenerator.GenerateMarkerConnections();
+		}
+		public void RetrieveMarkers()
+		{
+			if (!CheckMarkerGenerator()) return;
+			
+			markers = markerGenerator.RetrieveAllMarkers();
 		}
 	}
 }

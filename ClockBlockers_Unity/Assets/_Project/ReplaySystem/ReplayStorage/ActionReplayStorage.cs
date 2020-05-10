@@ -7,6 +7,8 @@ using Between_Names.Property_References;
 using ClockBlockers.GameControllers;
 using ClockBlockers.Utility;
 
+using Unity.Burst;
+
 using UnityEngine;
 
 
@@ -16,7 +18,7 @@ namespace ClockBlockers.ReplaySystem.ReplayStorage
 	
 	// Store and retrieve CharacterActions (A combination of action, parameter for said action, and time when to execute said action)
 	
-	
+	[BurstCompile]
 	public class ActionReplayStorage : MonoBehaviour
 	{
 		[SerializeField]

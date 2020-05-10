@@ -3,9 +3,12 @@
 using ClockBlockers.AI.AiControllers;
 using ClockBlockers.Utility;
 
+using Unity.Burst;
+
 
 namespace ClockBlockers.AI.States
 {
+	[BurstCompile]
 	internal class FullyAutonomous : AiState
 	{
 		public override IEnumerator Begin()

@@ -4,11 +4,14 @@ using ClockBlockers.AI.States;
 using ClockBlockers.ReplaySystem.ReplayRunner;
 using ClockBlockers.Utility;
 
+using Unity.Burst;
+
 using UnityEngine;
 
 
 namespace ClockBlockers.AI.AiControllers
 {
+	[BurstCompile]
 	public abstract class AiController : MonoBehaviour
 	{
 		
@@ -35,11 +38,18 @@ namespace ClockBlockers.AI.AiControllers
 			Begin();
 		}
 
+		private void Update()
+		{
+			currentState.Update();
+		}
+
 		public void SetState(AiState newState)
 		{
 			Logging.Log(name + " is changing state to: " + newState.GetType().Name);
 
 			currentState?.End();
+			
+			aiPathfinder.StopAllCoroutines();
 
 			currentState = newState;
 

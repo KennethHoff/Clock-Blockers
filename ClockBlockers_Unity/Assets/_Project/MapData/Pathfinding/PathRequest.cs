@@ -1,13 +1,14 @@
-﻿namespace ClockBlockers.MapData.Pathfinding
+﻿using System.Collections.Generic;
+
+using Unity.Burst;
+
+
+namespace ClockBlockers.MapData.Pathfinding
 {
+	[BurstCompile]
 	public readonly struct PathRequest
 	{
-		public static PathRequest CreateInstance(IPathRequester pathRequester, PathfindingMarker startMarker, PathfindingMarker endMarker, float maxJumpHeight)
-		{
-			return new PathRequest(pathRequester, startMarker, endMarker, maxJumpHeight);
-		}
-
-		private PathRequest(IPathRequester pathRequester, PathfindingMarker startMarker, PathfindingMarker endMarker, float maxJumpHeight)
+		public PathRequest(IPathRequester pathRequester, PathfindingMarker startMarker, PathfindingMarker endMarker, float maxJumpHeight)
 		{
 			this.pathRequester = pathRequester;
 			this.startMarker = startMarker;

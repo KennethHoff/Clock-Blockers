@@ -4,17 +4,20 @@ using Between_Names.Property_References;
 
 using ClockBlockers.Characters;
 using ClockBlockers.Events;
+using ClockBlockers.MapData;
 using ClockBlockers.ReplaySystem.ReplayRunner;
 using ClockBlockers.ReplaySystem.ReplayStorage;
 using ClockBlockers.Utility;
 
+using Unity.Burst;
+
 using UnityEngine;
-using UnityEngine.Events;
 
 
 namespace ClockBlockers.MatchData
 {
 	// DONE: Find a way to store the CharacterStorage across acts. << Not needed. The act itself is stored in a 'Round', and you'll access the values directly
+	[BurstCompile]
 	public class Act : MonoBehaviour
 	{
 		[NonSerialized]
@@ -43,25 +46,11 @@ namespace ClockBlockers.MatchData
 		public List<IntervalReplayStorage> replaysCreated;
 
 		public List<IntervalReplayStorage> replaysForThisAct;
-		
-		// private bool _begun = false;
-
-		// private bool Ongoing => _begun && !_ended;
-		//
-		// private bool HasNotStarted => !_begun && !_ended;
-
-		// private bool _ended = false;
-
-
 		public void Setup()
 		{
 			
 			_playerCharacters = new List<Character>();
 			SpawnAllCharacters();
-
-			// _begun = false;
-			// _ended = false;
-
 
 			actCreatedEvent.Raise();
 		}
@@ -71,7 +60,6 @@ namespace ClockBlockers.MatchData
 		public void Begin()
 		{
 			timeWhenActStarted.Value = Time.time;
-			// _begun = true;
 		}
 
 
@@ -79,7 +67,6 @@ namespace ClockBlockers.MatchData
 		public void End()
 		{
 			Logging.Log("Act ended!", this);
-			// _ended = true;
 
 			
 			// The following is temporary 
@@ -94,7 +81,7 @@ namespace ClockBlockers.MatchData
 			
 			replaysCreated = new List<IntervalReplayStorage>();
 
-			_playerCharacters.ForEach(p => replaysCreated.Add(p.GetComponent<IntervalReplayStorage>()));
+			_playerCharacters.ForEach(character => replaysCreated.Add(character.GetComponent<IntervalReplayStorage>()));
 
 		}
 
@@ -138,9 +125,10 @@ namespace ClockBlockers.MatchData
 		public Character SpawnNewPlayer()
 		{
 			Character newPlayer = round.match.spawner.SpawnPlayer();
-
+			
 			newPlayer.transform.SetParent(transform, true);
 			_playerCharacters.Add(newPlayer);
+			
 			return newPlayer;
 		}
 

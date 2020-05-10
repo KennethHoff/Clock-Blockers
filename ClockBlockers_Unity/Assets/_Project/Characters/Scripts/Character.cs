@@ -5,6 +5,8 @@ using ClockBlockers.DataStructures;
 using ClockBlockers.ToBeMoved;
 using ClockBlockers.Utility;
 
+using Unity.Burst;
+
 using UnityEngine;
 
 
@@ -54,7 +56,7 @@ namespace ClockBlockers.Characters
 
 	[DisallowMultipleComponent]
 	[RequireComponent(typeof(HealthComponent))]
-	
+	[BurstCompile]
 	public class Character : MonoBehaviour, IInteractable
 	{
 		private WaitForFixedUpdate _waitForFixedFrame;
@@ -71,7 +73,6 @@ namespace ClockBlockers.Characters
 		private Material deadMaterial = null;
 
 		internal Action onKilled;
-
 
 		protected virtual void Awake()
 		{

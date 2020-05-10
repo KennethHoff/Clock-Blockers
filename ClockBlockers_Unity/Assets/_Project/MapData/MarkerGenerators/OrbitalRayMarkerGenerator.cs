@@ -1,14 +1,19 @@
 ﻿using System.Collections.Generic;
 
+using ClockBlockers.Characters;
 using ClockBlockers.Utility;
+
+using Unity.Burst;
 
 using UnityEngine;
 
 
 namespace ClockBlockers.MapData.MarkerGenerators
 {
+	[BurstCompile]
+
 	[ExecuteInEditMode]
-	public class OrbitalRayMarkerGenerator : IntervalAutomatedMarkerGenerator
+	public class OrbitalRayMarkerGenerator : IntervalMarkerGeneratorBase
 	{
 		private void OnDrawGizmos()
 		{
@@ -37,9 +42,10 @@ namespace ClockBlockers.MapData.MarkerGenerators
 		private bool CheckValidMarkerHeights(float xPos, float zPos, out RaycastHit[] allCollisions)
 		{
 			var rayOriginPos = new Vector3(xPos, grid.YEndPos, zPos);
-			Vector3 rayDirection = Vector3.down;
-			
-			allCollisions = Physics.RaycastAll(rayOriginPos, rayDirection, grid.MapHeight);
+
+			var ray = new Ray(rayOriginPos, Vector3.down);
+
+			allCollisions = RayCaster.CastRayAll(ray, grid.MapHeight);
 
 			return allCollisions.Length != 0;
 		}
@@ -48,7 +54,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 		{
 			var markersCreated = new List<PathfindingMarker>();
 			int collCount = allCollisions.Count;
-			for (int i = 0; i < collCount; i++)
+			for (var i = 0; i < collCount; i++)
 			{
 				// I want to get the upper-most hit first
 				RaycastHit hit = allCollisions[collCount-1-i];

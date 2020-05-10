@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 
 using ClockBlockers.GameControllers;
+using ClockBlockers.MapData;
 using ClockBlockers.Utility;
+
+using Unity.Burst;
 
 using UnityEngine;
 using UnityEngine.Events;
@@ -17,11 +20,10 @@ namespace ClockBlockers.MatchData
 	/// For example how in CS:GO Dust2 has a map and a set of character models, while Cache has another map and a different set of character models. This would be the equivalent</para>
 	/// <para>*Although, now that I say it, that sounds more like a ScriptableObject kind of thing, which I would like to change this to, but I digress</para>
 	/// </summary>
+	
+	[BurstCompile]
 	public class Match : MonoBehaviour
 	{
-		
-		
-		
 		[SerializeField]
 		private UnityEvent matchCreatedEvent = null;
 		
@@ -49,17 +51,23 @@ namespace ClockBlockers.MatchData
 		[SerializeField]
 		private string battleArena = null;
 
+		private PathfindingGrid grid;
+
 		private void Awake()
 		{
 			spawner = GetComponent<CharacterSpawner>();
+			
+			grid = FindObjectOfType<PathfindingGrid>();
+			spawner.grid = grid;
+
+			
 			allRounds = new List<Round>();
 		}
 
 		public void Setup()
 		{
 			SceneManager.LoadScene(battleArena, LoadSceneMode.Additive);
-			
-			
+
 			matchCreatedEvent.Invoke();
 		}
 
@@ -102,7 +110,7 @@ namespace ClockBlockers.MatchData
 		
 		public void StopMatch()
 		{
-			gameObject.SetActive(false);
+			
 		}
 	}
 }

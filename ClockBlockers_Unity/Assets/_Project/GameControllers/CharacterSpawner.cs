@@ -1,9 +1,15 @@
+using ClockBlockers.AI;
 using ClockBlockers.Characters;
+using ClockBlockers.MapData;
+using ClockBlockers.Utility;
+
+using Unity.Burst;
 
 using UnityEngine;
 
 
 namespace ClockBlockers.GameControllers {
+	[BurstCompile]
 	public class CharacterSpawner : MonoBehaviour
 	{
 
@@ -12,21 +18,37 @@ namespace ClockBlockers.GameControllers {
 
 		[SerializeField]
 		private Character clonePrefab = null;
-		
+
+		public PathfindingGrid grid;
+
 		public Character SpawnPlayer()
 		{
-			return SpawnCharacter(playerPrefab);
+			Character newPlayer = SpawnCharacter(playerPrefab);
+			return newPlayer;
 		}
 
 		public Character SpawnClone()
 		{
-			return SpawnCharacter(clonePrefab);
+			Character newClone = SpawnCharacter(clonePrefab);
+			var aiPathfinder = newClone.GetComponent<AiPathfinder>();
+			
+			if (aiPathfinder == null)
+			{
+				Logging.LogWarning("Clone has no PathFinder");
+			}
+			else
+			{
+				aiPathfinder.pathfindingManager = grid.pathfindingManager;
+			}
+
+			return newClone;
 		}
 		
 		
 		private static Character SpawnCharacter(Character character)
 		{
-			return Instantiate(character);
+			Character newCharacter = Instantiate(character, Vector3.up *10, Quaternion.identity);
+			return newCharacter;
 		}
 	}
 }

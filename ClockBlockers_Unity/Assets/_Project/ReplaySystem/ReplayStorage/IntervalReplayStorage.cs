@@ -5,11 +5,14 @@ using Between_Names.Property_References;
 
 using ClockBlockers.Characters;
 
+using Unity.Burst;
+
 using UnityEngine;
 
 
 namespace ClockBlockers.ReplaySystem.ReplayStorage
 {
+	[BurstCompile]
 	public class IntervalReplayStorage : MonoBehaviour
 	{
 		

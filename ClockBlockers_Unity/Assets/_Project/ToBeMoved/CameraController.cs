@@ -1,9 +1,12 @@
 ﻿using Between_Names.Property_References;
 
+using Unity.Burst;
+
 using UnityEngine;
 
 
 namespace ClockBlockers.ToBeMoved {
+	[BurstCompile]
 	internal class CameraController : MonoBehaviour
 	{
 		[SerializeField]
@@ -25,8 +28,6 @@ namespace ClockBlockers.ToBeMoved {
 			var rotationVector = new Vector3(finalRotation, 0, 0);
 
 			transform.localRotation = Quaternion.Euler(rotationVector);
-
-
 		}
 	}
 }

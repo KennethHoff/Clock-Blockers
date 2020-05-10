@@ -1,17 +1,21 @@
 ﻿using System;
 
+using ClockBlockers.Characters;
 using ClockBlockers.DataStructures;
+
+using Unity.Burst;
 
 using UnityEngine;
 
 
 namespace ClockBlockers.Targetting
 {
+	[BurstCompile]
 	internal class RayCastBasedTargeter : MonoBehaviour, ITargeter
 	{
 		public Tuple<IInteractable, RaycastHit> GetInteractableFromRay(Ray ray, float range)
 		{
-			if (!Physics.Raycast(ray, out RaycastHit hit, range)) return null;
+			if (!RayCaster.CastRay(ray, range, out RaycastHit hit)) return null;
 			var interactable = hit.transform.GetComponent<IInteractable>();
 			return interactable == null ? null : new Tuple<IInteractable, RaycastHit>(interactable, hit);
 		}

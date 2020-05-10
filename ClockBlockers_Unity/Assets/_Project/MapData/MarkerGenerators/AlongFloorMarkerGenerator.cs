@@ -1,10 +1,14 @@
-﻿using UnityEngine;
+﻿using Unity.Burst;
+
+using UnityEngine;
 
 
 namespace ClockBlockers.MapData.MarkerGenerators
 {
 	[ExecuteInEditMode]
-	public class AlongFloorMarkerGenerator : IntervalAutomatedMarkerGenerator
+	[BurstCompile]
+
+	public class AlongFloorMarkerGenerator : IntervalMarkerGeneratorBase
 	{
 		protected override int CreateMarker(float xPos, int rowIndex, Transform newColumn, int columnIndex)
 		{

@@ -8,6 +8,8 @@ using ClockBlockers.Targetting;
 
 using JetBrains.Annotations;
 
+using Unity.Burst;
+
 using UnityEngine;
 
 using Random = UnityEngine.Random;
@@ -15,6 +17,7 @@ using Random = UnityEngine.Random;
 
 namespace ClockBlockers.Weapons
 {
+	[BurstCompile]
 	public class Gun : MonoBehaviour
 	{
 		private IRayProvider _rayProvider;
@@ -140,8 +143,10 @@ namespace ClockBlockers.Weapons
 
 			CreateBulletHole(hit.point, Quaternion.FromToRotation(Vector3.up, hit.normal), hit.transform);
 		}
+		
+		
 
-		private Ray CreateRay()
+		public Ray CreateRay()
 		{
 			return _rayProvider.CreateRay();
 		}

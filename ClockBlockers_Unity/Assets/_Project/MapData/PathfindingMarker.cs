@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using ClockBlockers.MapData.Pathfinding;
@@ -6,14 +7,12 @@ using ClockBlockers.Utility;
 
 using Unity.Burst;
 
-using UnityEditor;
-
 using UnityEngine;
 
 
 namespace ClockBlockers.MapData
 {
-    [ExecuteInEditMode][BurstCompile]
+    [ExecuteInEditMode][BurstCompile][Serializable]
     public class PathfindingMarker : MonoBehaviour, IPathRequester
     {
         // TODO: During pathfinding, find the Marker closest to the 'destination', and then recursive find the marker that's closest to you
@@ -25,12 +24,6 @@ namespace ClockBlockers.MapData
 
         public int ConnMarkerCount => connectedMarkers?.Count(node => node != null) ?? 0;
 
-        public float scale = 0.5f;
-
-        private static readonly Color DefaultDrawColor = Color.white;
-
-        private Color drawColor = DefaultDrawColor;
-
         [HideInInspector]
         public PathfindingGrid grid;
 
@@ -40,26 +33,24 @@ namespace ClockBlockers.MapData
 
         private List<PathfindingMarker> pathToOtherSelectMarker;
 
+        #region Gizmo
+#if UNITY_EDITOR
+        
+        public float scale = 0.5f;
+        private static readonly Color DefaultDrawColor = Color.white;
+        private Color drawColor = DefaultDrawColor;
+
         private void OnDrawGizmos()
         {
             if (grid.alwaysDrawRays) DrawTransparentRays();
 
             if (grid.alwaysDrawNodes) DrawCubeGizmoOnPosition();
 
-            if (grid.alwaysDrawCollisionArea) DrawCollisionArea();
         }
-
-        private void DrawCollisionArea()
-        {
-            Vector3 markerPos = transform.position;
-            var newPos = new Vector3(markerPos.x, markerPos.y + grid.minimumOpenAreaAroundMarkers.y / 2, markerPos.z);
-
-            Gizmos.DrawWireCube(newPos, grid.minimumOpenAreaAroundMarkers);
-        }
-
+        
         private void OnDrawGizmosSelected()
         {
-            if (Selection.activeGameObject != gameObject) return;
+            if (UnityEditor.Selection.activeGameObject != gameObject) return;
 
             if (CurrentPathfinder != null)
             {
@@ -67,9 +58,9 @@ namespace ClockBlockers.MapData
                 return;
             }
 
-            const SelectionMode selectionMode = SelectionMode.TopLevel | SelectionMode.ExcludePrefab | SelectionMode.Editable;
+            const UnityEditor.SelectionMode selectionMode = UnityEditor.SelectionMode.TopLevel | UnityEditor.SelectionMode.ExcludePrefab | UnityEditor.SelectionMode.Editable;
             
-            Transform[] transforms = Selection.GetTransforms(selectionMode);
+            Transform[] transforms = UnityEditor.Selection.GetTransforms(selectionMode);
             
             if (transforms == null)
             {
@@ -104,19 +95,20 @@ namespace ClockBlockers.MapData
             }
         }
 
+
         private void DrawPathToSelectedMarker(PathfindingMarker marker)
         {
             if (marker != otherSelectedMarker)
             {
                 otherSelectedMarker = marker;
-                Logging.Log("Selected different markers");
+                // Logging.Log("Selected different markers");
                 RequestPathFrom(marker, grid.defaultJumpHeight);
             }
 
             if (pathToOtherSelectMarker == null || pathToOtherSelectMarker.Count == 0) return;
             
-            Logging.Log("Drawing path between markers");
-            AffectDrawOfMarkers(pathToOtherSelectMarker);
+            // Logging.Log("Drawing path between markers");
+            AffectDrawOfMarkers( pathToOtherSelectMarker);
 
             otherSelectedMarker.drawColor = Color.black;
             drawColor = Color.black;
@@ -231,6 +223,10 @@ namespace ClockBlockers.MapData
             scale = grid.nodeScale;
             PickAColor();
         }
+        
+#endif
+        #endregion
+
 
         public static PathfindingMarker CreateInstance(string markerName, PathfindingGrid grid, Vector3 markerPos, Transform parent, float creationYPosAboveFloor)
         {
@@ -261,19 +257,22 @@ namespace ClockBlockers.MapData
         private void RequestPathTo(PathfindingMarker marker, float maxJumpHeight)
         {
             Logging.Log($"Finding path to {marker.name} from {this.name}");
-            
-            grid.GetPath(this, this, marker, maxJumpHeight);
-        }
 
-        private void RequestPathFrom(PathfindingMarker marker, float maxJumpHeight)
-        {
-            Logging.Log($"Finding path from {marker.name} to {this.name}");
+            pathToOtherSelectMarker = null;
             
             grid.GetPath(this, marker, this, maxJumpHeight);
         }
 
+        private void RequestPathFrom(PathfindingMarker marker, float maxJumpHeight)
+        {
+            Logging.Log($"Finding path to {marker.name} from {this.name}");
+            
+            pathToOtherSelectMarker = null;
+            
+            grid.GetPath(marker, this, this, maxJumpHeight);
+        }
 
-        public void PathCallback(List<PathfindingMarker> pathFinderPath)
+        void IPathRequester.PathCallback(List<PathfindingMarker> pathFinderPath)
         {
             pathToOtherSelectMarker = pathFinderPath;
             Logging.Log("Path Callback");
@@ -281,6 +280,7 @@ namespace ClockBlockers.MapData
 
         public IEnumerable<PathfindingMarker> GetAvailableConnectedMarkers(float jumpHeight)
         {
+            if (connectedMarkers == null) return null;
             return (from connectedMarker in connectedMarkers
                 where !(connectedMarker.yDistance > jumpHeight)
                 select connectedMarker.marker).ToList();

@@ -26,18 +26,29 @@
               <e p="Character.cs" t="Include" />
               <e p="CharacterBodyTag.cs" t="Include" />
               <e p="CharacterMovement.cs" t="Include" />
+              <e p="CharacterMovementNew.cs" t="Include" />
+              <e p="RayCaster.cs" t="Include" />
+            </e>
+          </e>
+          <e p="ClockBlockers.asmdef" t="Include" />
+          <e p="CustomEditors" t="Include">
+            <e p="ClockBlockers.Editor.asmdef" t="Include" />
+            <e p="Editor" t="Include">
+              <e p="MapData" t="Include">
+                <e p="PathfindingGridEditor.cs" t="Include" />
+                <e p="PathfindingMarkerEditor.cs" t="Include" />
+              </e>
             </e>
           </e>
           <e p="DataStructures" t="Include">
             <e p="DamagePacket.cs" t="Include" />
-            <e p="Enums.cs" t="Include" />
             <e p="IInteractable.cs" t="Include" />
           </e>
           <e p="Environment" t="Include">
             <e p="Scripts" t="Include">
               <e p="Plane.cs" t="Include" />
-              <e p="Platform1.cs" t="Include" />
-              <e p="ShootingTarget1.cs" t="Include" />
+              <e p="Platform.cs" t="Include" />
+              <e p="ShootingTarget.cs" t="Include" />
             </e>
           </e>
           <e p="Events" t="Include">
@@ -51,24 +62,12 @@
           <e p="Input" t="Include">
             <e p="PlayerInputController.cs" t="Include" />
           </e>
-          <e p="Main.asmdef" t="Include" />
           <e p="MapData" t="Include">
             <e p="AdjacencyDirection.cs" t="Include" />
-            <e p="Editor" t="Include">
-              <e p="PathfindingGridEditor.cs" t="Include" />
-              <e p="PathfindingMarkerEditor.cs" t="Include" />
-            </e>
             <e p="IPathRequester.cs" t="Include" />
             <e p="MarkerGenerators" t="Include">
               <e p="AlongFloorMarkerGenerator.cs" t="Include" />
-              <e p="AutomatedMarkerGenerator.cs" t="Include" />
-              <e p="Editor" t="Include">
-                <e p="AlongFloorMarkerGeneratorEditor.cs" t="Include" />
-                <e p="AutomatedMarkerGeneratorEditor.cs" t="Include" />
-                <e p="OrbitalRayMarkerGeneratorEditor.cs" t="Include" />
-                <e p="SurfaceColliderMarkerGeneratorEditor.cs" t="Include" />
-              </e>
-              <e p="IntervalAutomatedMarkerGenerator.cs" t="Include" />
+              <e p="IntervalMarkerGeneratorBase.cs" t="Include" />
               <e p="MarkerGeneratorBase.cs" t="Include" />
               <e p="OrbitalRayMarkerGenerator.cs" t="Include" />
               <e p="SurfaceColliderMarkerGenerator.cs" t="Include" />
@@ -76,15 +75,11 @@
             <e p="MarkerStats.cs" t="Include" />
             <e p="Pathfinding" t="Include">
               <e p="AStarPathFinder.cs" t="Include" />
-              <e p="AStarPathFinderJob.cs" t="Include" />
               <e p="IPathfinder.cs" t="Include" />
               <e p="Node.cs" t="Include" />
               <e p="PathfindingManagement" t="Include">
                 <e p="AStarPathfindingManager.cs" t="Include" />
                 <e p="IPathfindingManager.cs" t="Include" />
-                <e p="Job" t="Include">
-                  <e p="AStarPathFinderOld.cs" t="Include" />
-                </e>
               </e>
               <e p="PathRequest.cs" t="Include" />
             </e>
@@ -145,17 +140,28 @@
             <e p="ExtensionMethods.cs" t="Include" />
             <e p="Logging.cs" t="Include" />
           </e>
+          <e p="Visualizations" t="Include">
+            <e p="Scripts" t="Include">
+              <e p="QuestMarker3D.cs" t="Include" />
+              <e p="VisualizerBase.cs" t="Include" />
+            </e>
+          </e>
           <e p="Weapons" t="Include">
             <e p="Gun.cs" t="Include" />
           </e>
         </e>
-        <e p="Between Names" t="Include">
+        <e p="BetweenNames" t="Include">
           <e p="BetweenNames.asmdef" t="Include" />
-          <e p="Property References" t="Include">
+          <e p="CustomEditors" t="Include">
+            <e p="BetweenNames.Editor.asmdef" t="Include" />
             <e p="Editor" t="Include">
-              <e p="FloatReferenceDrawer.cs" t="Include" />
-              <e p="IntReferenceDrawer.cs" t="Include" />
+              <e p="Property References" t="Include">
+                <e p="FloatReferenceDrawer.cs" t="Include" />
+                <e p="IntReferenceDrawer.cs" t="Include" />
+              </e>
             </e>
+          </e>
+          <e p="Property References" t="Include">
             <e p="FloatReference.cs" t="Include" />
             <e p="FloatVariable.cs" t="Include" />
             <e p="IntReference.cs" t="Include" />
@@ -165,9 +171,11 @@
         </e>
       </e>
       <e p="BetweenNames.csproj" t="IncludeRecursive" />
+      <e p="BetweenNames.Editor.csproj" t="IncludeRecursive" />
+      <e p="ClockBlockers.csproj" t="IncludeRecursive" />
+      <e p="ClockBlockers.Editor.csproj" t="IncludeRecursive" />
       <e p="ClockBlockers_Unity.sln" t="IncludeFlat" />
       <e p="EditModeTests.csproj" t="IncludeRecursive" />
-      <e p="Main.csproj" t="IncludeRecursive" />
       <e p="obj" t="ExcludeRecursive" />
       <e p="Packages" t="ExcludeRecursive" />
       <e p="PlayModeTests.csproj" t="IncludeRecursive" />

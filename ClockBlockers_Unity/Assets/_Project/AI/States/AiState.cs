@@ -2,11 +2,15 @@
 
 using ClockBlockers.AI.AiControllers;
 
+using Unity.Burst;
+
+
 namespace ClockBlockers.AI.States
 {
+	[BurstCompile]
 	public abstract class AiState
 	{
-		protected AiController aiController;
+		protected readonly AiController aiController;
 		protected AiState(AiController aiController)
 		{
 			this.aiController = aiController;
@@ -16,6 +20,8 @@ namespace ClockBlockers.AI.States
 		{
 			yield break;
 		}
+
+		public virtual void Update() { }
 
 		public virtual void End() { }
 		public virtual void CompletedJob() { }

@@ -3,34 +3,37 @@
 using ClockBlockers.Characters;
 using ClockBlockers.Utility;
 
+using Unity.Burst;
+
 using UnityEngine;
 
 
 namespace ClockBlockers.ToBeMoved
 {
+    [BurstCompile]
     public class Gravity : MonoBehaviour
     {
         [SerializeField]
         private FloatReference gravityValue = null;
 
-        private CharacterMovement _characterMovement;
+        // private CharacterController characterController;
+
+        private CharacterMovementNew characterMovement;
 
         private void Awake()
         {
-            _characterMovement = GetComponent<CharacterMovement>();
+            characterMovement = GetComponent<CharacterMovementNew>();
 
-            if (!Logging.CheckIfCorrectMonoBehaviourInstantiation(ref _characterMovement, this, "Character Movement"))
+            if (!Logging.CheckIfCorrectMonoBehaviourInstantiation(ref characterMovement, this, "Character Movement"))
             {
                 enabled = false;
             }
         }
 
-        // Update is called once per frame
         private void Update()
         {
-            if (_characterMovement.isGrounded) return;
-            
-            _characterMovement.Velocity += new Vector3(0, gravityValue * Time.deltaTime, 0);
+            if (characterMovement.IsGrounded) return;
+            characterMovement.AddVelocity(new Vector3(0, gravityValue, 0) * Time.deltaTime);
         }
     }
 }

@@ -3,11 +3,14 @@ using System.Collections.Generic;
 
 using ClockBlockers.DataStructures;
 
+using Unity.Burst;
+
 using UnityEngine;
 
 
 namespace ClockBlockers.Targetting
 {
+	[BurstCompile]
 	public class DotProductConeTargeter : MonoBehaviour, ITargeter
 	{
 		// ReSharper disable once IdentifierTypo

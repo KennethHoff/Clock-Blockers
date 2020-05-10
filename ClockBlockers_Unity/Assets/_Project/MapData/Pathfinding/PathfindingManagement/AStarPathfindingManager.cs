@@ -3,7 +3,6 @@
 using ClockBlockers.Utility;
 
 using Unity.Burst;
-using Unity.EditorCoroutines.Editor;
 
 using UnityEngine;
 
@@ -15,23 +14,39 @@ namespace ClockBlockers.MapData.Pathfinding.PathfindingManagement
 		[SerializeField]
 		private int pathfindingChecksPerFramePerFinder = 100;
 
+		private readonly List<PathRequest> pathRequests = new List<PathRequest>();
+
+		private PathfindingGrid grid;
+
 
 		private void OnValidate()
 		{
 			if (pathfindingChecksPerFramePerFinder < 1) pathfindingChecksPerFramePerFinder = 1;
 		}
-		private List<PathRequest> pathRequests = new List<PathRequest>();
 
 		private void FixedUpdate()
 		{
 			FindPaths();
 		}
 
-		public void RequestPath(IPathRequester pathRequester, PathfindingMarker marker1, PathfindingMarker marker2, float maxJumpHeight)
+		private void Awake()
 		{
-			pathRequests.Add(PathRequest.CreateInstance(pathRequester, marker1, marker2, maxJumpHeight));
+			grid = GetComponent<PathfindingGrid>();
 		}
-		
+
+		public void RequestPath(IPathRequester pathRequester, PathfindingMarker startMarker, PathfindingMarker endMarker, float maxJumpHeight)
+		{
+			pathRequests.Add(new PathRequest(pathRequester, startMarker, endMarker, maxJumpHeight));
+		}
+
+		public void RequestPath(IPathRequester pathRequester, Vector3 point1, Vector3 point2, float maxJumpHeight)
+		{
+			PathfindingMarker marker1 = grid.FindNearestMarker(point1);
+			PathfindingMarker marker2 = grid.FindNearestMarker(point2);
+			
+			RequestPath(pathRequester, marker1, marker2, maxJumpHeight);
+		}
+
 		public void FindPaths()
 		{
 			FindPathsViaCoroutines();
@@ -41,13 +56,24 @@ namespace ClockBlockers.MapData.Pathfinding.PathfindingManagement
 		{
 			int pathRequestsCount = pathRequests.Count;
 			if (pathRequestsCount == 0) return;
+
+			Logging.Log($"Searching for {pathRequestsCount} paths");
 			
 			foreach (PathRequest pathRequest in pathRequests)
 			{
+				
 				var newPathfinder = AStarPathFinder.CreateInstance(pathRequest, pathfindingChecksPerFramePerFinder);
 				pathRequest.pathRequester.CurrentPathfinder = newPathfinder;
+				
 #if UNITY_EDITOR
-				EditorCoroutineUtility.StartCoroutine(newPathfinder.FindPathCoroutine(), this);
+				if (!Application.isPlaying)
+				{
+					Unity.EditorCoroutines.Editor.EditorCoroutineUtility.StartCoroutine(newPathfinder.FindPathCoroutine(), this);
+				}
+				else
+				{
+					StartCoroutine(newPathfinder.FindPathCoroutine());
+				}
 #else
 				StartCoroutine(newPathfinder.FindPathCoroutine());
 #endif

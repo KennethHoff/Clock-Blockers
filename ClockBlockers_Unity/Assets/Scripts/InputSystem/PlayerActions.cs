@@ -97,6 +97,22 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Aim"",
+                    ""type"": ""Button"",
+                    ""id"": ""9727b4e9-b1dc-4ab9-8e18-6483147303ac"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""MiddleClick"",
+                    ""type"": ""Button"",
+                    ""id"": ""556367b7-9ac4-42cd-b361-067992fd3bb6"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -319,6 +335,28 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                     ""action"": ""ToggleCursor"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ece5de71-e232-486a-962b-b05faa8928ea"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Aim"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a370cae7-e18e-40d5-a27e-3966f90899a6"",
+                    ""path"": ""<Mouse>/middleButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MiddleClick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -337,6 +375,8 @@ public class @PlayerActions : IInputActionCollection, IDisposable
         m_Character_Pause = m_Character.FindAction("Pause", throwIfNotFound: true);
         m_Character_StartNewAct = m_Character.FindAction("StartNewAct", throwIfNotFound: true);
         m_Character_ToggleCursor = m_Character.FindAction("ToggleCursor", throwIfNotFound: true);
+        m_Character_Aim = m_Character.FindAction("Aim", throwIfNotFound: true);
+        m_Character_MiddleClick = m_Character.FindAction("MiddleClick", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -396,6 +436,8 @@ public class @PlayerActions : IInputActionCollection, IDisposable
     private readonly InputAction m_Character_Pause;
     private readonly InputAction m_Character_StartNewAct;
     private readonly InputAction m_Character_ToggleCursor;
+    private readonly InputAction m_Character_Aim;
+    private readonly InputAction m_Character_MiddleClick;
     public struct CharacterActions
     {
         private @PlayerActions m_Wrapper;
@@ -410,6 +452,8 @@ public class @PlayerActions : IInputActionCollection, IDisposable
         public InputAction @Pause => m_Wrapper.m_Character_Pause;
         public InputAction @StartNewAct => m_Wrapper.m_Character_StartNewAct;
         public InputAction @ToggleCursor => m_Wrapper.m_Character_ToggleCursor;
+        public InputAction @Aim => m_Wrapper.m_Character_Aim;
+        public InputAction @MiddleClick => m_Wrapper.m_Character_MiddleClick;
         public InputActionMap Get() { return m_Wrapper.m_Character; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -449,6 +493,12 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                 @ToggleCursor.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnToggleCursor;
                 @ToggleCursor.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnToggleCursor;
                 @ToggleCursor.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnToggleCursor;
+                @Aim.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnAim;
+                @Aim.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnAim;
+                @Aim.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnAim;
+                @MiddleClick.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnMiddleClick;
+                @MiddleClick.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnMiddleClick;
+                @MiddleClick.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnMiddleClick;
             }
             m_Wrapper.m_CharacterActionsCallbackInterface = instance;
             if (instance != null)
@@ -483,6 +533,12 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                 @ToggleCursor.started += instance.OnToggleCursor;
                 @ToggleCursor.performed += instance.OnToggleCursor;
                 @ToggleCursor.canceled += instance.OnToggleCursor;
+                @Aim.started += instance.OnAim;
+                @Aim.performed += instance.OnAim;
+                @Aim.canceled += instance.OnAim;
+                @MiddleClick.started += instance.OnMiddleClick;
+                @MiddleClick.performed += instance.OnMiddleClick;
+                @MiddleClick.canceled += instance.OnMiddleClick;
             }
         }
     }
@@ -499,5 +555,7 @@ public class @PlayerActions : IInputActionCollection, IDisposable
         void OnPause(InputAction.CallbackContext context);
         void OnStartNewAct(InputAction.CallbackContext context);
         void OnToggleCursor(InputAction.CallbackContext context);
+        void OnAim(InputAction.CallbackContext context);
+        void OnMiddleClick(InputAction.CallbackContext context);
     }
 }

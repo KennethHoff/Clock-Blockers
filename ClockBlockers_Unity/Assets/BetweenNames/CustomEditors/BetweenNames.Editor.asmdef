@@ -1,0 +1,17 @@
+{
+    "name": "BetweenNames.Editor",
+    "references": [
+        "GUID:1217c75065e53bf4f8d5769cad174016"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

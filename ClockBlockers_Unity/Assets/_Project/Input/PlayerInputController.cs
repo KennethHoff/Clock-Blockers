@@ -1,18 +1,20 @@
-﻿using System;
+﻿using System.Collections;
 
 using Between_Names.Property_References;
 
 using ClockBlockers.AI;
+using ClockBlockers.AI.AiControllers;
+using ClockBlockers.AI.States;
 using ClockBlockers.Characters;
 using ClockBlockers.Events;
 using ClockBlockers.ReplaySystem;
-using ClockBlockers.ReplaySystem.ReplayRunner;
 using ClockBlockers.ReplaySystem.ReplayStorage;
 using ClockBlockers.ToBeMoved;
 using ClockBlockers.Utility;
+using ClockBlockers.Visualizations;
 using ClockBlockers.Weapons;
 
-using JetBrains.Annotations;
+using Unity.Burst;
 
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -21,9 +23,10 @@ namespace ClockBlockers.Input
 {
 	[RequireComponent(typeof(Character))]
 	[RequireComponent(typeof(CharacterMovement))]
+	[BurstCompile]
 	public class PlayerInputController : MonoBehaviour
 	{
-		private CharacterMovement _characterMovement;
+		private CharacterMovementNew _characterMovement;
 
 		private Character _character;
 
@@ -50,13 +53,21 @@ namespace ClockBlockers.Input
 
 		[SerializeField]
 		private GameEvent endActEvent = null;
-		
+
+		[SerializeField]
+		private VisualizerBase testVisualizer = null;
+
+
+
+
+		private AiController controlledAI;
+
 		private void Awake()
 		{
 			_replayStorage = GetComponent<IntervalReplayStorage>();
 			Logging.CheckIfCorrectMonoBehaviourInstantiation(ref _replayStorage, this, "Replay Storage");
 
-			_characterMovement = GetComponent<CharacterMovement>();
+			_characterMovement = GetComponent<CharacterMovementNew>();
 			Logging.CheckIfCorrectMonoBehaviourInstantiation(ref _characterMovement, this, "Character Movement");
 
 			_character = GetComponent<Character>();
@@ -72,13 +83,12 @@ namespace ClockBlockers.Input
 
 		private void Update()
 		{
-
-			_characterMovement.Rotate(_sideToSideCharacterRotation);
-			cameraController.Rotate(_upDownCameraRotation);
+			_characterMovement.Rotate(_sideToSideCharacterRotation * Time.deltaTime);
+			cameraController.Rotate(_upDownCameraRotation * Time.deltaTime);
 
 			if (_moveInput.magnitude > 0)
 			{
-				_characterMovement.AddVelocityRelativeToForward(_moveInput);
+				_characterMovement.SetForwardInputVelocity(_moveInput);
 			}
 		}
 
@@ -87,7 +97,6 @@ namespace ClockBlockers.Input
 			SetCursorActive(false);
 		}
 
-		[UsedImplicitly]
 		private void OnLook(InputValue ctx)
 		{
 			if (!_inputEnabled)
@@ -98,18 +107,17 @@ namespace ClockBlockers.Input
 			}
 			var value = ctx.Get<Vector2>();
 
-			_sideToSideCharacterRotation = value.x * horizontalMouseSensitivity * Time.deltaTime;
-			_upDownCameraRotation = value.y * verticalMouseSensitivity * Time.deltaTime;
+			_sideToSideCharacterRotation = value.x * horizontalMouseSensitivity;
+			_upDownCameraRotation = value.y * verticalMouseSensitivity;
 			
 		}
-		[UsedImplicitly]
 		private void OnJump()
 		{
 			_characterMovement.Jump();
 		}
 
 
-		[UsedImplicitly]
+		
 		private void OnMovement(InputValue ctx)
 		{
 			if (!_inputEnabled)
@@ -120,7 +128,6 @@ namespace ClockBlockers.Input
 			_moveInput = ctx.Get<Vector2>();
 		}
 
-		[UsedImplicitly]
 		private void OnShoot()
 		{
 			if (!_inputEnabled) return;
@@ -129,31 +136,83 @@ namespace ClockBlockers.Input
 			_replayStorage.SaveAction(Actions.Shoot);
 		}
 
-		[UsedImplicitly]
 		private void OnStartNewAct() // Obviously a test feature
 		{
 			if (!_inputEnabled) return;
 			endActEvent.Raise();
 		}
 
-		[UsedImplicitly]
 		private void OnIncreaseTimescale() // Obviously a test feature
 		{
 			Time.timeScale += 1;
 			Logging.Log("Increasing timescale. Now at: " + Time.timeScale);
 		}
 
-		[UsedImplicitly]
 		private void OnDecreaseTimescale() // Obviously a test feature
 		{
 			Time.timeScale -= 1;
 			Logging.Log("Decreasing timescale. Now at: " + Time.timeScale);
 		}
 
-		[UsedImplicitly]
 		private void OnToggleCursor()
 		{
 			ToggleCursor();
+		}
+
+		private void OnAim()
+		{
+			TargetCharacterYoureAimingAt();
+		}
+
+		private void TargetCharacterYoureAimingAt()
+		{
+			Ray ray = gun.CreateRay();
+			bool hitSomething = RayCaster.CastRay(ray, float.MaxValue, out RaycastHit hit);
+
+			if (!hitSomething) return;
+
+			var aiController = hit.transform.GetComponent<AiController>();
+			if (aiController == null) return;
+
+			controlledAI.SetState(new Idle(aiController));
+			
+			controlledAI = aiController;
+			
+			aiController.SetState(new ListenToInput(aiController));
+
+			Logging.Log($"Gotcha, {controlledAI.name}!");
+
+		}
+
+		private void OnMiddleClick()
+		{
+			CreateVisualizerWhereYoureAiming();
+		}
+
+		private void CreateVisualizerWhereYoureAiming()
+		{
+			Ray ray = gun.CreateRay();
+			bool hitSomething = RayCaster.CastRay(ray, float.MaxValue, out RaycastHit hit);
+
+			if (!hitSomething) return;
+
+			Vector3 hitPoint = hit.point;
+
+			const float yDistAboveGround = 5;
+			
+			hitPoint.y += yDistAboveGround;
+
+			VisualizerBase visualizer = Instantiate(testVisualizer, hitPoint, Quaternion.identity);
+
+			Transform visualizerTransform = visualizer.transform;
+			
+			visualizerTransform.LookAt(transform);
+			
+			Vector3 currRot = visualizerTransform.rotation.eulerAngles;
+			visualizer.transform.rotation = Quaternion.Euler(0, currRot.y, 0);
+
+			controlledAI.aiPathfinder.EndCurrentPath();
+			controlledAI.aiPathfinder.RequestPath(hitPoint);
 		}
 
 		private void ToggleCursor()
@@ -173,6 +232,16 @@ namespace ClockBlockers.Input
 			Cursor.lockState = locked
 				? CursorLockMode.Locked
 				: CursorLockMode.None;
+		}
+	}
+
+	internal class ListenToInput : AiState
+	{
+		public ListenToInput(AiController aiController) : base(aiController) { }
+		public override IEnumerator Begin()
+		{
+			Logging.Log("AI is now listening for input!");
+			yield break;
 		}
 	}
 }

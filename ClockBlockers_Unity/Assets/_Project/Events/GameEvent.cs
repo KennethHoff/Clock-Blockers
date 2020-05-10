@@ -1,10 +1,13 @@
 using System.Collections.Generic;
 
+using Unity.Burst;
+
 using UnityEngine;
 
 
 namespace ClockBlockers.Events {
 	[CreateAssetMenu]
+	[BurstCompile]
 	public class GameEvent : ScriptableObject
 	{
 		private readonly List<GameEventListener> _listeners = new List<GameEventListener>();

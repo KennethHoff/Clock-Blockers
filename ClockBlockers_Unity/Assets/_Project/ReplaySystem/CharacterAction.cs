@@ -1,9 +1,11 @@
 ﻿using System;
 
+using Unity.Burst;
+
 
 namespace ClockBlockers.ReplaySystem
 {
-	[Serializable]
+	[Serializable][BurstCompile]
 	public struct CharacterAction
 	{
 		public Actions action;

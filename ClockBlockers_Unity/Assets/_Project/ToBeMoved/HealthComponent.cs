@@ -7,10 +7,13 @@ using ClockBlockers.DataStructures;
 
 using TMPro;
 
+using Unity.Burst;
+
 using UnityEngine;
 
 
 namespace ClockBlockers.ToBeMoved {
+	[BurstCompile]
 	internal class HealthComponent : MonoBehaviour
 	{
 		private float Health

@@ -3,6 +3,8 @@
 using ClockBlockers.MatchData;
 using ClockBlockers.Utility;
 
+using Unity.Burst;
+
 using UnityEngine;
 
 
@@ -40,6 +42,7 @@ namespace ClockBlockers.GameControllers
 			// It does make sense for a map to be loaded by the 'latest thing' in the sequence that is guaranteed to never despawn. A match will always be on a single map.
 
 
+	[BurstCompile]
 	public class GameController : MonoBehaviour
 	{
 		

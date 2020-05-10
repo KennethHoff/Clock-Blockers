@@ -4,10 +4,13 @@ using Between_Names.Property_References;
 
 using ClockBlockers.Utility;
 
+using Unity.Burst;
+
 using UnityEngine;
 
 namespace ClockBlockers.Characters
 {
+	[BurstCompile]
 	public class CharacterMovement : MonoBehaviour
 	{
 		
@@ -26,7 +29,6 @@ namespace ClockBlockers.Characters
 		public bool isGrounded;
 
 		public Vector3 charDimension = new Vector3(0, 2, 0);
-
 		public Vector3 Velocity
 		{
 			get => velocity;
@@ -34,6 +36,8 @@ namespace ClockBlockers.Characters
 		}
 		
 		public float MoveSpd => moveSpd;
+
+		public float JumpHeight => jumpHeight;
 
 
 		private void Update()
@@ -73,7 +77,7 @@ namespace ClockBlockers.Characters
 		private bool CheckIfHittingLeftWall(ref Transform charTransform, ref Vector3 currPos)
 		{
 			float distance = -velocity.x + (charDimension.x / 2);
-			RaycastHit[] rays = Physics.RaycastAll(currPos, Vector3.left, distance);
+			RaycastHit[] rays = RayCaster.CastRayAll(new Ray(currPos, Vector3.left), distance);
 			if (rays.Length == 0)
 			{
 				return false;
@@ -94,10 +98,11 @@ namespace ClockBlockers.Characters
 
 			return true;
 		}
+
 		private bool CheckIfHittingRightWall(ref Transform charTransform, ref Vector3 currPos)
 		{
 			float distance = velocity.x + (charDimension.x / 2);
-			RaycastHit[] rays = Physics.RaycastAll(currPos, Vector3.right, distance);
+			RaycastHit[] rays = RayCaster.CastRayAll(new Ray(currPos, Vector3.right), distance);
 			if (rays.Length == 0)
 			{
 				return false;
@@ -122,7 +127,7 @@ namespace ClockBlockers.Characters
 		private bool CheckIfHittingForwardWall(ref Transform charTransform, ref Vector3 currPos)
 		{
 			float distance = velocity.z + (charDimension.z / 2);
-			RaycastHit[] rays = Physics.RaycastAll(currPos, Vector3.forward, distance);
+			RaycastHit[] rays = RayCaster.CastRayAll(new Ray(currPos, Vector3.forward), distance);
 			if (rays.Length == 0)
 			{
 				return false;
@@ -147,7 +152,7 @@ namespace ClockBlockers.Characters
 		private bool CheckIfHittingBackWall(ref Transform charTransform, ref Vector3 currPos)
 		{
 			float distance = -velocity.z + (charDimension.z / 2);
-			RaycastHit[] rays = Physics.RaycastAll(currPos, Vector3.back, distance);
+			RaycastHit[] rays = RayCaster.CastRayAll(new Ray(currPos, Vector3.back), distance);
 			if (rays.Length == 0)
 			{
 				return false;
@@ -172,7 +177,7 @@ namespace ClockBlockers.Characters
 		private void CheckIfGrounded(ref Transform charTransform, ref Vector3 currPos)
 		{
 			float distance = -velocity.y + (charDimension.y / 2);
-			RaycastHit[] rays = Physics.RaycastAll(currPos, Vector3.down, distance);
+			RaycastHit[] rays = RayCaster.CastRayAll(new Ray(currPos, Vector3.down), distance);
 			if (rays.Length == 0)
 			{
 				isGrounded = false;
@@ -197,7 +202,7 @@ namespace ClockBlockers.Characters
 		private bool CheckIfHitRoof(ref Transform charTransform, ref Vector3 currPos)
 		{
 			float distance = velocity.y + (charDimension.y / 2);
-			RaycastHit[] rays = Physics.RaycastAll(currPos, Vector3.up, distance);
+			RaycastHit[] rays = RayCaster.CastRayAll(new Ray(currPos, Vector3.up), distance);
 			if (rays.Length == 0)
 			{
 				return false;

@@ -4,14 +4,17 @@ using System.Linq;
 
 using ClockBlockers.Utility;
 
+using Unity.Burst;
+
 using UnityEngine;
 
 
 namespace ClockBlockers.MapData.MarkerGenerators
 {
 
-	[ExecuteInEditMode]
-	public class SurfaceColliderMarkerGenerator : AutomatedMarkerGenerator
+	[ExecuteInEditMode]	[BurstCompile]
+
+	public class SurfaceColliderMarkerGenerator : MarkerGeneratorBase
 	{
 		
 		private const float MaxDistanceCheck = 100f;
@@ -53,15 +56,15 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			IterativelyCreateMarkers(startPos);
 		}
 
-		public override void ClearMarkers()
-		{
-			foreach (PathfindingMarker marker in grid.markers.Where(marker => marker != null))
-			{
-				DestroyImmediate(marker.gameObject);
-			}
+		// public override void ClearMarkers()
+		// {
+			// foreach (PathfindingMarker marker in grid.markers.Where(marker => marker != null))
+			// {
+				// DestroyImmediate(marker.gameObject);
+			// }
 
-			grid.ClearMarkerList();
-		}
+			// grid.ClearMarkerList();
+		// }
 
 		public override void GenerateMarkerConnections()
 		{

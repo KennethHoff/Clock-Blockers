@@ -1,8 +1,11 @@
-﻿using UnityEngine;
+﻿using Unity.Burst;
+
+using UnityEngine;
 
 
 namespace ClockBlockers.DataStructures
 {
+	[BurstCompile]
 	public struct DamagePacket
 	{
 		public readonly float damage;

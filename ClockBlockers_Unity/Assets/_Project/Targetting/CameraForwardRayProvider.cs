@@ -1,8 +1,11 @@
-﻿using UnityEngine;
+﻿using Unity.Burst;
+
+using UnityEngine;
 
 
 namespace ClockBlockers.Targetting
 {
+	[BurstCompile]
 	public class CameraForwardRayProvider : MonoBehaviour, IRayProvider
 	{
 		[SerializeField]

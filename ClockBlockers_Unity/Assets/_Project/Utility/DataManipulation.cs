@@ -7,6 +7,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 using ClockBlockers.ReplaySystem;
 
+using Unity.Burst;
+
 
 // ReSharper disable UnusedType.Global
 // ReSharper disable UnusedMember.Global
@@ -14,6 +16,7 @@ using ClockBlockers.ReplaySystem;
 
 namespace ClockBlockers.Utility
 {
+	[BurstCompile]
 	public static class DataManipulation
 	{
 		private static readonly BinaryFormatter Formatter = new BinaryFormatter();
