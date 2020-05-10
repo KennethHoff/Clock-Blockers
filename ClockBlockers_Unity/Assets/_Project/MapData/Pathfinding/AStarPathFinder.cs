@@ -54,13 +54,14 @@ namespace ClockBlockers.MapData.Pathfinding
 			OpenList = new List<Node>();
 			closedList = new List<Node>();
 			
-			Logging.Log($"New instance of AStarPathFinder was constructed!");
+			Logging.Log("New instance of AStarPathFinder was constructed!");
 		}
 		~AStarPathFinder()
 		{
-			Logging.Log($"An instance of AStarPathFinder was deconstructed!");
+			Logging.Log("An instance of AStarPathFinder was deconstructed!");
 		}
 		
+		// ReSharper disable once SuggestBaseTypeForParameter
 		private void AddToMarkerNodeDictionary(PathfindingMarker marker, Node node)
 		{
 			markerNodeDictionary.Add(marker.GetInstanceID(), node);
@@ -76,6 +77,7 @@ namespace ClockBlockers.MapData.Pathfinding
 			markerNodeDictionary.Clear();
 		}
 		
+		// ReSharper disable once SuggestBaseTypeForParameter
 		private Node GetNodeFromMarker(PathfindingMarker marker)
 		{
 			markerNodeDictionary.TryGetValue(marker.GetInstanceID(), out Node node);

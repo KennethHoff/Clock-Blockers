@@ -30,6 +30,12 @@ namespace Between_Names.Property_References
 		{
 			return reference.Value;
 		}
+		
+		public string ToString(string format)
+		{
+			// ReSharper disable once SpecifyACultureInStringConversionExplicitly
+			return Value.ToString(format);
+		}
 
 		public override string ToString()
 		{

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+using ClockBlockers.Events;
 using ClockBlockers.GameControllers;
 using ClockBlockers.MapData;
 using ClockBlockers.Utility;
@@ -9,7 +11,6 @@ using ClockBlockers.Utility;
 using Unity.Burst;
 
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 
@@ -24,42 +25,43 @@ namespace ClockBlockers.MatchData
 	[BurstCompile]
 	public class Match : MonoBehaviour
 	{
+		[Header("Game Events")]
 		[SerializeField]
-		private UnityEvent matchCreatedEvent = null;
+		private GameEvent matchCreatedEvent = null;
 		
 		[SerializeField]
-		private UnityEvent matchBegunEvent = null;
+		private GameEvent matchBegunEvent = null;
 
 		[SerializeField]
-		private UnityEvent matchEndedEvent = null;
+		private GameEvent matchEndedEvent = null;
 
 		[SerializeField]
-		private UnityEvent matchRemovedEvent = null;
-		
-		[SerializeField]
-		private List<Round> allRounds;
+		private GameEvent matchRemovedEvent = null;
 
-		[NonSerialized]
-		public CharacterSpawner spawner;
-
-		public int RoundNumber => allRounds.Count;
-		public Round CurrentRound => allRounds.Last();
-
+		[Header("Setup")]
 		[SerializeField]
 		private Round roundPrefab = null;
 
 		[SerializeField]
 		private string battleArena = null;
 
+		
+		[Header("Instance Data")]
+		[SerializeField]
+		private List<Round> allRounds;
+		
+		
+		[NonSerialized]
+		public CharacterSpawner spawner;
+
+		public int RoundNumber => allRounds.Count;
+		public Round CurrentRound => allRounds.Last();
+		
 		private PathfindingGrid grid;
 
 		private void Awake()
 		{
 			spawner = GetComponent<CharacterSpawner>();
-			
-			grid = FindObjectOfType<PathfindingGrid>();
-			spawner.grid = grid;
-
 			
 			allRounds = new List<Round>();
 		}
@@ -67,8 +69,20 @@ namespace ClockBlockers.MatchData
 		public void Setup()
 		{
 			SceneManager.LoadScene(battleArena, LoadSceneMode.Additive);
+			
+			grid = FindObjectOfType<PathfindingGrid>();
+			
+			spawner.grid = grid;
 
-			matchCreatedEvent.Invoke();
+			matchCreatedEvent.Raise();
+			
+			StartCoroutine(BeginNextFrame());
+		}
+
+		private IEnumerator BeginNextFrame()
+		{
+			yield return null;
+			Begin();
 		}
 
 		public void Begin()
@@ -76,7 +90,7 @@ namespace ClockBlockers.MatchData
 			StartNewRound();
 			
 			
-			matchBegunEvent.Invoke();
+			matchBegunEvent.Raise();
 		}
 
 		public void End()
@@ -84,7 +98,7 @@ namespace ClockBlockers.MatchData
 			Logging.Log("Match ended!", this);
 			
 			
-			matchEndedEvent.Invoke();
+			matchEndedEvent.Raise();
 		}
 
 		public void Remove()
@@ -93,7 +107,7 @@ namespace ClockBlockers.MatchData
 
 			gameObject.SetActive(false);
 			
-			matchRemovedEvent.Invoke();
+			matchRemovedEvent.Raise();
 		}
 
 		private void StartNewRound()

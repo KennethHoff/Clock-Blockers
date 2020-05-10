@@ -37,7 +37,7 @@ namespace BetweenNames.Editor.Property_References
 			SerializedProperty variable = property.FindPropertyRelative("variable");
 
 			// Calculate rect for configuration button
-			Rect buttonRect = new Rect(position);
+			var buttonRect = new Rect(position);
 			buttonRect.yMin += popupStyle.margin.top;
 			buttonRect.width = popupStyle.fixedWidth + popupStyle.margin.right;
 			position.xMin = buttonRect.xMax;

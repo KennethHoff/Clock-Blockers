@@ -195,6 +195,7 @@ namespace ClockBlockers.MapData
 
 		public bool CheckIfPointIsInsideMap(Vector3 point)
 		{
+			
 			if (point.x > XEndPos) return false;
 			if (point.x < XStartPos) return false;
 			
@@ -202,6 +203,7 @@ namespace ClockBlockers.MapData
 			if (point.z > ZStartPos) return false;
 
 			if (point.y < YStartPos) return false;
+			// ReSharper disable once ConvertIfStatementToReturnStatement
 			if (point.y > YEndPos) return false;
 
 			return true;
@@ -224,6 +226,7 @@ namespace ClockBlockers.MapData
 
 		public PathfindingMarker FindNearestMarker(Vector3 point)
 		{
+			// ReSharper disable once ConvertIfStatementToReturnStatement
 			if (!CheckMarkerGenerator()) return null;
 
 			return markerGenerator.FindNearestMarker(point);

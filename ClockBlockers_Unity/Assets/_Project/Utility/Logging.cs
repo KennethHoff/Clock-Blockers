@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-
-using ClockBlockers.ReplaySystem.ReplayRunner;
+﻿using System.Diagnostics.CodeAnalysis;
 
 using Unity.Burst;
 
@@ -12,6 +9,7 @@ using Object = UnityEngine.Object;
 namespace ClockBlockers.Utility
 {
 	[ExecuteAlways][BurstCompile]
+	[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 	public class Logging : MonoBehaviour
 	{
 

@@ -34,7 +34,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			Logging.Log("GenerateAllMarkers is not implemented in " + GetType());
 		}
 		
-		public virtual void MergeMarkers()
+		public void MergeMarkers()
 		{
 			Logging.Log("MergeMarkers is not implemented in " + GetType());
 		}

@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 
 using ClockBlockers.Characters;
-using ClockBlockers.ReplaySystem.ReplayStorage;
 using ClockBlockers.Weapons;
 
 using Unity.Burst;
@@ -82,7 +81,7 @@ namespace ClockBlockers.ReplaySystem.ReplayRunner
 		// I might be looking to much into this.. My FPS camera doesn't even behave correctly :lul:
 		private void EngageAction(CharacterAction characterAction)
 		{
-			StartCoroutine(Co_Action(characterAction));
+			StartCoroutine(ActionRoutine(characterAction));
 		}
 
 		private void EngageAllActions()
@@ -94,7 +93,7 @@ namespace ClockBlockers.ReplaySystem.ReplayRunner
 			_remainingActions += replays.Count;
 		}
 
-		private IEnumerator Co_Action(CharacterAction characterAction)
+		private IEnumerator ActionRoutine(CharacterAction characterAction)
 		{
 			yield return new WaitForSeconds(characterAction.time - Time.fixedDeltaTime);
 			yield return new WaitForFixedUpdate();

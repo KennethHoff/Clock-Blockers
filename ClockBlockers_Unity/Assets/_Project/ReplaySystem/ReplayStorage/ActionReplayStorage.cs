@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using Between_Names.Property_References;
 
@@ -65,6 +64,7 @@ namespace ClockBlockers.ReplaySystem.ReplayStorage
 
 		}
 
+		// ReSharper disable once MemberCanBePrivate.Global
 		public void SaveAction(Actions action, float[] parameter)
 		{
 			if (!saveActions) return;

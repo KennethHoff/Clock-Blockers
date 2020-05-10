@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-using Between_Names.Property_References;
+﻿using Between_Names.Property_References;
 
 using TMPro;
 
@@ -12,9 +10,9 @@ using UnityEngine.UI;
 
 namespace ClockBlockers.UI.Main_Menu
 {
-	
-	[BurstCompile]
 	// TODO: Split up each 'section' into separate classes..
+
+	[BurstCompile]
 	public class OptionsMenu : BaseGameMenu
 	{
 		private BaseGameMenu Main { get; set; }
@@ -55,19 +53,19 @@ namespace ClockBlockers.UI.Main_Menu
 		public void SetVerticalSensitivity()
 		{
 			verticalSensitivity.Value = verticalSensitivitySlider.value / 10;
-			verticalSensitivityInputField.text = (verticalSensitivity * 10f).ToString(CultureInfo.CurrentCulture);
+			verticalSensitivityInputField.text = verticalSensitivity.ToString("F1");
 		}
 
 		public void SetHorizontalSensitivity()
 		{
 			horizontalSensitivity.Value = horizontalSensitivitySlider.value / 10;
-			horizontalSensitivityInputField.text = (horizontalSensitivity * 10f).ToString(CultureInfo.CurrentCulture);
+			horizontalSensitivityInputField.text = horizontalSensitivity.ToString("F1");
 		}
 
 		// private void OnGUI()
 		// {
-		// 	horizontalMovementInputField.text = horizontalMovement.ToString();
-		// 	verticalMovementInputField.text = verticalMovement.ToString();
+			// horizontalSensitivityInputField.text = horizontalSensitivity.ToString("F1");
+			// verticalSensitivityInputField.text = verticalSensitivity.ToString("F1");
 		// }
 
 		public void OnPressBack()

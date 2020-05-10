@@ -1,6 +1,4 @@
-﻿using Unity.Burst;
-
-using UnityEngine;
+﻿using UnityEngine;
 
 
 namespace ClockBlockers.DataStructures

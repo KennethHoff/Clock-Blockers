@@ -126,7 +126,7 @@ MonoBehaviour:
     useConstant: 0
     constantValue: 5
     variable: {fileID: 11400000, guid: 200b86ee37752df4985386a04e2664f9, type: 2}
-  endActEvent: {fileID: 11400000, guid: ad8b6c064072c994a9777d3eb89f6091, type: 2}
+  forceEndActEvent: {fileID: 11400000, guid: 79d70253939a2604abceaa1833e99a57, type: 2}
   testVisualizer: {fileID: 2969348827695347134, guid: a4369b1c0c8c7e6479dff889dda2cf8d, type: 3}
 --- !u!1001 &759690741484361695
 PrefabInstance:

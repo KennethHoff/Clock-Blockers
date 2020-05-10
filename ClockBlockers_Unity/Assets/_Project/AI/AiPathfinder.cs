@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using ClockBlockers.Characters;
 using ClockBlockers.MapData;
@@ -26,6 +25,7 @@ namespace ClockBlockers.AI
 		protected int currentPathIndex;
 
 		// In relation to pathfinding - 'How high can I jump'
+		[SerializeField]
 		protected float highestReachableRelativeAltitude;
 
 		public IPathfindingManager pathfindingManager;
@@ -61,7 +61,7 @@ namespace ClockBlockers.AI
 		{
 			if (CurrentPathMarker == null) return;
 			
-			if (DistanceToCurrentPathMarker() < characterMovement.MoveSpd) IncrementCurrentPathIndex();;
+			if (DistanceToCurrentPathMarker() < characterMovement.MoveSpd) IncrementCurrentPathIndex();
 		}
 
 		public abstract void RequestPath(Vector3 destination);

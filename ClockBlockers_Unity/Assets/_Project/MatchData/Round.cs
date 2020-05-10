@@ -1,36 +1,45 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-using ClockBlockers.MapData;
+using ClockBlockers.Events;
 using ClockBlockers.Utility;
 
 using Unity.Burst;
 
 using UnityEngine;
-using UnityEngine.Events;
 
 
 namespace ClockBlockers.MatchData {
 	[BurstCompile]
 	public class Round : MonoBehaviour
 	{
+		[Header("Game Events")]
 
 		[SerializeField]
-		private UnityEvent roundCreatedEvent = null;
+		private GameEvent roundCreatedEvent = null;
 		
 		[SerializeField]
-		private UnityEvent roundBegunEvent = null;
+		private GameEvent roundBegunEvent = null;
 
 		[SerializeField]
-		private UnityEvent roundEndedEvent = null;
+		private GameEvent roundEndedEvent = null;
 
 		[SerializeField]
-		private UnityEvent roundRemovedEvent = null;
+		private GameEvent roundRemovedEvent = null;
 		
+		
+		[Header("Setup")]
+		
+		[SerializeField]
+		private Act actPrefab;
+
 		
 		[NonSerialized]
 		public Match match;
+		
+		[Header("Instance Data")]
 		[SerializeField]
 		private List<Act> allActs = new List<Act>();
 
@@ -38,9 +47,6 @@ namespace ClockBlockers.MatchData {
 		public Act CurrentAct => allActs.Last();
 
 		public int ActNumber => allActs.Count;
-
-		[SerializeField]
-		private Act actPrefab;
 
 		private void Awake()
 		{
@@ -51,7 +57,15 @@ namespace ClockBlockers.MatchData {
 		{
 			StartNewAct();
 
-			roundCreatedEvent.Invoke();
+			roundCreatedEvent.Raise();
+			
+			StartCoroutine(BeginNextFrame());
+		}
+
+		private IEnumerator BeginNextFrame()
+		{
+			yield return null;
+			Begin();
 		}
 
 		public void Begin()
@@ -59,14 +73,14 @@ namespace ClockBlockers.MatchData {
 			Logging.Log("Round ended", this);
 			
 			
-			roundBegunEvent.Invoke();
+			roundBegunEvent.Raise();
 		}
 		
 		public void End()
 		{
 			// Look at leaderboard etc..
 			
-			roundEndedEvent.Invoke();
+			roundEndedEvent.Raise();
 		}
 
 		private Act PreviousAct()
@@ -78,7 +92,7 @@ namespace ClockBlockers.MatchData {
 		{
 			gameObject.SetActive(false);
 			
-			roundRemovedEvent.Invoke();
+			roundRemovedEvent.Raise();
 		}
 
 		public void StartNewAct()

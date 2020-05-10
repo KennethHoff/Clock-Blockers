@@ -1,8 +1,4 @@
-﻿using System;
-
-using ClockBlockers.Utility;
-
-using UnityEngine;
+﻿using UnityEngine;
 
 
 namespace ClockBlockers.Characters

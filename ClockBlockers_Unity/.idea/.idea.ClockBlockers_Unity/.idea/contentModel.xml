@@ -36,7 +36,6 @@
             <e p="Editor" t="Include">
               <e p="MapData" t="Include">
                 <e p="PathfindingGridEditor.cs" t="Include" />
-                <e p="PathfindingMarkerEditor.cs" t="Include" />
               </e>
             </e>
           </e>

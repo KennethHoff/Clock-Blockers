@@ -58,6 +58,7 @@ namespace ClockBlockers.MapData
                 return;
             }
 
+            // ReSharper disable twice BitwiseOperatorOnEnumWithoutFlags
             const UnityEditor.SelectionMode selectionMode = UnityEditor.SelectionMode.TopLevel | UnityEditor.SelectionMode.ExcludePrefab | UnityEditor.SelectionMode.Editable;
             
             Transform[] transforms = UnityEditor.Selection.GetTransforms(selectionMode);
@@ -256,7 +257,7 @@ namespace ClockBlockers.MapData
 
         private void RequestPathTo(PathfindingMarker marker, float maxJumpHeight)
         {
-            Logging.Log($"Finding path to {marker.name} from {this.name}");
+            Logging.Log($"Finding path to {marker.name} from {name}");
 
             pathToOtherSelectMarker = null;
             
@@ -265,7 +266,7 @@ namespace ClockBlockers.MapData
 
         private void RequestPathFrom(PathfindingMarker marker, float maxJumpHeight)
         {
-            Logging.Log($"Finding path to {marker.name} from {this.name}");
+            Logging.Log($"Finding path to {marker.name} from {name}");
             
             pathToOtherSelectMarker = null;
             

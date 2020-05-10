@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using ClockBlockers.Utility;
 
@@ -11,9 +10,12 @@ using UnityEngine;
 
 namespace ClockBlockers.MapData.MarkerGenerators
 {
+	// A lot of time was spent on this, but it never really worked out as I hoped.
 
+	// The plan was to automatically create colliders along the floor that expanded until it hit something along every axis, up to a set size.
+	// Similarly to how (I think..) the pathfinding mapping works in CS:GO (And potentially other games, but I've seen at least the visualizer for how it works in CS:GO, and I feel like it works like this)
+	
 	[ExecuteInEditMode]	[BurstCompile]
-
 	public class SurfaceColliderMarkerGenerator : MarkerGeneratorBase
 	{
 		
@@ -184,8 +186,8 @@ namespace ClockBlockers.MapData.MarkerGenerators
 
 				if (!GetCollisions(ref currPos, ref currSize, out bool forward, out bool left, out bool back, out bool right)) continue;
 
-				var moved = MoveBasedOnCollisions(ref currPos, forward, left, back, right, "");
-				var resized = ResizeBasedOnCollisions(ref currSize, forward, left, back, right, "");
+				bool moved = MoveBasedOnCollisions(ref currPos, forward, left, back, right, "");
+				bool resized = ResizeBasedOnCollisions(ref currSize, forward, left, back, right, "");
 
 				if (!moved || !resized) break;
 			}
@@ -211,7 +213,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			}
 
 
-			string collNames = "";
+			var collNames = "";
 			foreach (Collider coll in colliders)
 			{
 				bool isNotInsideOtherObject = CheckCollidingDirections(ref currPos, coll, ref collForward, ref collLeft, ref collBack, ref collRight, false, true);
@@ -274,7 +276,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 		{
 			int sides = (forward ? 1 : 0) + (left ? 1 : 0) + (back ? 1 : 0) + (right ? 1 : 0);
 
-			string directionString = "";
+			var directionString = "";
 
 			switch (sides)
 			{
@@ -393,7 +395,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 		{
 			int sides = (forward ? 1 : 0) + (left ? 1 : 0) + (back ? 1 : 0) + (right ? 1 : 0);
 
-			string directionString = "";
+			var directionString = "";
 
 			switch (sides)
 			{
@@ -442,6 +444,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 						
 						if (forward)
 						{
+							// ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
 							if (left)
 							{
 								directionString = "Forward and Left";
@@ -453,6 +456,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 						}
 						else if (back)
 						{
+							// ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
 							if (left)
 							{
 								directionString = "Back and Left";
@@ -586,6 +590,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			return collidedWithSomething;
 		}
 
+		// ReSharper disable once SuggestBaseTypeForParameter
 		private static void CheckIfCollidedOnXAxis(Vector3 hitPos, ref bool collLeft, ref bool collRight, GameObject gObjHit, bool logging, float xDist, float floatLeniency, ref bool collidedWithSomething)
 		{
 			if (!(Math.Abs(xDist) > floatLeniency)) return;
@@ -603,6 +608,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			}
 		}
 
+		// ReSharper disable once SuggestBaseTypeForParameter
 		private static void CheckIfCollidedOnZAxis(Vector3 hitPos, ref bool collForward, ref bool collBack, GameObject gObjHit, bool logging, float zDist, float floatLeniency, ref bool collidedWithSomething)
 		{
 			if (!(Math.Abs(zDist) > floatLeniency)) return;

@@ -2,7 +2,6 @@
 
 using Between_Names.Property_References;
 
-using ClockBlockers.Characters;
 using ClockBlockers.DataStructures;
 using ClockBlockers.Targetting;
 
@@ -52,9 +51,6 @@ namespace ClockBlockers.Weapons
 		[SerializeField]
 		private Transform casingExitLocation = null;
 
-		[SerializeField]
-		private Character holder;
-		
 		[SerializeField]
 		private FloatReference damage = null;
 

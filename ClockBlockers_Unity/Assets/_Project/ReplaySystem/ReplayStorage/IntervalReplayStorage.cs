@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using Between_Names.Property_References;
-
-using ClockBlockers.Characters;
 
 using Unity.Burst;
 
@@ -20,8 +17,6 @@ namespace ClockBlockers.ReplaySystem.ReplayStorage
 		
 		public List<CharacterAction> actions;
 
-
-		private Character _character;
 		private Transform _transform;
 
 		[SerializeField]
@@ -32,7 +27,6 @@ namespace ClockBlockers.ReplaySystem.ReplayStorage
 		private void Awake()
 		{
 			_transform = GetComponent<Transform>();
-			_character = GetComponent<Character>();
 			
 			actions = new List<CharacterAction>();
 			translations = new List<Translation>();

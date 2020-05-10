@@ -74,7 +74,7 @@ namespace ClockBlockers.Characters
 
 		internal Action onKilled;
 
-		protected virtual void Awake()
+		protected void Awake()
 		{
 			_healthComponent = GetComponent<HealthComponent>();
 			Logging.CheckIfCorrectMonoBehaviourInstantiation(ref _healthComponent, this, "Health Component");
@@ -88,7 +88,7 @@ namespace ClockBlockers.Characters
 			_waitForFixedFrame = new WaitForFixedUpdate(); 
 		}
 
-		private IEnumerator Co_FallThroughFloor(float removalTime)
+		private IEnumerator FallThroughFloorRoutine(float removalTime)
 		{
 			_diedTime = Time.time;
 			// Get the height of the body.
@@ -118,16 +118,15 @@ namespace ClockBlockers.Characters
 		}
 		
 		
-		public virtual void Kill()
+		public void Kill()
 		{
 			_bodyRenderer.material = deadMaterial;
 			
 			const float removalTime = 1.25f;
 			
 			onKilled?.Invoke();
-			
 
-			StartCoroutine(Co_FallThroughFloor(removalTime));
+			StartCoroutine(FallThroughFloorRoutine(removalTime));
 		}
 	}
 }

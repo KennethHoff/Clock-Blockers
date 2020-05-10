@@ -90,11 +90,12 @@ namespace ClockBlockers.MapData.MarkerGenerators
 
 			int markersCreatedCount = markersCreated.Count;
 			
+			// ReSharper disable once InvertIf
 			if (markersCreatedCount > 1)
 			{
 				for (var i = 0; i < markersCreatedCount; i++)
 				{
-					var marker = markersCreated[i];
+					PathfindingMarker marker = markersCreated[i];
 					marker.name += $"({i})";
 				}
 			}

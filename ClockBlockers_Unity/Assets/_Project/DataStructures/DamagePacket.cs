@@ -6,7 +6,7 @@ using UnityEngine;
 namespace ClockBlockers.DataStructures
 {
 	[BurstCompile]
-	public struct DamagePacket
+	public readonly struct DamagePacket
 	{
 		public readonly float damage;
 		public readonly GameObject source;

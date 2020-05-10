@@ -44,68 +44,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb08c7bb6b04f6f4a9859d58170041b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RoundCreatedEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: 8cdaaa6f377c3fa41935bef5e5202083, type: 2}
-        m_TargetAssemblyTypeName: ClockBlockers.Events.GameEvent, Main
-        m_MethodName: Raise
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  RoundBegunEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: 32eb60b24b452074abfb9b10fbd81094, type: 2}
-        m_TargetAssemblyTypeName: ClockBlockers.Events.GameEvent, Main
-        m_MethodName: Raise
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  RoundEndedEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: 7a5f10391fe82fc45a8a3d32608b31b8, type: 2}
-        m_TargetAssemblyTypeName: ClockBlockers.Events.GameEvent, Main
-        m_MethodName: Raise
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  RoundRemovedEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: bf37cfd26a206d7468fbe61767352bd6, type: 2}
-        m_TargetAssemblyTypeName: ClockBlockers.Events.GameEvent, Main
-        m_MethodName: Raise
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  allActs: []
+  roundCreatedEvent: {fileID: 11400000, guid: 8cdaaa6f377c3fa41935bef5e5202083, type: 2}
+  roundBegunEvent: {fileID: 11400000, guid: 32eb60b24b452074abfb9b10fbd81094, type: 2}
+  roundEndedEvent: {fileID: 11400000, guid: 7a5f10391fe82fc45a8a3d32608b31b8, type: 2}
+  roundRemovedEvent: {fileID: 11400000, guid: bf37cfd26a206d7468fbe61767352bd6, type: 2}
   actPrefab: {fileID: 223034420267762624, guid: fb23989b7ba4e5e48b4885f7a686c7ac, type: 3}
+  allActs: []
 --- !u!114 &7215427937529460062
 MonoBehaviour:
   m_ObjectHideFlags: 0

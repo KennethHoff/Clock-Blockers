@@ -19,6 +19,7 @@ using Unity.Burst;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+
 namespace ClockBlockers.Input
 {
 	[RequireComponent(typeof(Character))]
@@ -52,7 +53,7 @@ namespace ClockBlockers.Input
 		private bool _inputEnabled;
 
 		[SerializeField]
-		private GameEvent endActEvent = null;
+		private GameEvent forceEndActEvent = null;
 
 		[SerializeField]
 		private VisualizerBase testVisualizer = null;
@@ -60,7 +61,7 @@ namespace ClockBlockers.Input
 
 
 
-		private AiController controlledAI;
+		private AiController controlledAi;
 
 		private void Awake()
 		{
@@ -139,7 +140,7 @@ namespace ClockBlockers.Input
 		private void OnStartNewAct() // Obviously a test feature
 		{
 			if (!_inputEnabled) return;
-			endActEvent.Raise();
+			forceEndActEvent.Raise();
 		}
 
 		private void OnIncreaseTimescale() // Obviously a test feature
@@ -161,10 +162,10 @@ namespace ClockBlockers.Input
 
 		private void OnAim()
 		{
-			TargetCharacterYoureAimingAt();
+			TakeControlOverTargetAi();
 		}
 
-		private void TargetCharacterYoureAimingAt()
+		private void TakeControlOverTargetAi()
 		{
 			Ray ray = gun.CreateRay();
 			bool hitSomething = RayCaster.CastRay(ray, float.MaxValue, out RaycastHit hit);
@@ -174,22 +175,22 @@ namespace ClockBlockers.Input
 			var aiController = hit.transform.GetComponent<AiController>();
 			if (aiController == null) return;
 
-			controlledAI.SetState(new Idle(aiController));
+			controlledAi.SetState(new Idle(aiController));
 			
-			controlledAI = aiController;
+			controlledAi = aiController;
 			
 			aiController.SetState(new ListenToInput(aiController));
 
-			Logging.Log($"Gotcha, {controlledAI.name}!");
+			Logging.Log($"Gotcha, {controlledAi.name}!");
 
 		}
 
 		private void OnMiddleClick()
 		{
-			CreateVisualizerWhereYoureAiming();
+			CreateVisualizerAtTargetPosition();
 		}
 
-		private void CreateVisualizerWhereYoureAiming()
+		private void CreateVisualizerAtTargetPosition()
 		{
 			Ray ray = gun.CreateRay();
 			bool hitSomething = RayCaster.CastRay(ray, float.MaxValue, out RaycastHit hit);
@@ -211,8 +212,8 @@ namespace ClockBlockers.Input
 			Vector3 currRot = visualizerTransform.rotation.eulerAngles;
 			visualizer.transform.rotation = Quaternion.Euler(0, currRot.y, 0);
 
-			controlledAI.aiPathfinder.EndCurrentPath();
-			controlledAI.aiPathfinder.RequestPath(hitPoint);
+			controlledAi.aiPathfinder.EndCurrentPath();
+			controlledAi.aiPathfinder.RequestPath(hitPoint);
 		}
 
 		private void ToggleCursor()

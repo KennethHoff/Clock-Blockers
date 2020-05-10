@@ -1,11 +1,7 @@
-﻿using System;
-
-using Between_Names.Property_References;
+﻿using Between_Names.Property_References;
 
 using ClockBlockers.Characters;
 using ClockBlockers.DataStructures;
-
-using TMPro;
 
 using Unity.Burst;
 

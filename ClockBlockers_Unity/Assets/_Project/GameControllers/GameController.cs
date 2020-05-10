@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 
 using ClockBlockers.MatchData;
-using ClockBlockers.Utility;
 
 using Unity.Burst;
 
@@ -45,12 +44,13 @@ namespace ClockBlockers.GameControllers
 	[BurstCompile]
 	public class GameController : MonoBehaviour
 	{
-		
-		[SerializeField]
-		private List<Match> allMatches;
-		
+		[Header("Setup")]
 		[SerializeField]
 		private Match matchPrefab = null;
+		
+		[Header("Instance Data")]
+		[SerializeField]
+		private List<Match> allMatches;
 		
 		private Match _currentMatch;
 		
@@ -61,8 +61,9 @@ namespace ClockBlockers.GameControllers
 			allMatches.Add(newMatch);
 			
 			newMatch.Setup();
-			newMatch.Begin();
+			
 			// Application.targetFrameRate = 60;
 		}
+		
 	}
 }

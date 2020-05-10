@@ -3,8 +3,6 @@ using System.Collections.Generic;
 
 using Between_Names.Property_References;
 
-using ClockBlockers.AI.AiControllers;
-using ClockBlockers.AI.States;
 using ClockBlockers.Characters;
 using ClockBlockers.Utility;
 
@@ -46,14 +44,18 @@ namespace ClockBlockers.ReplaySystem.ReplayRunner
 			if (_timer < translationInterval) return null;
 
 			_timer = 0;
-			
-			if ( (translations.Count == 0) || (_currentTranslationIndex >= translations.Count) )
+
+			if (translations == null || _currentTranslationIndex >= translations.Count)
 			{
 				Unlink();
 				return null;
 			}
 			
-			return translations[_currentTranslationIndex++];
+			Translation translation = translations[_currentTranslationIndex];
+			_currentTranslationIndex++;
+
+			return translations[_currentTranslationIndex];
+			
 		}
 
 		/// <summary>

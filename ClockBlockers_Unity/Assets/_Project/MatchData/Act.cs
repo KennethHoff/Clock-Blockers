@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Between_Names.Property_References;
 
 using ClockBlockers.Characters;
 using ClockBlockers.Events;
-using ClockBlockers.MapData;
 using ClockBlockers.ReplaySystem.ReplayRunner;
 using ClockBlockers.ReplaySystem.ReplayStorage;
 using ClockBlockers.Utility;
@@ -16,43 +16,49 @@ using UnityEngine;
 
 namespace ClockBlockers.MatchData
 {
-	// DONE: Find a way to store the CharacterStorage across acts. << Not needed. The act itself is stored in a 'Round', and you'll access the values directly
 	[BurstCompile]
 	public class Act : MonoBehaviour
 	{
-		[NonSerialized]
-		public Round round;
-
-		// List of all Clones to spawn - List<IReplayStorage> perhaps
-
-		// List of all players to spawn - List <Player> perhaps, although I don't want the same player instance to be created.
-		// Mostly for the independence of being able to create a completely random character and it working correctly
+		[Header("Game Events")]
 		[SerializeField]
 		private GameEvent actCreatedEvent = null;
 
-		
 		[SerializeField]
-		private GameEvent actRemovedEvent = null; // Temporary
+		private GameEvent actBegunEvent = null;
 
-		private float _actDuration;
+		[SerializeField]
+		private GameEvent actEndedEvent = null;
 
+		[SerializeField]
+		private GameEvent actRemovedEvent = null;
+
+
+		[Header("Instance Data")]
+		public List<IntervalReplayStorage> replaysForThisAct;
+		public List<IntervalReplayStorage> replaysCreated;
+		
+		
 		[SerializeField]
 		private FloatReference timeWhenActStarted = null;
-		
-		
 		private List<Character> _playerCharacters;
 
 		[NonSerialized]
-		public List<IntervalReplayStorage> replaysCreated;
+		public Round round;
 
-		public List<IntervalReplayStorage> replaysForThisAct;
 		public void Setup()
 		{
-			
 			_playerCharacters = new List<Character>();
 			SpawnAllCharacters();
 
 			actCreatedEvent.Raise();
+			
+			StartCoroutine(BeginNextFrame());
+		}
+
+		private IEnumerator BeginNextFrame()
+		{
+			yield return null;
+			Begin();
 		}
 
 		// in CS:GO terms: This is when the buy phase is, and you can't move or shoot
@@ -60,19 +66,19 @@ namespace ClockBlockers.MatchData
 		public void Begin()
 		{
 			timeWhenActStarted.Value = Time.time;
+			actBegunEvent.Raise();
 		}
 
 
-		// in CS:GO terms: This is when the Leaderboard pops up, and you can't interact
+		// in CS:GO terms: This is when the leaderboard pops up, and you can't interact
 		public void End()
 		{
 			Logging.Log("Act ended!", this);
 
-			
+			actEndedEvent.Raise();
+
 			// The following is temporary 
 			Remove();
-			actRemovedEvent.Raise();
-
 		}
 
 		public void Remove()
@@ -82,7 +88,8 @@ namespace ClockBlockers.MatchData
 			replaysCreated = new List<IntervalReplayStorage>();
 
 			_playerCharacters.ForEach(character => replaysCreated.Add(character.GetComponent<IntervalReplayStorage>()));
-
+			
+			actRemovedEvent.Raise();
 		}
 
 		private void SpawnAllCharacters()
@@ -142,4 +149,6 @@ namespace ClockBlockers.MatchData
 			return newClone;
 		}
 	}
+
+	// DONE: Find a way to store the CharacterStorage across acts. << Not needed. The act itself is stored in a 'Round', and you'll access the values directly
 }

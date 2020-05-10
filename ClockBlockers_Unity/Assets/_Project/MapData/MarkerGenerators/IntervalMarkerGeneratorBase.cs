@@ -18,19 +18,6 @@ namespace ClockBlockers.MapData.MarkerGenerators
 	[BurstCompile]
 	public abstract class IntervalMarkerGeneratorBase : MarkerGeneratorBase
 	{
-
-		[Serializable]
-		private struct MarkerAndDistanceToZero
-		{
-			public float distanceToZero;
-			public PathfindingMarker marker;
-			public MarkerAndDistanceToZero(float distanceToZero, PathfindingMarker marker)
-			{
-				this.distanceToZero = distanceToZero;
-				this.marker = marker;
-			}
-		}
-
 		[Space(10)]
 		[Range(MinDistance, MaxDistance)]
 		public int distanceBetweenCreatedMarkers;
@@ -108,11 +95,10 @@ namespace ClockBlockers.MapData.MarkerGenerators
 				markersCreatedThisColumn += markersCreatedThisRow;
 			}
 
-			if (markersCreatedThisColumn == 0)
-			{
-				DestroyImmediate(newColumn.gameObject);
-				Logging.Log("Did not create any Markers on column " + i);
-			}
+			if (markersCreatedThisColumn != 0) return markersCreatedThisColumn;
+			
+			DestroyImmediate(newColumn.gameObject);
+			Logging.Log("Did not create any Markers on column " + i);
 
 			return markersCreatedThisColumn;
 
@@ -223,7 +209,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 					AdjacencyDirection direction = FindRelativeDirection(xDist, zDist);
 					if (direction == AdjacencyDirection.Unknown)
 					{
-						Logging.LogWarning($"Unknown direction");
+						Logging.LogWarning("Unknown direction");
 						yield break;
 					}
 					
@@ -245,7 +231,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 		}
 
 		// Due to how it's constructed, it can never collide purely on the horizontal axis. If there is a X-Z collision, then the marker would simply not be created in the first place
-		private bool CheckIfColliding(Vector3 markerPos, AdjacencyDirection direction, float xDist, float zDist, float yDist)
+		private static bool CheckIfColliding(Vector3 markerPos, AdjacencyDirection direction, float xDist, float zDist, float yDist)
 		{
 			// 'Marker' is referring to the marker whose 'connectedMarkers' list is being worked on.
 			// 'Object' is referring to the marker that we're checking line-of-sight towards.
@@ -262,9 +248,9 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			//		v						^
 			// 	C	O					C	M
 			
-			bool yCollides = false;
-			bool xCollides = false;
-			bool zCollides = false;
+			var yCollides = false;
+			var xCollides = false;
+			var zCollides = false;
 
 
 			// 'Object' is above

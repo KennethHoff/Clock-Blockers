@@ -1,3 +1,5 @@
+using System;
+
 using ClockBlockers.AI;
 using ClockBlockers.Characters;
 using ClockBlockers.MapData;
@@ -19,6 +21,7 @@ namespace ClockBlockers.GameControllers {
 		[SerializeField]
 		private Character clonePrefab = null;
 
+		[NonSerialized]
 		public PathfindingGrid grid;
 
 		public Character SpawnPlayer()
@@ -31,7 +34,7 @@ namespace ClockBlockers.GameControllers {
 		{
 			Character newClone = SpawnCharacter(clonePrefab);
 			var aiPathfinder = newClone.GetComponent<AiPathfinder>();
-			
+
 			if (aiPathfinder == null)
 			{
 				Logging.LogWarning("Clone has no PathFinder");
@@ -43,8 +46,7 @@ namespace ClockBlockers.GameControllers {
 
 			return newClone;
 		}
-		
-		
+
 		private static Character SpawnCharacter(Character character)
 		{
 			Character newCharacter = Instantiate(character, Vector3.up *10, Quaternion.identity);

@@ -1,5 +1,7 @@
 using System;
 
+using ClockBlockers.MapData;
+
 using Unity.Burst;
 
 using UnityEditor;
@@ -7,7 +9,7 @@ using UnityEditor;
 using UnityEngine;
 
 
-namespace ClockBlockers.MapData.Editor
+namespace ClockBlockers.CustomEditors.Editor.MapData
 {
 	[CustomEditor(typeof(PathfindingGrid))]
 	[BurstCompile]
