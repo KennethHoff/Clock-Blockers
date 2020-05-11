@@ -44,9 +44,9 @@ namespace ClockBlockers.MatchData {
 		private List<Act> allActs = new List<Act>();
 
 
-		public Act CurrentAct => allActs.Last();
+		// public Act CurrentAct => allActs.Last();
 
-		public int ActNumber => allActs.Count;
+		// public int ActNumber => allActs.Count;
 
 		private void Awake()
 		{
@@ -55,8 +55,6 @@ namespace ClockBlockers.MatchData {
 
 		public void Setup()
 		{
-			StartNewAct();
-
 			roundCreatedEvent.Raise();
 			
 			StartCoroutine(BeginNextFrame());
@@ -68,9 +66,12 @@ namespace ClockBlockers.MatchData {
 			Begin();
 		}
 
-		public void Begin()
+		private void Begin()
 		{
 			Logging.Log("Round ended", this);
+			
+			StartNewAct();
+
 			
 			
 			roundBegunEvent.Raise();
@@ -85,6 +86,7 @@ namespace ClockBlockers.MatchData {
 
 		private Act PreviousAct()
 		{
+			if (allActs == null || allActs.Count == 0) return null;
 			return allActs.Last();
 		}
 
@@ -99,19 +101,20 @@ namespace ClockBlockers.MatchData {
 		{
 			Act newAct = Instantiate(actPrefab, transform, true);
 			
-			newAct.round = this;
-
-			if (allActs.Count > 0)
-			{
-				newAct.replaysForThisAct = PreviousAct().replaysCreated;
-			}
 			
+			newAct.Inject(this, PreviousAct()?.replaysCreated);
+
 			allActs.Add(newAct);
 			
 			newAct.Setup();
 			
 			// "10 seconds after start..." or whatever
 			newAct.Begin();
+		}
+
+		public void Inject(Match currMatch)
+		{
+			match = currMatch;
 		}
 	}
 }

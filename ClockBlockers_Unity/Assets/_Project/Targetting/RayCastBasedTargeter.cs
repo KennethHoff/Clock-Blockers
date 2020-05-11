@@ -2,6 +2,7 @@
 
 using ClockBlockers.Characters;
 using ClockBlockers.DataStructures;
+using ClockBlockers.Utility;
 
 using Unity.Burst;
 

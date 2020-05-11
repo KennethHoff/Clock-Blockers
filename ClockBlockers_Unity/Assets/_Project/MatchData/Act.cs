@@ -42,17 +42,17 @@ namespace ClockBlockers.MatchData
 		private FloatReference timeWhenActStarted = null;
 		private List<Character> _playerCharacters;
 
-		[NonSerialized]
-		public Round round;
+		private Round _round;
 
 		public void Setup()
 		{
 			_playerCharacters = new List<Character>();
+			
 			SpawnAllCharacters();
 
-			actCreatedEvent.Raise();
-			
 			StartCoroutine(BeginNextFrame());
+			
+			actCreatedEvent.Raise();
 		}
 
 		private IEnumerator BeginNextFrame()
@@ -109,29 +109,36 @@ namespace ClockBlockers.MatchData
 
 		private void SpawnAllClones()
 		{
+			if (replaysForThisAct == null)
+			{
+				Logging.Log("Spawned no clones");
+				return;
+			}
+			
+			
 			foreach (IntervalReplayStorage replayStorage in replaysForThisAct)
 			{
 				Character clone = SpawnNewClone();
 				// clone.GetComponent<IntervalReplayRunner>().replays = replayStorage.PlayerActions;
 
-				var cloneReplayRunner = clone.GetComponent<ReplayRunner>();
+				var cloneReplayRunner = clone.GetComponent<IntervalReplayRunner>();
+
+				cloneReplayRunner.Initialize(replayStorage.actions, replayStorage.translations);
 				
-				cloneReplayRunner.actions = replayStorage.actions;
-				cloneReplayRunner.translations = replayStorage.translations;
 
 			}
 
 			// TODO: For each clone...
 			// SpawnNewClone();
 
-			Logging.Log("Spawned all clones on me!", this);
+			Logging.Log($"Spawned {replaysForThisAct.Count} clones", this);
 		}
 
 
 		[ContextMenu("Spawn a new Player")]
 		public Character SpawnNewPlayer()
 		{
-			Character newPlayer = round.match.spawner.SpawnPlayer();
+			Character newPlayer = _round.match.spawner.SpawnPlayer();
 			
 			newPlayer.transform.SetParent(transform, true);
 			_playerCharacters.Add(newPlayer);
@@ -142,11 +149,17 @@ namespace ClockBlockers.MatchData
 		[ContextMenu("Spawn a new Clone")]
 		public Character SpawnNewClone()
 		{
-			Character newClone = round.match.spawner.SpawnClone();
+			Character newClone = _round.match.spawner.SpawnClone();
 
 			newClone.transform.SetParent(transform, true);
 
 			return newClone;
+		}
+
+		public void Inject(Round currRound, List<IntervalReplayStorage> replays)
+		{
+			_round = currRound;
+			replaysForThisAct = replays;
 		}
 	}
 

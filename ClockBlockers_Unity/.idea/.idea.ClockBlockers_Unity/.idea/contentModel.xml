@@ -14,12 +14,6 @@
             </e>
             <e p="AiPathfinder.cs" t="Include" />
             <e p="StandardAiPathfinder.cs" t="Include" />
-            <e p="States" t="Include">
-              <e p="AiState.cs" t="Include" />
-              <e p="FullyAutonomous.cs" t="Include" />
-              <e p="Idle.cs" t="Include" />
-              <e p="ReplicatingActions.cs" t="Include" />
-            </e>
           </e>
           <e p="Characters" t="Include">
             <e p="Scripts" t="Include">
@@ -27,7 +21,6 @@
               <e p="CharacterBodyTag.cs" t="Include" />
               <e p="CharacterMovement.cs" t="Include" />
               <e p="CharacterMovementNew.cs" t="Include" />
-              <e p="RayCaster.cs" t="Include" />
             </e>
           </e>
           <e p="ClockBlockers.asmdef" t="Include" />
@@ -38,10 +31,6 @@
                 <e p="PathfindingGridEditor.cs" t="Include" />
               </e>
             </e>
-          </e>
-          <e p="DataStructures" t="Include">
-            <e p="DamagePacket.cs" t="Include" />
-            <e p="IInteractable.cs" t="Include" />
           </e>
           <e p="Environment" t="Include">
             <e p="Scripts" t="Include">
@@ -94,14 +83,31 @@
             <e p="CharacterAction.cs" t="Include" />
             <e p="ReplayRunner" t="Include">
               <e p="ActionReplayRunner.cs" t="Include" />
-              <e p="ReplayRunner.cs" t="Include" />
-              <e p="Unlinked.cs" t="Include" />
+              <e p="IntervalReplayRunner.cs" t="Include" />
             </e>
             <e p="ReplayStorage" t="Include">
               <e p="ActionReplayStorage.cs" t="Include" />
               <e p="IntervalReplayStorage.cs" t="Include" />
             </e>
             <e p="Translation.cs" t="Include" />
+          </e>
+          <e p="StateMachines" t="Include">
+            <e p="Conditions" t="Include">
+              <e p="OutOfActions.cs" t="Include" />
+            </e>
+            <e p="ControlLost.cs" t="Include" />
+            <e p="ControlRegained.cs" t="Include" />
+            <e p="ICondition.cs" t="Include" />
+            <e p="IState.cs" t="Include" />
+            <e p="OutOfThingsToDo.cs" t="Include" />
+            <e p="OutOfTranslationData.cs" t="Include" />
+            <e p="StateMachine.cs" t="Include" />
+            <e p="States" t="Include">
+              <e p="ExternalControl.cs" t="Include" />
+              <e p="Idle.cs" t="Include" />
+              <e p="ReplicatingActions.cs" t="Include" />
+              <e p="Unlinked.cs" t="Include" />
+            </e>
           </e>
           <e p="Targetting" t="Include">
             <e p="CameraForwardRayProvider.cs" t="Include" />
@@ -122,6 +128,10 @@
           </e>
           <e p="ToBeMoved" t="Include">
             <e p="CameraController.cs" t="Include" />
+            <e p="DataStructures" t="Include">
+              <e p="DamagePacket.cs" t="Include" />
+              <e p="IInteractable.cs" t="Include" />
+            </e>
             <e p="Gravity.cs" t="Include" />
             <e p="HealthComponent.cs" t="Include" />
           </e>
@@ -138,6 +148,7 @@
             <e p="DataManipulation.cs" t="Include" />
             <e p="ExtensionMethods.cs" t="Include" />
             <e p="Logging.cs" t="Include" />
+            <e p="RayCaster.cs" t="Include" />
           </e>
           <e p="Visualizations" t="Include">
             <e p="Scripts" t="Include">

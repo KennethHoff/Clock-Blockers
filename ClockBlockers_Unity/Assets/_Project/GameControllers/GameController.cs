@@ -60,7 +60,7 @@ namespace ClockBlockers.GameControllers
 			Match newMatch = Instantiate(matchPrefab);
 			allMatches.Add(newMatch);
 			
-			newMatch.Setup();
+			StartCoroutine(newMatch.Setup());
 			
 			// Application.targetFrameRate = 60;
 		}

@@ -18,13 +18,13 @@ namespace ClockBlockers.ToBeMoved
 
         // private CharacterController characterController;
 
-        private CharacterMovementNew characterMovement;
+        private CharacterMovementNew _characterMovement;
 
         private void Awake()
         {
-            characterMovement = GetComponent<CharacterMovementNew>();
+            _characterMovement = GetComponent<CharacterMovementNew>();
 
-            if (!Logging.CheckIfCorrectMonoBehaviourInstantiation(ref characterMovement, this, "Character Movement"))
+            if (!Logging.CheckIfCorrectMonoBehaviourInstantiation(ref _characterMovement, this, "Character Movement"))
             {
                 enabled = false;
             }
@@ -32,8 +32,8 @@ namespace ClockBlockers.ToBeMoved
 
         private void Update()
         {
-            if (characterMovement.IsGrounded) return;
-            characterMovement.AddVelocity(new Vector3(0, gravityValue, 0) * Time.deltaTime);
+            if (_characterMovement.IsGrounded) return;
+            _characterMovement.AddVelocity(new Vector3(0, gravityValue, 0) * Time.deltaTime);
         }
     }
 }

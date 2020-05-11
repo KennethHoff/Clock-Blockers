@@ -57,7 +57,7 @@ namespace ClockBlockers.MatchData
 		public int RoundNumber => allRounds.Count;
 		public Round CurrentRound => allRounds.Last();
 		
-		private PathfindingGrid grid;
+		private PathfindingGrid _grid;
 
 		private void Awake()
 		{
@@ -66,14 +66,18 @@ namespace ClockBlockers.MatchData
 			allRounds = new List<Round>();
 		}
 
-		public void Setup()
+		public IEnumerator Setup()
 		{
 			SceneManager.LoadScene(battleArena, LoadSceneMode.Additive);
-			
-			grid = FindObjectOfType<PathfindingGrid>();
-			
-			spawner.grid = grid;
 
+			yield return null;
+			
+			_grid = FindObjectOfType<PathfindingGrid>();
+
+			if (_grid == null) Logging.LogError("No grid!");
+
+			spawner.Inject(_grid);
+			
 			matchCreatedEvent.Raise();
 			
 			StartCoroutine(BeginNextFrame());
@@ -85,11 +89,10 @@ namespace ClockBlockers.MatchData
 			Begin();
 		}
 
-		public void Begin()
+		private void Begin()
 		{
 			StartNewRound();
-			
-			
+
 			matchBegunEvent.Raise();
 		}
 
@@ -113,18 +116,14 @@ namespace ClockBlockers.MatchData
 		private void StartNewRound()
 		{
 			Round newRound = Instantiate(roundPrefab, transform, true);
-			newRound.match = this;
+
+			newRound.Inject(this);
 
 			allRounds.Add(newRound);
 			
 			newRound.Setup();
 			
 			// newRound.Begin();
-		}
-		
-		public void StopMatch()
-		{
-			
 		}
 	}
 }

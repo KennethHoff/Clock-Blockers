@@ -29,16 +29,16 @@ namespace ClockBlockers.MapData
 
         public float creationHeightAboveFloor;
 
-        private PathfindingMarker otherSelectedMarker;
+        private PathfindingMarker _otherSelectedMarker;
 
-        private List<PathfindingMarker> pathToOtherSelectMarker;
+        private List<PathfindingMarker> _pathToOtherSelectMarker;
 
         #region Gizmo
 #if UNITY_EDITOR
         
         public float scale = 0.5f;
         private static readonly Color DefaultDrawColor = Color.white;
-        private Color drawColor = DefaultDrawColor;
+        private Color _drawColor = DefaultDrawColor;
 
         private void OnDrawGizmos()
         {
@@ -99,25 +99,25 @@ namespace ClockBlockers.MapData
 
         private void DrawPathToSelectedMarker(PathfindingMarker marker)
         {
-            if (marker != otherSelectedMarker)
+            if (marker != _otherSelectedMarker)
             {
-                otherSelectedMarker = marker;
+                _otherSelectedMarker = marker;
                 // Logging.Log("Selected different markers");
                 RequestPathFrom(marker, grid.defaultJumpHeight);
             }
 
-            if (pathToOtherSelectMarker == null || pathToOtherSelectMarker.Count == 0) return;
+            if (_pathToOtherSelectMarker == null || _pathToOtherSelectMarker.Count == 0) return;
             
             // Logging.Log("Drawing path between markers");
-            AffectDrawOfMarkers( pathToOtherSelectMarker);
+            AffectDrawOfMarkers( _pathToOtherSelectMarker);
 
-            otherSelectedMarker.drawColor = Color.black;
-            drawColor = Color.black;
+            _otherSelectedMarker._drawColor = Color.black;
+            _drawColor = Color.black;
         }
 
         private void DrawSingleSelectedMarker()
         {
-            drawColor = Color.black;
+            _drawColor = Color.black;
 
             if (grid.selectionDrawRays) DrawTransparentRays();
 
@@ -148,7 +148,7 @@ namespace ClockBlockers.MapData
         {
             foreach (PathfindingMarker marker in markerList.Where(marker => marker != null))
             {
-                if (grid.selectionChangeNodeColors) marker.drawColor = newColor;
+                if (grid.selectionChangeNodeColors) marker._drawColor = newColor;
 
                 if (grid.selectionChangeScale) marker.scale = newScale;
             }
@@ -158,7 +158,7 @@ namespace ClockBlockers.MapData
         {
             if (connectedMarkers == null) return;
             const float rayTransparency = 0.6f;
-            var transparentDrawColor = new Color(drawColor.a, drawColor.g, drawColor.b, drawColor.a * rayTransparency);
+            var transparentDrawColor = new Color(_drawColor.a, _drawColor.g, _drawColor.b, _drawColor.a * rayTransparency);
 
             Gizmos.color = transparentDrawColor;
             DrawRayGizmosToConnectedMarkers();
@@ -169,7 +169,7 @@ namespace ClockBlockers.MapData
             const int fewAdjacentNodesAmount = 3;
             const int someAdjacentNodesAmount = 6;
 
-            drawColor = DefaultDrawColor;
+            _drawColor = DefaultDrawColor;
 
             int connMarkersAmount = ConnMarkerCount;
 
@@ -177,25 +177,25 @@ namespace ClockBlockers.MapData
 
             if (connMarkersAmount == 0)
             {
-                drawColor = Color.black;
+                _drawColor = Color.black;
             }
             else if (connMarkersAmount > 0 && connMarkersAmount < fewAdjacentNodesAmount)
             {
-                drawColor = Color.green;
+                _drawColor = Color.green;
             }
             else if (connMarkersAmount >= fewAdjacentNodesAmount && connMarkersAmount < someAdjacentNodesAmount)
             {
-                drawColor = Color.blue;
+                _drawColor = Color.blue;
             }
             else
             {
-                drawColor = Color.yellow;
+                _drawColor = Color.yellow;
             }
         }
 
         private void DrawCubeGizmoOnPosition()
         {
-            Gizmos.color = drawColor;
+            Gizmos.color = _drawColor;
 
             Vector3 position = transform.position;
             position.y += (grid.drawHeightAboveFloor - creationHeightAboveFloor) + (scale/2);
@@ -238,10 +238,15 @@ namespace ClockBlockers.MapData
             
             newMarker.creationHeightAboveFloor = creationYPosAboveFloor;
 
-            newMarker.grid = grid;
+            newMarker.Inject(grid);
 
             grid.markers.Add(newMarker);
             return newMarker;
+        }
+
+        private void Inject(PathfindingGrid currGrid)
+        {
+            grid = currGrid;
         }
 
         public static PathfindingMarker CreateInstance(string markerName, ref PathfindingGrid grid)
@@ -259,7 +264,7 @@ namespace ClockBlockers.MapData
         {
             Logging.Log($"Finding path to {marker.name} from {name}");
 
-            pathToOtherSelectMarker = null;
+            _pathToOtherSelectMarker = null;
             
             grid.GetPath(this, marker, this, maxJumpHeight);
         }
@@ -268,14 +273,14 @@ namespace ClockBlockers.MapData
         {
             Logging.Log($"Finding path to {marker.name} from {name}");
             
-            pathToOtherSelectMarker = null;
+            _pathToOtherSelectMarker = null;
             
             grid.GetPath(marker, this, this, maxJumpHeight);
         }
 
         void IPathRequester.PathCallback(List<PathfindingMarker> pathFinderPath)
         {
-            pathToOtherSelectMarker = pathFinderPath;
+            _pathToOtherSelectMarker = pathFinderPath;
             Logging.Log("Path Callback");
         }
 

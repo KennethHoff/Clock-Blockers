@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 
-namespace ClockBlockers.Characters
+namespace ClockBlockers.Utility
 {
 	public static class RayCaster
 	{

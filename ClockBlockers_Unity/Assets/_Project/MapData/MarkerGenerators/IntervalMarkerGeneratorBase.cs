@@ -76,10 +76,11 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			float xPos = MarkerSizeAdjustedXStartPos + (distanceBetweenCreatedMarkers * i);
 
 			Transform newColumn = new GameObject("Column " + i).transform;
+			
 
 			newColumn.position = new Vector3(xPos, 0, 0);
-
 			newColumn.SetParent(gridTransform);
+
 
 			var markersCreatedThisColumn = 0;
 			

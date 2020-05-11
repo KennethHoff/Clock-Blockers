@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using ClockBlockers.MapData.Pathfinding.PathfindingManagement;
 using ClockBlockers.Utility;
 
 using Unity.Burst;
@@ -17,22 +18,32 @@ namespace ClockBlockers.MapData.Pathfinding
 	[BurstCompile]
 	public class AStarPathFinder : IPathfinder
 	{
-		private readonly PathRequest pathRequest;
+		private readonly PathRequest _pathRequest;
 
-		private readonly int checksPerFrame;
+		private readonly int _checksPerFrame;
 
-		private int totalChecks;
-		private int framesTaken;
+		private int _totalChecks;
+		private int _framesTaken;
+
+		private IPathfindingManager pathfindingManager;
 
 
-		private readonly List<PathfindingMarker> path;
-		private List<PathfindingMarker> Path => path.Count > 0 ? path : null;
+		private readonly List<PathfindingMarker> _path;
+		private List<PathfindingMarker> Path => _path.Count > 0 ? _path : null;
 		
-		private Dictionary<int, Node> markerNodeDictionary;
+		private Dictionary<int, Node> _markerNodeDictionary;
 
 		public List<Node> OpenList { get; set; }
 
-		private readonly List<Node> closedList;
+		public void End()
+		{
+			//  The Coroutine is technically being ran from the Manager, and I can't find a way to stop a coroutine by sending in a reference to this GameObject.
+			// I could make a List<IPathfinder>, and add the instance of this Type to that list on creation, and remove it on deletion, but it's fine for now..
+			Logging.Log("A Pathfinder would've ended had I known how to... ");
+		}
+
+
+		private readonly List<Node> _closedList;
 
 		public static AStarPathFinder CreateInstance(PathRequest pathRequest, int checksPerFrame)
 		{
@@ -41,18 +52,18 @@ namespace ClockBlockers.MapData.Pathfinding
 		
 		private AStarPathFinder(PathRequest pathRequest, int checksPerFrame)
 		{
-			this.pathRequest = pathRequest;
+			_pathRequest = pathRequest;
 			
-			this.checksPerFrame = checksPerFrame;
+			_checksPerFrame = checksPerFrame;
 
-			totalChecks = 0;
+			_totalChecks = 0;
 			
-			path = new List<PathfindingMarker>();
+			_path = new List<PathfindingMarker>();
 			
-			markerNodeDictionary = new Dictionary<int, Node>();
+			_markerNodeDictionary = new Dictionary<int, Node>();
 
 			OpenList = new List<Node>();
-			closedList = new List<Node>();
+			_closedList = new List<Node>();
 			
 			Logging.Log("New instance of AStarPathFinder was constructed!");
 		}
@@ -61,26 +72,28 @@ namespace ClockBlockers.MapData.Pathfinding
 			Logging.Log("An instance of AStarPathFinder was deconstructed!");
 		}
 		
+		
+		
 		// ReSharper disable once SuggestBaseTypeForParameter
 		private void AddToMarkerNodeDictionary(PathfindingMarker marker, Node node)
 		{
-			markerNodeDictionary.Add(marker.GetInstanceID(), node);
+			_markerNodeDictionary.Add(marker.GetInstanceID(), node);
 		}
 		
 		private void ResetDictionary()
 		{
-			if (markerNodeDictionary == null)
+			if (_markerNodeDictionary == null)
 			{
-				markerNodeDictionary = new Dictionary<int, Node>();
+				_markerNodeDictionary = new Dictionary<int, Node>();
 				return;
 			}
-			markerNodeDictionary.Clear();
+			_markerNodeDictionary.Clear();
 		}
 		
 		// ReSharper disable once SuggestBaseTypeForParameter
 		private Node GetNodeFromMarker(PathfindingMarker marker)
 		{
-			markerNodeDictionary.TryGetValue(marker.GetInstanceID(), out Node node);
+			_markerNodeDictionary.TryGetValue(marker.GetInstanceID(), out Node node);
 			return node;
 		}
 		
@@ -99,19 +112,29 @@ namespace ClockBlockers.MapData.Pathfinding
 		
 		private IEnumerable<Node> TurnAvailableConnectedMarkersIntoNodes(PathfindingMarker marker)
 		{
-			IEnumerable<PathfindingMarker> availableConnectedMarkers = marker.GetAvailableConnectedMarkers(pathRequest.maxJumpHeight);
+			IEnumerable<PathfindingMarker> availableConnectedMarkers = marker.GetAvailableConnectedMarkers(_pathRequest.maxJumpHeight);
 			if (availableConnectedMarkers == null) return null;
 			return from currMarker in availableConnectedMarkers
 				select GetOrAddMarkerToDictionary(currMarker);
 		}
+
+		private bool PathfindingStillRequired()
+		{
+			if (_pathRequest.pathRequester != null && _pathRequest.pathRequester.CurrentPathfinder == this) return true;
+			
+			Logging.Log("Pathfinding was no longer required.");
+			return false;
+
+		}
+		
 		public IEnumerator FindPathCoroutine()
 		{
 			ResetDictionary();
 
-			Node startNode = GetOrAddMarkerToDictionary(pathRequest.startMarker);
-			Node endNode = GetOrAddMarkerToDictionary(pathRequest.endMarker);
+			Node startNode = GetOrAddMarkerToDictionary(_pathRequest.startMarker);
+			Node endNode = GetOrAddMarkerToDictionary(_pathRequest.endMarker);
 
-			float distFromStartToEnd = Vector3.Distance(pathRequest.startMarker.transform.position, pathRequest.endMarker.transform.position);
+			float distFromStartToEnd = Vector3.Distance(_pathRequest.startMarker.transform.position, _pathRequest.endMarker.transform.position);
 
 			startNode.G = 0;
 			startNode.H = distFromStartToEnd;
@@ -123,11 +146,14 @@ namespace ClockBlockers.MapData.Pathfinding
 
 			while (OpenList.Count > 0)
 			{
-				totalChecks++;
+				_totalChecks++;
 				
-				if (totalChecks % checksPerFrame == 0 )
+				if (_totalChecks % _checksPerFrame == 0 )
 				{
-					framesTaken++;
+					_framesTaken++;
+					
+					if (!PathfindingStillRequired()) yield break;
+					
 					yield return null;
 				}
 
@@ -139,7 +165,7 @@ namespace ClockBlockers.MapData.Pathfinding
 				Node currNode = OpenList.First();
 
 				OpenList.Remove(currNode);
-				closedList.Add(currNode);
+				_closedList.Add(currNode);
 
 				if (currNode == endNode)
 				{
@@ -147,11 +173,11 @@ namespace ClockBlockers.MapData.Pathfinding
 
 					while (current != null)
 					{
-						path.Add(current.marker);
+						_path.Add(current.marker);
 						current = current.parentNode;
 					}
 
-					path.Reverse();
+					_path.Reverse();
 					break;
 				}
 
@@ -163,7 +189,7 @@ namespace ClockBlockers.MapData.Pathfinding
 				
 				foreach (Node childNode in currNode.childNodes)
 				{
-					if (closedList.Contains(childNode)) continue;
+					if (_closedList.Contains(childNode)) continue;
 
 					Vector3 childMarkerPos = childNode.marker.transform.position;
 
@@ -194,13 +220,15 @@ namespace ClockBlockers.MapData.Pathfinding
 			
 			// End of search
 
-			Logging.Log($"Pathfinding completed {(path.Count > 0 ? "Successfully" : "Unsuccessfully" )}. Checked {totalChecks} markers for {pathRequest.pathRequester}. It took {framesTaken+1} frames to complete.");
+			IPathRequester pathRequester = _pathRequest.pathRequester;
 			
-			if (pathRequest.pathRequester == null) yield break;
+			Logging.Log($"Pathfinding completed {(_path.Count > 0 ? "Successfully" : "Unsuccessfully" )}. Checked {_totalChecks} markers for {pathRequester}. It took {_framesTaken+1} frames to complete.");
+
+			if (!PathfindingStillRequired()) yield break;
 			
-			pathRequest.pathRequester.PathCallback(Path);
+			pathRequester.PathCallback(Path);
 			
-			pathRequest.pathRequester.CurrentPathfinder = null;
+			pathRequester.CurrentPathfinder = null;
 		}
 	}
 }

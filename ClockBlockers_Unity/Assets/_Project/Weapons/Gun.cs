@@ -100,10 +100,13 @@ namespace ClockBlockers.Weapons
 		{
 			Vector3 position = casingExitLocation.position;
 			GameObject casing = Instantiate(casingPrefab, position, casingExitLocation.rotation);
-			casing.GetComponent<Rigidbody>().AddExplosionForce(550f,
-				position - (casingExitLocation.right * 0.3f) - (casingExitLocation.up * 0.6f), 1f);
-			casing.GetComponent<Rigidbody>()
-				.AddTorque(new Vector3(0, Random.Range(100f, 500f), Random.Range(10f, 1000f)), ForceMode.Impulse);
+			var casingRb = casing.GetComponent<Rigidbody>();
+			
+			Vector3 explosionPosition = position - (casingExitLocation.right * 0.3f) - (casingExitLocation.up * 0.6f);
+			casingRb.AddExplosionForce(550f, explosionPosition, 1f);
+			
+			var casingTorque = new Vector3(0, Random.Range(100f, 500f), Random.Range(10f, 1000f));
+			casingRb.AddTorque(casingTorque, ForceMode.Impulse);
 
 			Destroy(casing, 1f);
 		}

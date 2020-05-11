@@ -80,7 +80,7 @@ namespace ClockBlockers.MapData
 		[NonSerialized]
 		public IPathfindingManager pathfindingManager;
 		
-		private MarkerGeneratorBase markerGenerator;
+		private MarkerGeneratorBase _markerGenerator;
 
 		private void Start()
 		{
@@ -150,10 +150,10 @@ namespace ClockBlockers.MapData
 
 		private bool CheckMarkerGenerator()
 		{
-			if (markerGenerator != null) return true;
-			markerGenerator = GetComponent<MarkerGeneratorBase>();
+			if (_markerGenerator != null) return true;
+			_markerGenerator = GetComponent<MarkerGeneratorBase>();
 			
-			return markerGenerator != null;
+			return _markerGenerator != null;
 		}
 
 		public void ClearMarkers()
@@ -203,6 +203,7 @@ namespace ClockBlockers.MapData
 			if (point.z > ZStartPos) return false;
 
 			if (point.y < YStartPos) return false;
+			
 			// ReSharper disable once ConvertIfStatementToReturnStatement
 			if (point.y > YEndPos) return false;
 
@@ -229,27 +230,27 @@ namespace ClockBlockers.MapData
 			// ReSharper disable once ConvertIfStatementToReturnStatement
 			if (!CheckMarkerGenerator()) return null;
 
-			return markerGenerator.FindNearestMarker(point);
+			return _markerGenerator.FindNearestMarker(point);
 		}
 
 		public void GenerateMarkers()
 		{
 			if (!CheckMarkerGenerator()) return;
 			
-			markerGenerator.GenerateAllMarkers();
+			_markerGenerator.GenerateAllMarkers();
 		}
 
 		public void GenerateMarkerConnections()
 		{
 			if (!CheckMarkerGenerator()) return;
 			
-			markerGenerator.GenerateMarkerConnections();
+			_markerGenerator.GenerateMarkerConnections();
 		}
 		public void RetrieveMarkers()
 		{
 			if (!CheckMarkerGenerator()) return;
 			
-			markers = markerGenerator.RetrieveAllMarkers();
+			markers = _markerGenerator.RetrieveAllMarkers();
 		}
 	}
 }

@@ -37,7 +37,7 @@ namespace ClockBlockers.Characters
 		public bool IsGrounded => (characterController.collisionFlags & CollisionFlags.Below) != 0;
 
 		public bool IsHittingCeiling => (characterController.collisionFlags & CollisionFlags.Above) != 0;
-		public double MoveSpd => moveSpd;
+		public float MoveSpd => moveSpd;
 
 		private void Awake()
 		{

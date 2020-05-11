@@ -14,28 +14,41 @@ using UnityEngine;
 namespace ClockBlockers.ReplaySystem.ReplayRunner
 {
 	[BurstCompile]
-	public class ReplayRunner : MonoBehaviour
+	public class IntervalReplayRunner : MonoBehaviour
 	{
 		
-		[NonSerialized]
-		public List<Translation> translations;
+		// TODO: Look into the 'Command Pattern' << It looks quite good, and basically exactly what I was looking for.
 
-		private int _currentTranslationIndex;
 		
-		[NonSerialized]
-		public List<CharacterAction> actions;
+		private List<Translation> _translations;
+
+		private int _currentTranslationIndex = 0;
+
+		
+		private List<CharacterAction> _actions;
+
+		private int _currentActionIndex = 0;
 
 		private Character _character;
+
 
 		[SerializeField]
 		private FloatReference translationInterval = null;
 
 		private float _timer;
-		
+		public int RemainingActions => _actions.Count - -_currentActionIndex;
+		public int RemainingTranslations => _translations.Count - _currentTranslationIndex;
+
 		private void Awake()
 		{
 			_character = GetComponent<Character>();
 			Logging.CheckIfCorrectMonoBehaviourInstantiation(ref _character, this, "Character");
+		}
+
+		public void Initialize(List<CharacterAction> replayStorageActions, List<Translation> replayStorageTranslations)
+		{
+			_actions = replayStorageActions;
+			_translations = replayStorageTranslations;
 		}
 
 		public Translation? GetNextTranslationData()
@@ -45,16 +58,16 @@ namespace ClockBlockers.ReplaySystem.ReplayRunner
 
 			_timer = 0;
 
-			if (translations == null || _currentTranslationIndex >= translations.Count)
+			if (_translations == null || _currentTranslationIndex >= _translations.Count)
 			{
 				Unlink();
 				return null;
 			}
 			
-			Translation translation = translations[_currentTranslationIndex];
+			Translation translation = _translations[_currentTranslationIndex];
 			_currentTranslationIndex++;
 
-			return translations[_currentTranslationIndex];
+			return _translations[_currentTranslationIndex];
 			
 		}
 

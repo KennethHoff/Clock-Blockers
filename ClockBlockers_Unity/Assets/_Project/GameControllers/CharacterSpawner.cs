@@ -22,7 +22,7 @@ namespace ClockBlockers.GameControllers {
 		private Character clonePrefab = null;
 
 		[NonSerialized]
-		public PathfindingGrid grid;
+		private PathfindingGrid _grid;
 
 		public Character SpawnPlayer()
 		{
@@ -30,18 +30,23 @@ namespace ClockBlockers.GameControllers {
 			return newPlayer;
 		}
 
+		public void Inject(PathfindingGrid grid)
+		{
+			_grid = grid;
+		}
+
 		public Character SpawnClone()
 		{
 			Character newClone = SpawnCharacter(clonePrefab);
 			var aiPathfinder = newClone.GetComponent<AiPathfinder>();
 
-			if (aiPathfinder == null)
+			if (aiPathfinder != null)
 			{
-				Logging.LogWarning("Clone has no PathFinder");
+				aiPathfinder.Inject(_grid.pathfindingManager);
 			}
 			else
 			{
-				aiPathfinder.pathfindingManager = grid.pathfindingManager;
+				Logging.LogWarning("Clone has no Pathfinder");
 			}
 
 			return newClone;

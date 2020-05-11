@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 using ClockBlockers.Characters;
 using ClockBlockers.MapData;
@@ -17,12 +19,10 @@ namespace ClockBlockers.AI
 	{
 		protected CharacterMovementNew characterMovement;
 
-		protected List<PathfindingMarker> currentPath;
+		protected Queue<PathfindingMarker> currentPath;
 
-		protected PathfindingMarker CurrentPathMarker => currentPath[currentPathIndex];
+		protected PathfindingMarker currentMarker;
 
-
-		protected int currentPathIndex;
 
 		// In relation to pathfinding - 'How high can I jump'
 		[SerializeField]
@@ -40,36 +40,35 @@ namespace ClockBlockers.AI
 
 		protected float DistanceToCurrentPathMarker()
 		{
-			return Vector3.Distance(CurrentPathMarker.transform.position, transform.position);
+			return Vector3.Distance(currentMarker.transform.position, transform.position);
 		}
 
 		public abstract void MoveTowardsNextWaypoint();
 
 		public void PathCallback(List<PathfindingMarker> pathFinderPath)
 		{
-			currentPath = pathFinderPath;
+			currentPath = new Queue<PathfindingMarker>(pathFinderPath);
+			GetNextMarkerInPath();
 			Logging.Log($"{name} successfully received their path");
 		}
 
-		protected void IncrementCurrentPathIndex()
-		{
-			currentPathIndex++;
-		}
-
-
-		public virtual void RunPathfinding()
-		{
-			if (CurrentPathMarker == null) return;
-			
-			if (DistanceToCurrentPathMarker() < characterMovement.MoveSpd) IncrementCurrentPathIndex();
-		}
+		public abstract void Tick();
 
 		public abstract void RequestPath(Vector3 destination);
 
 		public void EndCurrentPath()
 		{
 			currentPath = null;
-			currentPathIndex = 0;
+		}
+
+		public void Inject(IPathfindingManager currPathfindingManager)
+		{
+			pathfindingManager = currPathfindingManager;
+		}
+
+		protected void GetNextMarkerInPath()
+		{
+			currentMarker = currentPath.Dequeue();
 		}
 	}
 }

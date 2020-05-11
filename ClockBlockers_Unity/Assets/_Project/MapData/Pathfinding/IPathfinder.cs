@@ -6,5 +6,6 @@ namespace ClockBlockers.MapData.Pathfinding
 	public interface IPathfinder
 	{
 		List<Node> OpenList { get; set; }
+		void End();
 	}
 }

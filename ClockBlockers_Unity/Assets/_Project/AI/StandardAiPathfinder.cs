@@ -1,4 +1,8 @@
-﻿using Unity.Burst;
+﻿using System;
+
+using ClockBlockers.Utility;
+
+using Unity.Burst;
 
 using UnityEngine;
 
@@ -11,20 +15,40 @@ namespace ClockBlockers.AI
 
 		public override void MoveTowardsNextWaypoint()
 		{
-			Vector3 direction = (CurrentPathMarker.transform.position - transform.position).normalized;
+			const float timeBeforeMarkerToChangeTargetMarker = 0.2f;
+			float distanceBeforeMarkerToChangeTargetMarker = characterMovement.MoveSpd * timeBeforeMarkerToChangeTargetMarker;
+			
+			float distanceToCurrentPathMarker = DistanceToCurrentPathMarker();
+
+			if (distanceToCurrentPathMarker < distanceBeforeMarkerToChangeTargetMarker)
+			{
+				if (currentPath.Count == 0)
+				{
+					Logging.Log("Reached the final marker!");
+					currentPath = null;
+					return;
+				}
+				
+				GetNextMarkerInPath();
+			}
+
+			Vector3 currentMarkerPos = currentMarker.transform.position;
+			
+			Vector3 direction = (currentMarkerPos - transform.position).normalized;
 			
 			characterMovement.SetForwardInputVelocity(direction);
 		}
 
-		public override void RunPathfinding()
+		public override void Tick()
 		{
-			base.RunPathfinding();
-			
+			if (currentPath == null) return;
+
 			MoveTowardsNextWaypoint();
 		}
 
 		public override void RequestPath(Vector3 destination)
 		{
+			CurrentPathfinder?.End();
 			pathfindingManager.RequestPath(this, transform.position, destination, highestReachableRelativeAltitude);
 		}
 	}

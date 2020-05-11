@@ -1,10 +1,6 @@
-﻿using System.Collections;
+﻿using Between_Names.Property_References;
 
-using Between_Names.Property_References;
-
-using ClockBlockers.AI;
 using ClockBlockers.AI.AiControllers;
-using ClockBlockers.AI.States;
 using ClockBlockers.Characters;
 using ClockBlockers.Events;
 using ClockBlockers.ReplaySystem;
@@ -39,8 +35,6 @@ namespace ClockBlockers.Input
 		[SerializeField]
 		private Gun gun = null;
 
-		private StandardAiPathfinder testing;
-
 		[SerializeField]
 		private FloatReference verticalMouseSensitivity = null;
 
@@ -61,7 +55,7 @@ namespace ClockBlockers.Input
 
 
 
-		private AiController controlledAi;
+		private AiController _controlledAi;
 
 		private void Awake()
 		{
@@ -117,7 +111,6 @@ namespace ClockBlockers.Input
 			_characterMovement.Jump();
 		}
 
-
 		
 		private void OnMovement(InputValue ctx)
 		{
@@ -165,9 +158,18 @@ namespace ClockBlockers.Input
 			TakeControlOverTargetAi();
 		}
 
+		private void OnMiddleClick()
+		{
+			CreateVisualizerAtTargetPosition();
+		}
+
 		private void TakeControlOverTargetAi()
 		{
+			_controlledAi?.WithdrawControl(this);
+
+			// Not a fan of using the Gun's CreateRay here, as it's not related to the gun.
 			Ray ray = gun.CreateRay();
+
 			bool hitSomething = RayCaster.CastRay(ray, float.MaxValue, out RaycastHit hit);
 
 			if (!hitSomething) return;
@@ -175,24 +177,19 @@ namespace ClockBlockers.Input
 			var aiController = hit.transform.GetComponent<AiController>();
 			if (aiController == null) return;
 
-			controlledAi.SetState(new Idle(aiController));
-			
-			controlledAi = aiController;
-			
-			aiController.SetState(new ListenToInput(aiController));
 
-			Logging.Log($"Gotcha, {controlledAi.name}!");
+			_controlledAi = aiController;
 
-		}
+			Logging.Log($"Gotcha, {_controlledAi.name}!");
 
-		private void OnMiddleClick()
-		{
-			CreateVisualizerAtTargetPosition();
+			_controlledAi.TakeControl(this);
 		}
 
 		private void CreateVisualizerAtTargetPosition()
 		{
+			// Not a fan of using the Gun's CreateRay here, as it's not related to the gun.
 			Ray ray = gun.CreateRay();
+			
 			bool hitSomething = RayCaster.CastRay(ray, float.MaxValue, out RaycastHit hit);
 
 			if (!hitSomething) return;
@@ -212,8 +209,10 @@ namespace ClockBlockers.Input
 			Vector3 currRot = visualizerTransform.rotation.eulerAngles;
 			visualizer.transform.rotation = Quaternion.Euler(0, currRot.y, 0);
 
-			controlledAi.aiPathfinder.EndCurrentPath();
-			controlledAi.aiPathfinder.RequestPath(hitPoint);
+			if (_controlledAi == null) return;
+
+			_controlledAi.aiPathfinder.EndCurrentPath();
+			_controlledAi.aiPathfinder.RequestPath(hitPoint);
 		}
 
 		private void ToggleCursor()
@@ -233,16 +232,6 @@ namespace ClockBlockers.Input
 			Cursor.lockState = locked
 				? CursorLockMode.Locked
 				: CursorLockMode.None;
-		}
-	}
-
-	internal class ListenToInput : AiState
-	{
-		public ListenToInput(AiController aiController) : base(aiController) { }
-		public override IEnumerator Begin()
-		{
-			Logging.Log("AI is now listening for input!");
-			yield break;
 		}
 	}
 }
