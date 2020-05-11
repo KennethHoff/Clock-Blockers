@@ -75,7 +75,7 @@ namespace ClockBlockers.AI
 		protected void GetNextMarkerInPath()
 		{
 			currentMarker = currentPath.Dequeue();
-			Logging.Log($"Current marker is now {currentMarker.name}");
+			// Logging.Log($"Current marker is now {currentMarker.name}");
 		}
 	}
 }

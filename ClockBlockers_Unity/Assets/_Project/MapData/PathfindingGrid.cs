@@ -79,8 +79,13 @@ namespace ClockBlockers.MapData
 
 		[NonSerialized]
 		public IPathfindingManager pathfindingManager;
-		
+
 		private MarkerGeneratorBase _markerGenerator;
+
+		private void Awake()
+		{
+			CheckPathfindingManager();
+		}
 
 		private void Start()
 		{
