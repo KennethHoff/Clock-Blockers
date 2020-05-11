@@ -99,7 +99,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c47e13478a1f41469645e755ed43655f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  highestReachableRelativeAltitude: 4
+  highestReachableRelativeAltitude: 2.5
 --- !u!1001 &8266837681266467731
 PrefabInstance:
   m_ObjectHideFlags: 0

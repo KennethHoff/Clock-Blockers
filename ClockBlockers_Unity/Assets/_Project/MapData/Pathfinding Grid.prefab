@@ -46,7 +46,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   alwaysDrawNodes: 1
   alwaysDrawRays: 0
-  alwaysDrawCollisionArea: 0
   drawHeightAboveFloor: 0.25
   nodeScale: 0.5
   selectionChangeScale: 1
@@ -57,8 +56,11 @@ MonoBehaviour:
   floorPlane: {fileID: 0}
   minimumOpenAreaAroundMarkers: {x: 1, y: 2, z: 1}
   mapHeight: 20
+  defaultJumpHeight:
+    useConstant: 1
+    constantValue: 0
+    variable: {fileID: 0}
   markers: []
-  markerGenerator: {fileID: 0}
 --- !u!114 &3609927531256765598
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -71,13 +73,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c70af323ac97419180b52c853ea434b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  markerLayerMask:
-    serializedVersion: 2
-    m_Bits: 4096
   showAffectedArea: 1
   createMarkerNearOrInsideCollisions: 0
   creationHeightAboveFloor: 0
-  xDistanceBetweenCreatedMarkers: 2
-  zDistanceBetweenCreatedMarkers: 2
-  markersOnColumn: 
-  testForNearestMarkerPoint: {x: 0, y: 0, z: 0}
+  markerLayerMask:
+    serializedVersion: 2
+    m_Bits: 4096
+  distanceBetweenCreatedMarkers: 0
+  markerConnectionsToGeneratePerFrame: 100

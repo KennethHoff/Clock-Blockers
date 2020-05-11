@@ -44,6 +44,8 @@ namespace ClockBlockers.MapData.Pathfinding.PathfindingManagement
 			PathfindingMarker marker1 = grid.FindNearestMarker(point1);
 			PathfindingMarker marker2 = grid.FindNearestMarker(point2);
 			
+			Logging.Log($"Trying to move from {marker1.name} to {marker2.name}!");
+			
 			RequestPath(pathRequester, marker1, marker2, maxJumpHeight);
 		}
 

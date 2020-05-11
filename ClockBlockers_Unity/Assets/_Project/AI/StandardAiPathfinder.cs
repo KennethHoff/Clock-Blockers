@@ -15,10 +15,22 @@ namespace ClockBlockers.AI
 
 		public override void MoveTowardsNextWaypoint()
 		{
+			Vector3 currentMarkerPos = currentMarker.transform.position;
+
+			LookAt(currentMarkerPos);
+
+			characterMovement.SetVelocityForward();
+			
+			if (characterMovement.IsHittingASide)
+			{
+				characterMovement.Jump();
+			}
+			
 			const float timeBeforeMarkerToChangeTargetMarker = 0.2f;
 			float distanceBeforeMarkerToChangeTargetMarker = characterMovement.MoveSpd * timeBeforeMarkerToChangeTargetMarker;
 			
-			float distanceToCurrentPathMarker = DistanceToCurrentPathMarker();
+			float distanceToCurrentPathMarker = HorizontalDistanceToCurrentPathMarker();
+
 
 			if (distanceToCurrentPathMarker < distanceBeforeMarkerToChangeTargetMarker)
 			{
@@ -31,12 +43,12 @@ namespace ClockBlockers.AI
 				
 				GetNextMarkerInPath();
 			}
+		}
 
-			Vector3 currentMarkerPos = currentMarker.transform.position;
-			
-			Vector3 direction = (currentMarkerPos - transform.position).normalized;
-			
-			characterMovement.SetForwardInputVelocity(direction);
+		private void LookAt(Vector3 point)
+		{
+			var targetPosition = new Vector3(point.x, transform.position.y, point.z);
+			characterMovement.transform.LookAt(targetPosition);
 		}
 
 		public override void Tick()

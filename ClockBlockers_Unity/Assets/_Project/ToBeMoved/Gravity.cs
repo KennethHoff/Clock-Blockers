@@ -16,8 +16,6 @@ namespace ClockBlockers.ToBeMoved
         [SerializeField]
         private FloatReference gravityValue = null;
 
-        // private CharacterController characterController;
-
         private CharacterMovementNew _characterMovement;
 
         private void Awake()
@@ -33,7 +31,8 @@ namespace ClockBlockers.ToBeMoved
         private void Update()
         {
             if (_characterMovement.IsGrounded) return;
-            _characterMovement.AddVelocity(new Vector3(0, gravityValue, 0) * Time.deltaTime);
+            
+            _characterMovement.AddVelocity(new Vector3(0, gravityValue * Time.deltaTime, 0) );
         }
     }
 }

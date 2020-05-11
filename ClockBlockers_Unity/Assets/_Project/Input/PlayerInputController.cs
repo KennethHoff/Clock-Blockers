@@ -212,7 +212,7 @@ namespace ClockBlockers.Input
 			if (_controlledAi == null) return;
 
 			_controlledAi.aiPathfinder.EndCurrentPath();
-			_controlledAi.aiPathfinder.RequestPath(hitPoint);
+			_controlledAi.aiPathfinder.RequestPath(hit.point);
 		}
 
 		private void ToggleCursor()

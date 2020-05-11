@@ -38,9 +38,15 @@ namespace ClockBlockers.AI
 			characterMovement = GetComponent<CharacterMovementNew>();
 		}
 
-		protected float DistanceToCurrentPathMarker()
+		protected float HorizontalDistanceToCurrentPathMarker()
 		{
-			return Vector3.Distance(currentMarker.transform.position, transform.position);
+			var currMarkerPos3D = currentMarker.transform.position;
+			var currMarkerPos2D = new Vector2(currMarkerPos3D.x, currMarkerPos3D.z);
+
+			var currPos3D = transform.position;
+			var currPos2D = new Vector2(currPos3D.x, currPos3D.z);
+			
+			return Vector2.Distance(currMarkerPos2D, currPos2D);
 		}
 
 		public abstract void MoveTowardsNextWaypoint();
@@ -69,6 +75,7 @@ namespace ClockBlockers.AI
 		protected void GetNextMarkerInPath()
 		{
 			currentMarker = currentPath.Dequeue();
+			Logging.Log($"Current marker is now {currentMarker.name}");
 		}
 	}
 }

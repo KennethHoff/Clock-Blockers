@@ -15,9 +15,13 @@ namespace ClockBlockers.Characters
 	[BurstCompile]
 	public class CharacterMovementNew : MonoBehaviour
 	{
-		private CharacterController characterController;
+		public CharacterController characterController;
 
 		private Vector3 inputVelocity;
+
+		// private float _currGravityAmount = 0;
+
+		public Vector3 currVelocity;
 
 		private Transform charTransform;
 		
@@ -38,6 +42,7 @@ namespace ClockBlockers.Characters
 
 		public bool IsHittingCeiling => (characterController.collisionFlags & CollisionFlags.Above) != 0;
 		public float MoveSpd => moveSpd;
+		public bool IsHittingASide => (characterController.collisionFlags & CollisionFlags.Sides) != 0;
 
 		private void Awake()
 		{
@@ -50,18 +55,16 @@ namespace ClockBlockers.Characters
 		private void Update()
 		{
 			Move();
-			
-			// if (IsGrounded)
-			// {
-				// velocity.y =  -characterController.stepOffset / Time.deltaTime;
-			// }
+
+			if (!IsGrounded) return;
+			currVelocity.y = -characterController.stepOffset * Time.deltaTime;
 		}
 
 		private void Move()
 		{
-			// characterController.SimpleMove(inputVelocity);
-			characterController.Move(inputVelocity * Time.deltaTime);
-			characterController.SimpleMove(Vector3.zero);
+			Vector3 finalVelocity = inputVelocity + currVelocity;
+			
+			characterController.Move(finalVelocity * Time.deltaTime);
 			inputVelocity = Vector3.zero;
 		}
 
@@ -118,7 +121,12 @@ namespace ClockBlockers.Characters
 
 		public void AddVelocity(Vector3 addedVelocity)
 		{
-			// velocity += addedVelocity;
+			currVelocity += addedVelocity;
+		}
+
+		public void SetVelocityForward()
+		{
+			SetForwardInputVelocity(Vector2.up);
 		}
 	}
 }

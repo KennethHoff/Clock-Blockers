@@ -225,10 +225,13 @@ namespace ClockBlockers.MapData.Pathfinding
 			Logging.Log($"Pathfinding completed {(_path.Count > 0 ? "Successfully" : "Unsuccessfully" )}. Checked {_totalChecks} markers for {pathRequester}. It took {_framesTaken+1} frames to complete.");
 
 			if (!PathfindingStillRequired()) yield break;
-			
-			pathRequester.PathCallback(Path);
-			
+
+
 			pathRequester.CurrentPathfinder = null;
+			
+			if (Path == null) yield break;
+
+			pathRequester.PathCallback(Path);
 		}
 	}
 }
