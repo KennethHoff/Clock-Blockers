@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 
+using ClockBlockers.Utility;
+
 using Unity.Burst;
 
 
@@ -16,6 +18,8 @@ namespace ClockBlockers.MapData.Pathfinding
 
 			parentNode = null;
 			childNodes = new List<Node>();
+
+			Logging.Log("Instantiated Node");
 		}
 
 		public void SetDistances(float newG, float newH)

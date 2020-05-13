@@ -77,12 +77,11 @@ namespace ClockBlockers.AI
 
 		public override void RequestMultiPath(List<Vector3> listOfPoints)
 		{
-			pathfindingManager.RequestMultiPath(this, transform.position, listOfPoints, highestReachableRelativeAltitude);
-
 			int pathfinderCount = listOfPoints.Count-1;
 			_workInProgressPath = new List<PathfindingMarker>[pathfinderCount];
 			CurrentPathfinders = new IPathfinder[pathfinderCount];
-
+			
+			pathfindingManager.RequestMultiPath(this, transform.position, listOfPoints, highestReachableRelativeAltitude);
 		}
 	}
 }

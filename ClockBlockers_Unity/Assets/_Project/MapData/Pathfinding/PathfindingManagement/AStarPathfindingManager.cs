@@ -102,8 +102,6 @@ namespace ClockBlockers.MapData.Pathfinding.PathfindingManagement
 					int requestAmount = multiPathRequest.markers.Count-1;
 					Logging.Log($"Multipath has {requestAmount} number of requests");
 
-					var pathfinders = new IPathfinder[requestAmount];
-
 					IPathRequester pathRequester = multiPathRequest.pathRequester;
 
 					for (var index = 0; index < requestAmount; index++)
@@ -115,11 +113,10 @@ namespace ClockBlockers.MapData.Pathfinding.PathfindingManagement
 
 						var newPathfinder = AStarPathFinder.CreateInstance(newPathRequest, pathfindingChecksPerFramePerFinder, index);
 
-						pathfinders[index] = newPathfinder;
+						pathRequester.CurrentPathfinders[index] = newPathfinder;
 
 						StartPathfinderCoroutine(newPathfinder);
 					}
-					pathRequester.CurrentPathfinders = pathfinders;
 				}
 			}
 

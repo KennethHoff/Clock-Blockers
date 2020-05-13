@@ -54,23 +54,18 @@ namespace ClockBlockers.AI
 
 		public abstract void MoveTowardsNextWaypoint();
 		
-		public void PathCallback(IEnumerable<PathfindingMarker> pathFinderPath, IPathfinder pathfinder)
-		{
-			if (CurrentPathfinders == null || !CurrentPathfinders.Contains(pathfinder)) return;
-			
-			currentPath = new Queue<PathfindingMarker>(pathFinderPath);
-			GetNextMarkerInPath();
-			Logging.Log($"{name} successfully received their path");
-
-		}
-
 		public void PathCallback(List<PathfindingMarker> pathFinderPath, int pathfinderIndex)
 		{
-			if (CurrentPathfinders?[pathfinderIndex] == null) return;
+			Logging.Log($"Got a path callback from pathfinder #{pathfinderIndex}!");
+
+			if (CurrentPathfinders == null) return;
+			if (CurrentPathfinders[pathfinderIndex] == null)
+			{
+				Logging.LogWarning($"{name} Got Path Callback on {pathfinderIndex}, but there was already a path on that index");
+				return;
+			}
 
 			CurrentPathfinders[pathfinderIndex] = null;
-
-			Logging.Log($"Got a path callback from pathfinder #{pathfinderIndex}!");
 
 			_workInProgressPath[pathfinderIndex] = pathFinderPath;
 

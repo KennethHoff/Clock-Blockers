@@ -22,24 +22,7 @@ namespace ClockBlockers.StateMachines.States
 		public void Tick()
 		{
 			_aiPathfinder.Tick();
-			
-			
-			// If the AI is on a path when he shouldn't be, then you unlink
-			// Translation? currentTranslationData = _replayRunner.GetTranslationData();
-			//
-			// if (!currentTranslationData.HasValue) return;
-			//
-			// if (_aiPathfinder.OnAPath)
-			// {
-			// 	Logging.Log($"<color='red'>Should've unlinked!</color> {_aiPathfinder}");
-			//
-			// 	// _replayRunner.Unlinked = true;
-			// 	// return;
-			// }
-			//
-			// _aiPathfinder.RequestPath(currentTranslationData.Value.position);
-
-		}
+			}
 
 		public void OnEnter()
 		{

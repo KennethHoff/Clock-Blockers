@@ -13,8 +13,6 @@ namespace ClockBlockers.MapData.Pathfinding
 {
 	// https://medium.com/@nicholas.w.swift/easy-a-star-pathfinding-7e6689c7f7b2
 
-	// HIGH-PRIO: Remove the entire dictionary. It feels unnecessary. <<--- It *needs* to go. I think it's what's causing crashes
-
 	[BurstCompile]
 	public class AStarPathFinder : IPathfinder
 	{
@@ -33,7 +31,7 @@ namespace ClockBlockers.MapData.Pathfinding
 		
 		private Dictionary<int, Node> _markerNodeDictionary;
 
-		public int PathfinderIndex { get; set; }
+		private int PathfinderIndex { get; set; }
 		public List<Node> OpenList { get; set; }
 
 		public void EndPreemptively()
@@ -42,8 +40,7 @@ namespace ClockBlockers.MapData.Pathfinding
 			// I could make a List<IPathfinder>, and add the instance of this Type to that list on creation, and remove it on deletion, but it's fine for now..
 			Logging.Log("A Pathfinder would've ended had I known how to... ");
 		}
-
-
+		
 		private readonly List<Node> _closedList;
 
 		public static AStarPathFinder CreateInstance(PathRequest pathRequest, int checksPerFrame, int pathfinderIndex)
@@ -74,8 +71,6 @@ namespace ClockBlockers.MapData.Pathfinding
 		{
 			Logging.Log("An instance of AStarPathFinder was deconstructed!");
 		}
-		
-		
 		
 		// ReSharper disable once SuggestBaseTypeForParameter
 		private void AddToMarkerNodeDictionary(PathfindingMarker marker, Node node)
@@ -130,8 +125,7 @@ namespace ClockBlockers.MapData.Pathfinding
 
 			if (startNode == endNode)
 			{
-				endNode.parentNode = startNode;
-				RetracePath(endNode);
+				_path.Add(startNode.marker);
 				Complete();
 				yield break;
 			}
@@ -185,7 +179,8 @@ namespace ClockBlockers.MapData.Pathfinding
 
 					Vector3 childMarkerPos = childNode.marker.transform.position;
 
-					// TODO: Redo this into something .. better (Currently it randomly goes diagonally back and forth, since that's equally "good")
+					// LOW-PRIO: Redo this into something .. better (Currently it randomly goes diagonally back and forth, since that's equally "good")
+					
 					float tempG = currNode.G + Vector3.Distance(childMarkerPos, currMarkerPos);
 
 					float tempH = Vector3.Distance(childMarkerPos, endNode.marker.transform.position).Round(4);
@@ -218,9 +213,10 @@ namespace ClockBlockers.MapData.Pathfinding
 
 		private void Complete()
 		{
+
 			IPathRequester pathRequester = _pathRequest.pathRequester;
 
-			Logging.Log($"Pathfinding completed {(_path.Count > 0 ? "Successfully" : "Unsuccessfully")}. Checked {_totalChecks} markers for {pathRequester}. It took {_framesTaken + 1} frames to complete.");
+			Logging.Log($"Pathfinder #{PathfinderIndex} completed {(_path.Count > 0 ? "Successfully" : "Unsuccessfully")}. Checked {_totalChecks} markers for {pathRequester}. It took {_framesTaken + 1} frames to complete.");
 
 			pathRequester.PathCallback(Path, PathfinderIndex);
 		}
