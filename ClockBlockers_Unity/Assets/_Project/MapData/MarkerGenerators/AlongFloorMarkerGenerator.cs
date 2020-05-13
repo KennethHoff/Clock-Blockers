@@ -10,7 +10,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 	[ExecuteInEditMode]
 	[BurstCompile]
 
-	public class AlongFloorMarkerGenerator : IntervalMarkerGeneratorBase
+	internal class AlongFloorMarkerGenerator : IntervalMarkerGeneratorBase
 	{
 		protected override int CreateMarker(float xPos, int rowIndex, Transform newColumn, int columnIndex)
 		{

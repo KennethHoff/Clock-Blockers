@@ -1,6 +1,6 @@
 ﻿namespace ClockBlockers.StateMachines.Conditions
 {
-	internal class RoundBegun : ICondition
+	public class Always : ICondition
 	{
 		public bool Fulfilled()
 		{

@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+
+using Between_Names.Property_References;
 
 using ClockBlockers.Characters;
 using ClockBlockers.MapData;
@@ -18,7 +21,7 @@ namespace ClockBlockers.AI
 	{
 		protected CharacterMovementNew characterMovement;
 
-		protected Queue<PathfindingMarker> currentPath;
+		protected internal Queue<PathfindingMarker> currentPath;
 
 		protected PathfindingMarker currentMarker;
 
@@ -28,13 +31,21 @@ namespace ClockBlockers.AI
 
 		public IPathfindingManager pathfindingManager;
 
-		protected List<PathfindingMarker>[] _workInProgressPath;
+		protected List<PathfindingMarker>[] workInProgressPath;
+		
+		// Remove this when you get a non-marker-based pathfinder
+		protected PathfindingGrid grid;
+		
+		
+		[NonSerialized]
+		public bool hasCompletedAPath = false;
 
 
 		// public IPathfinder CurrentPathfinder { get; set; }
 		public IPathfinder[] CurrentPathfinders { get; set; }
 		
-		public bool OnAPath => currentPath != null || CurrentPathfinders != null || (currentMarker != null && HorizontalDistanceToCurrentPathMarker() > characterMovement.MoveSpd * 0.2f);
+		public bool NotOnAPath => currentPath == null || CurrentPathfinders == null || (currentMarker != null && HorizontalDistanceToCurrentPathMarker() <= characterMovement.MoveSpd * 0.05f);
+		public bool OnAPath => !NotOnAPath;
 
 		protected virtual void Awake()
 		{
@@ -59,6 +70,7 @@ namespace ClockBlockers.AI
 			Logging.Log($"Got a path callback from pathfinder #{pathfinderIndex}!");
 
 			if (CurrentPathfinders == null) return;
+			
 			if (CurrentPathfinders[pathfinderIndex] == null)
 			{
 				Logging.LogWarning($"{name} Got Path Callback on {pathfinderIndex}, but there was already a path on that index");
@@ -67,7 +79,7 @@ namespace ClockBlockers.AI
 
 			CurrentPathfinders[pathfinderIndex] = null;
 
-			_workInProgressPath[pathfinderIndex] = pathFinderPath;
+			workInProgressPath[pathfinderIndex] = pathFinderPath;
 
 			MergeWorkInProgressPaths();
 		}
@@ -75,8 +87,13 @@ namespace ClockBlockers.AI
 		private void MergeWorkInProgressPaths()
 		{
 			if (CurrentPathfinders.Any(pathfinder => pathfinder != null)) return;
+			if (workInProgressPath.Any(tempPath => tempPath == null))
+			{
+				Logging.LogWarning("WorkInProgressPath has a null path, but all pathfinders are complete!");
+				return;
+			}
 
-			currentPath = new Queue<PathfindingMarker>(_workInProgressPath.SelectMany(x => x));
+			currentPath = new Queue<PathfindingMarker>(workInProgressPath.SelectMany(x => x));
 			Logging.Log("Finalized Creation of paths");
 
 			CurrentPathfinders = null;
@@ -86,16 +103,17 @@ namespace ClockBlockers.AI
 		public abstract void Tick();
 
 		public abstract void RequestPath(Vector3 destination);
-
+		
 		public void EndCurrentPath()
 		{
 			currentPath = null;
 			CurrentPathfinders = null;
 		}
 
-		public void Inject(IPathfindingManager currPathfindingManager)
+		public void Inject(IPathfindingManager currPathfindingManager, PathfindingGrid currGrid)
 		{
 			pathfindingManager = currPathfindingManager;
+			grid = currGrid;
 		}
 
 		protected void GetNextMarkerInPath()
@@ -105,5 +123,7 @@ namespace ClockBlockers.AI
 		}
 
 		public abstract void RequestMultiPath(List<Vector3> listOfPoints);
+
+		public abstract PathfindingMarker RequestPathToRandomLocationWithinDistance(float distance);
 	}
 }

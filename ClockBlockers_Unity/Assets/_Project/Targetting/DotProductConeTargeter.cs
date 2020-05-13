@@ -12,7 +12,7 @@ using UnityEngine;
 namespace ClockBlockers.Targetting
 {
 	[BurstCompile]
-	public class DotProductConeTargeter : MonoBehaviour, ITargeter
+	internal class DotProductConeTargeter : MonoBehaviour, ITargeter
 	{
 		// ReSharper disable once IdentifierTypo
 		private static List<Transform> _interactables;

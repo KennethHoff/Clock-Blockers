@@ -3,7 +3,7 @@
 
 namespace ClockBlockers.StateMachines.Conditions
 {
-	public class HasThingsToDo : ICondition
+	internal class HasThingsToDo : ICondition
 	{
 		private readonly IntervalReplayRunner _replayRunner;
 		public HasThingsToDo(IntervalReplayRunner replayRunner)
@@ -13,7 +13,7 @@ namespace ClockBlockers.StateMachines.Conditions
 
 		public bool Fulfilled()
 		{
-			return _replayRunner.RemainingActions > 0 || _replayRunner.RemainingTranslations > 0;
+			return _replayRunner.Unlinked == false;
 		}
 	}
 }

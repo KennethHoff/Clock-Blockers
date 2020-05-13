@@ -60,13 +60,13 @@ namespace ClockBlockers.Input
 		private void Awake()
 		{
 			_replayStorage = GetComponent<IntervalReplayStorage>();
-			Logging.CheckIfCorrectMonoBehaviourInstantiation(ref _replayStorage, this, "Replay Storage");
+			Logging.CheckIfCorrectMonoBehaviourInstantiation(_replayStorage, this, "Replay Storage");
 
 			_characterMovement = GetComponent<CharacterMovementNew>();
-			Logging.CheckIfCorrectMonoBehaviourInstantiation(ref _characterMovement, this, "Character Movement");
+			Logging.CheckIfCorrectMonoBehaviourInstantiation(_characterMovement, this, "Character Movement");
 
 			_character = GetComponent<Character>();
-			Logging.CheckIfCorrectMonoBehaviourInstantiation(ref _character, this, "Character");
+			Logging.CheckIfCorrectMonoBehaviourInstantiation(_character, this, "Character");
 
 			_character.onKilled += CharacterDied;
 		}

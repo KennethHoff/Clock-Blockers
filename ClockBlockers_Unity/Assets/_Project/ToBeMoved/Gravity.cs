@@ -22,7 +22,7 @@ namespace ClockBlockers.ToBeMoved
         {
             _characterMovement = GetComponent<CharacterMovementNew>();
 
-            if (!Logging.CheckIfCorrectMonoBehaviourInstantiation(ref _characterMovement, this, "Character Movement"))
+            if (!Logging.CheckIfCorrectMonoBehaviourInstantiation(_characterMovement, this, "Character Movement"))
             {
                 enabled = false;
             }

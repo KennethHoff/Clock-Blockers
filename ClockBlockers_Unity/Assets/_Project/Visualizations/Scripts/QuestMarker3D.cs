@@ -46,6 +46,5 @@ namespace ClockBlockers.Visualizations
 				yield return null;
 			}
 		}
-
 	}
 }

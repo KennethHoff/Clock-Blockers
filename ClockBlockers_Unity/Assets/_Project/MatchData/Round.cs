@@ -33,7 +33,7 @@ namespace ClockBlockers.MatchData {
 		[Header("Setup")]
 		
 		[SerializeField]
-		private Act actPrefab;
+		private Act actPrefab = null;
 
 		
 		[NonSerialized]
@@ -50,7 +50,7 @@ namespace ClockBlockers.MatchData {
 
 		private void Awake()
 		{
-			Logging.CheckIfCorrectMonoBehaviourInstantiation(ref actPrefab, this, "Act Prefab");
+			Logging.CheckIfCorrectMonoBehaviourInstantiation(actPrefab, this, "Act Prefab");
 		}
 
 		public void Setup()

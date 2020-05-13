@@ -95,23 +95,27 @@
           </e>
           <e p="StateMachines" t="Include">
             <e p="Conditions" t="Include">
+              <e p="Always.cs" t="Include" />
               <e p="ControlLost.cs" t="Include" />
               <e p="ControlRegained.cs" t="Include" />
+              <e p="Died.cs" t="Include" />
               <e p="HasThingsToDo.cs" t="Include" />
-              <e p="OutOfActions.cs" t="Include" />
               <e p="OutOfThingsToDo.cs" t="Include" />
-              <e p="OutOfTranslationData.cs" t="Include" />
               <e p="RoundBegun.cs" t="Include" />
+              <e p="UnderFire.cs" t="Include" />
             </e>
             <e p="ICondition.cs" t="Include" />
             <e p="IState.cs" t="Include" />
             <e p="StateMachine.cs" t="Include" />
             <e p="States" t="Include">
+              <e p="Dead.cs" t="Include" />
               <e p="ExternalControl.cs" t="Include" />
               <e p="Idle.cs" t="Include" />
+              <e p="LookingForAssailant.cs" t="Include" />
               <e p="ReplicatingActions.cs" t="Include" />
               <e p="Unlinked.cs" t="Include" />
               <e p="WaitingForRoundToBegin.cs" t="Include" />
+              <e p="WalkingAround.cs" t="Include" />
             </e>
           </e>
           <e p="Targetting" t="Include">
@@ -157,6 +161,7 @@
           </e>
           <e p="Visualizations" t="Include">
             <e p="Scripts" t="Include">
+              <e p="AlertMarker3D.cs" t="Include" />
               <e p="QuestMarker3D.cs" t="Include" />
               <e p="VisualizerBase.cs" t="Include" />
             </e>

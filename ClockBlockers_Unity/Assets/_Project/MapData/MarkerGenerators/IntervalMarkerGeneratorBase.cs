@@ -50,6 +50,8 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			return markers;
 		}
 
+
+
 		public sealed override void GenerateAllMarkers()
 		{
 			Logging.Log("Generating markers");
@@ -377,11 +379,22 @@ namespace ClockBlockers.MapData.MarkerGenerators
 				currSize += increasePerTime;
 				if (currSize.x >= 50) return null;
 				
-				Collider[] overlaps = RayCaster.OverLapBoxTriggersIncludeMarkers(point, currSize, Quaternion.identity, markerLayerMask);
+				Collider[] overlaps = GetMarkersWithinArea(point, currSize);
 				if (overlaps.Length == 0) continue;
 
 				return overlaps[0].GetComponent<PathfindingMarker>();
 			}
 		}
+
+		private Collider[] GetMarkersWithinArea(Vector3 point, Vector3 currSize)
+		{
+			Collider[] overlaps = RayCaster.OverLapBoxTriggersIncludeMarkers(point, currSize, Quaternion.identity, markerLayerMask);
+			return overlaps;
+		}
+
+		// public override PathfindingMarker FindRandomMarkerWithinDistance(Vector3 point, float distance)
+		// {
+		// 	return null;
+		// }
 	}
 }

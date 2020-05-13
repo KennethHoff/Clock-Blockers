@@ -42,7 +42,7 @@ namespace ClockBlockers.GameControllers {
 
 			if (aiPathfinder != null)
 			{
-				aiPathfinder.Inject(_grid.pathfindingManager);
+				aiPathfinder.Inject(_grid.pathfindingManager, _grid);
 			}
 			else
 			{

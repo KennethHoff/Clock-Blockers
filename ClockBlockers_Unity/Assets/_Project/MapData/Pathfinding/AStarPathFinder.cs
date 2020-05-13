@@ -14,7 +14,7 @@ namespace ClockBlockers.MapData.Pathfinding
 	// https://medium.com/@nicholas.w.swift/easy-a-star-pathfinding-7e6689c7f7b2
 
 	[BurstCompile]
-	public class AStarPathFinder : IPathfinder
+	internal class AStarPathFinder : IPathfinder
 	{
 		private readonly PathRequest _pathRequest;
 
@@ -29,7 +29,7 @@ namespace ClockBlockers.MapData.Pathfinding
 		private readonly List<PathfindingMarker> _path;
 		private List<PathfindingMarker> Path => _path.Count > 0 ? _path : null;
 		
-		private Dictionary<int, Node> _markerNodeDictionary;
+		private Dictionary<PathfindingMarker, Node> _markerNodeDictionary;
 
 		private int PathfinderIndex { get; set; }
 		public List<Node> OpenList { get; set; }
@@ -58,7 +58,7 @@ namespace ClockBlockers.MapData.Pathfinding
 			
 			_path = new List<PathfindingMarker>();
 			
-			_markerNodeDictionary = new Dictionary<int, Node>();
+			_markerNodeDictionary = new Dictionary<PathfindingMarker, Node>();
 
 			OpenList = new List<Node>();
 			_closedList = new List<Node>();
@@ -75,14 +75,14 @@ namespace ClockBlockers.MapData.Pathfinding
 		// ReSharper disable once SuggestBaseTypeForParameter
 		private void AddToMarkerNodeDictionary(PathfindingMarker marker, Node node)
 		{
-			_markerNodeDictionary.Add(marker.GetInstanceID(), node);
+			_markerNodeDictionary.Add(marker, node);
 		}
 		
 		private void ResetDictionary()
 		{
 			if (_markerNodeDictionary == null)
 			{
-				_markerNodeDictionary = new Dictionary<int, Node>();
+				_markerNodeDictionary = new Dictionary<PathfindingMarker, Node>();
 				return;
 			}
 			_markerNodeDictionary.Clear();
@@ -91,7 +91,7 @@ namespace ClockBlockers.MapData.Pathfinding
 		// ReSharper disable once SuggestBaseTypeForParameter
 		private Node GetNodeFromMarker(PathfindingMarker marker)
 		{
-			_markerNodeDictionary.TryGetValue(marker.GetInstanceID(), out Node node);
+			_markerNodeDictionary.TryGetValue(marker, out Node node);
 			return node;
 		}
 		

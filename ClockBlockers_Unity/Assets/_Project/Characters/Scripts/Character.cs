@@ -72,15 +72,15 @@ namespace ClockBlockers.Characters
 		[SerializeField]
 		private Material deadMaterial = null;
 
-		internal Action onKilled;
+		public Action onKilled;
 
 		protected void Awake()
 		{
 			_healthComponent = GetComponent<HealthComponent>();
-			Logging.CheckIfCorrectMonoBehaviourInstantiation(ref _healthComponent, this, "Health Component");
+			Logging.CheckIfCorrectMonoBehaviourInstantiation(_healthComponent, this, "Health Component");
 
 			_body = GetComponentInChildren<CharacterBodyTag>();
-			Logging.CheckIfCorrectMonoBehaviourInstantiation(ref _body, this, "Character Body Tag");
+			Logging.CheckIfCorrectMonoBehaviourInstantiation(_body, this, "Character Body Tag");
 
 			_bodyRenderer = _body.GetComponent<Renderer>();
 			Logging.CheckIfCorrectComponentInstantiation(ref _bodyRenderer, this, "Renderer");
@@ -93,15 +93,15 @@ namespace ClockBlockers.Characters
 			_diedTime = Time.time;
 			// Get the height of the body.
 			float height = _body.GetComponent<MeshFilter>().mesh.bounds.extents.y;
-
+		
 			// Multiply it by 2 (not sure why; I think the 'base height' is half, either that or it's radius or something
 			const int heightMultiplier = 2;
 			float multipliedHeight = height * heightMultiplier;
-
+		
 			// Get the position in order to know how far to fall; Fall until under y=0
 			float deathHeight = transform.position.y;
 			float totalDistance = deathHeight + (multipliedHeight * -1);
-
+		
 			while (_diedTime + removalTime >= Time.time)
 			{
 				float fallDistance = (totalDistance / removalTime) * Time.fixedDeltaTime;

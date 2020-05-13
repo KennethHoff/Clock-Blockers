@@ -1,4 +1,6 @@
-﻿using Between_Names.Property_References;
+﻿using System;
+
+using Between_Names.Property_References;
 
 using ClockBlockers.Characters;
 using ClockBlockers.ToBeMoved.DataStructures;
@@ -10,9 +12,9 @@ using UnityEngine;
 
 namespace ClockBlockers.ToBeMoved {
 	[BurstCompile]
-	internal class HealthComponent : MonoBehaviour
+	public class HealthComponent : MonoBehaviour
 	{
-		private float Health
+		public float Health
 		{
 			get => health;
 			set => health.Value = Mathf.Clamp(value, 0, MaxHealth);
@@ -20,31 +22,19 @@ namespace ClockBlockers.ToBeMoved {
 
 		private Character _character;
 
-
 		private float Armor => armor.Value;
 
-		// private float Shielding
-		// {
-		// 	get => shielding.Value;
-		// 	set => shielding.Value = value;
-		// }
-
-
 		private float MaxHealth => maxHealth.Value;
-			
+		public bool Dead { get; private set; }
+
 		[SerializeField]
 		private FloatReference armor = null;
-
-		// [SerializeField]
-		// private FloatReference shielding;
 
 		[SerializeField]
 		private FloatReference maxHealth = null;
 
 		[SerializeField]
 		private FloatReference health = null;
-
-		
 
 		private void Awake()
 		{
@@ -56,36 +46,18 @@ namespace ClockBlockers.ToBeMoved {
 			health = maxHealth;
 		}
 
-
-		internal void DealDamage(DamagePacket damagePacket)
+		public void DealDamage(DamagePacket damagePacket)
 		{
 			float finalDamage = damagePacket.damage - Armor;
 			float remainingDamage = finalDamage;
 			if (remainingDamage <= 0) return;
 
-			// if (Shielding > 0)
-			// {
-			// 	if (Shielding >= remainingDamage)
-			// 	{
-			// 		Shielding -= remainingDamage;
-			// 	}
-			// 	else
-			// 	{
-			// 		remainingDamage -= Shielding;
-			// 		Shielding = 0;
-			// 	}
-			// }
-
 			Health -= remainingDamage;
+
 			if (Health <= 0)
 			{
-				AttemptKill();
+				Dead = true;
 			}
 		}
-		private void AttemptKill()
-		{
-			_character.Kill();
-		}
-		
 	}
 }

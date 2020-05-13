@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace ClockBlockers.ToBeMoved {
 	[BurstCompile]
-	internal class CameraController : MonoBehaviour
+	public class CameraController : MonoBehaviour
 	{
 		[SerializeField]
 		private FloatReference minCamAngle = null;

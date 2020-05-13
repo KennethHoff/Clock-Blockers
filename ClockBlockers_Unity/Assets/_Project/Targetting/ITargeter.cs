@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace ClockBlockers.Targetting
 {
-	internal interface ITargeter
+	public interface ITargeter
 	{
 		Tuple<IInteractable, RaycastHit> GetInteractableFromRay(Ray ray, float range);
 	}

@@ -263,5 +263,13 @@ namespace ClockBlockers.MapData
 			
 			markers = _markerGenerator.RetrieveAllMarkers();
 		}
+
+		public PathfindingMarker FindRandomMarkerWithinDistance(Vector3 point, float distance)
+		{
+			if (!CheckMarkerGenerator()) return null;
+
+			return _markerGenerator.FindRandomMarkerWithinDistance(point, distance);
+
+		}
 	}
 }

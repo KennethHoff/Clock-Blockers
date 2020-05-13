@@ -87,6 +87,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controllingPlayer: {fileID: 0}
+  lookingForAssailantVisualizer: {fileID: 48027331327203101, guid: bfe24101a850d0247bb76f75a1701cc5, type: 3}
 --- !u!114 &7576223182090036205
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -13,7 +13,7 @@ using UnityEngine;
 namespace ClockBlockers.Environment
 {
 	[BurstCompile]
-	public class ShootingTarget : MonoBehaviour, IInteractable
+	internal class ShootingTarget : MonoBehaviour, IInteractable
 	{
 		private List<Tuple<Vector3, Character>> HitList { get; set; }
 

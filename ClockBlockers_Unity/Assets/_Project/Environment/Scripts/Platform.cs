@@ -9,7 +9,7 @@ namespace ClockBlockers.Environment
 {
 	[BurstCompile]
 
-	public class Platform : MonoBehaviour, IInteractable
+	internal class Platform : MonoBehaviour, IInteractable
 	{
 		public void OnHit(DamagePacket damagePacket, Vector3 hitPosition) { }
 	}

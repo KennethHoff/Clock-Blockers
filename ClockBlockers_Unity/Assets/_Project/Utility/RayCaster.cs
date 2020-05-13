@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+
+using UnityEngine;
 
 
 namespace ClockBlockers.Utility
@@ -9,12 +11,12 @@ namespace ClockBlockers.Utility
 
 		// Therefore, ~0 = 2^32-1
 
+		private const int MarkerLayerBit = 13;
 		private static void RemoveMarkerLayer(ref int layerToChange)
 		{
-			const int markerLayerInt = 13;
-			layerToChange ^= (-1 ^ layerToChange) & (1 << markerLayerInt);
+			layerToChange ^= (-1 ^ layerToChange) & (1 << MarkerLayerBit);
 		}
-
+		
 		public static RaycastHit[] CastRayAll(Ray ray, float distance, int layersToHit = ~0)
 		{
 			return Physics.RaycastAll(ray, distance, layersToHit, QueryTriggerInteraction.Ignore);
@@ -85,11 +87,8 @@ namespace ClockBlockers.Utility
 		
 		public static Collider[] OverLapBoxTriggersIncludeMarkers(Vector3 point, Vector3 halfExtents, Quaternion rotation, int layersToHit = ~0)
 		{
-			return Physics.OverlapBox(point, halfExtents, Quaternion.identity, layersToHit, QueryTriggerInteraction.Collide);
-		}
-		
-		
-
+			return Physics.OverlapBox(point, halfExtents, rotation, layersToHit, QueryTriggerInteraction.Collide);
+		} 
 		public static bool CheckBox(Vector3 point, Vector3 halfExtents, Quaternion rotation, int layersToHit = ~0)
 		{
 			return Physics.CheckBox(point, halfExtents, rotation, layersToHit, QueryTriggerInteraction.Ignore);

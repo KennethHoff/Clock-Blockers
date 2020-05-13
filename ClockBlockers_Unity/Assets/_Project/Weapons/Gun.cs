@@ -77,7 +77,7 @@ namespace ClockBlockers.Weapons
 			// CanShoot = true;
 		}
 
-		internal void PullTrigger()
+		public void PullTrigger()
 		{
 			if (_animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
 			{

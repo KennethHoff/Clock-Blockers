@@ -17,5 +17,16 @@ namespace ClockBlockers.Visualizations
 			thisTransform = GetComponent<Transform>();
 			Destroy(gameObject, lifetime);
 		}
+
+		public void Create(Vector3 position, Quaternion rotation, Transform parent)
+		{
+			Instantiate(this, position, rotation, parent);
+		}
+
+		public void Create(Vector3 position, Quaternion rotation)
+		{
+			Instantiate(this, position, rotation);
+
+		}
 	}
 }

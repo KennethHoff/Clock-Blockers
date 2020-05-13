@@ -6,7 +6,7 @@ using UnityEngine;
 namespace ClockBlockers.Targetting
 {
 	[BurstCompile]
-	public class CameraForwardRayProvider : MonoBehaviour, IRayProvider
+	internal class CameraForwardRayProvider : MonoBehaviour, IRayProvider
 	{
 		[SerializeField]
 		private Camera cam = null;

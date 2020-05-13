@@ -12,7 +12,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 	[BurstCompile]
 
 	[ExecuteInEditMode]
-	public class OrbitalRayMarkerGenerator : IntervalMarkerGeneratorBase
+	internal class OrbitalRayMarkerGenerator : IntervalMarkerGeneratorBase
 	{
 		private void OnDrawGizmos()
 		{

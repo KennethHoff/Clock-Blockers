@@ -49,18 +49,24 @@ namespace ClockBlockers.MapData.MarkerGenerators
 
 		public virtual void GenerateMarkerConnections()
 		{
-			Logging.Log("GenerateMarkerAdjacencies is not implemented in " + GetType());
+			Logging.LogWarning("GenerateMarkerAdjacencies is not implemented in " + GetType());
 		}
 
 		public virtual PathfindingMarker FindNearestMarker(Vector3 point)
 		{
-			Logging.Log($"FindNearestMarker is not implemented in {GetType()}");
+			Logging.LogWarning($"FindNearestMarker is not implemented in {GetType()}");
 			return null;
 		}
 
 		public virtual List<PathfindingMarker> RetrieveAllMarkers()
 		{
-			Logging.Log($"RetrieveAllMarkers is not implemented in {GetType()}");
+			Logging.LogWarning($"RetrieveAllMarkers is not implemented in {GetType()}");
+			return null;
+		}
+
+		public virtual PathfindingMarker FindRandomMarkerWithinDistance(Vector3 point, float distance)
+		{
+			Logging.LogWarning($"FindRandomMarkerWithinDistance is not implemented in {GetType()}");
 			return null;
 		}
 	}

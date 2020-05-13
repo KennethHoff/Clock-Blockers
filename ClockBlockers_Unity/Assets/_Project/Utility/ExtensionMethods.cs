@@ -9,7 +9,7 @@ using UnityEngine;
 namespace ClockBlockers.Utility
 {
 	[BurstCompile]
-	internal static class ExtensionMethods {
+	public static class ExtensionMethods {
 
 		
 		

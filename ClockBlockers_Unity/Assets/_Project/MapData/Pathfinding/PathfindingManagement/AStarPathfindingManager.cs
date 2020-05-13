@@ -41,16 +41,22 @@ namespace ClockBlockers.MapData.Pathfinding.PathfindingManagement
 		public void RequestPath(IPathRequester pathRequester, PathfindingMarker startMarker, PathfindingMarker endMarker, float maxJumpHeight)
 		{
 			_pathRequests.Add(new PathRequest(pathRequester, startMarker, endMarker, maxJumpHeight));
+
 		}
 
-		public void RequestPath(IPathRequester pathRequester, Vector3 point1, Vector3 point2, float maxJumpHeight)
+		public void RequestPath(IPathRequester pathRequester, Vector3 startPoint, Vector3 endPoint, float maxJumpHeight)
 		{
-			PathfindingMarker marker1 = _grid.FindNearestMarker(point1);
-			PathfindingMarker marker2 = _grid.FindNearestMarker(point2);
-			
-			Logging.Log($"Trying to move from {marker1.name} to {marker2.name}!");
-			
-			RequestPath(pathRequester, marker1, marker2, maxJumpHeight);
+			PathfindingMarker startMarker = _grid.FindNearestMarker(startPoint);
+			PathfindingMarker endMarker = _grid.FindNearestMarker(endPoint);
+			Logging.Log($"Trying to move from {startMarker.name} to {endMarker.name}!");
+
+			RequestPath(pathRequester, startMarker, endMarker, maxJumpHeight);
+		}
+
+		public void RequestPath(IPathRequester pathRequester, Vector3 startPoint, PathfindingMarker endMarker, float maxJumpHeight)
+		{
+			PathfindingMarker startMarker = _grid.FindNearestMarker(startPoint);
+			RequestPath(pathRequester, startMarker, endMarker, maxJumpHeight);
 		}
 
 		public void FindPaths()
@@ -61,9 +67,13 @@ namespace ClockBlockers.MapData.Pathfinding.PathfindingManagement
 		public void RequestMultiPath(IPathRequester pathRequester, Vector3 startPoint, IEnumerable<Vector3> listOfPoints, float maxJumpHeight)
 		{
 			PathfindingMarker startMarker = _grid.FindNearestMarker(startPoint);
+			if (startMarker == null)
+			{
+				Logging.LogWarning("Request MultiPath marker is null!");
+				return;
+			}
 			List<PathfindingMarker> listOfMarkersToGoThrough = listOfPoints.Select(point => _grid.FindNearestMarker(point)).ToList();
 
-			Logging.Log($"Requesting path to {listOfMarkersToGoThrough.Last().name} from {name} via {listOfMarkersToGoThrough.Count - 1} other markers");
 
 			RequestMultiPath(pathRequester, startMarker, listOfMarkersToGoThrough, maxJumpHeight);
 		}
