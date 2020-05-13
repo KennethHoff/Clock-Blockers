@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using ClockBlockers.DataStructures;
+using ClockBlockers.ToBeMoved.DataStructures;
+using ClockBlockers.Utility;
 
 using Unity.Burst;
 
@@ -80,9 +81,9 @@ namespace ClockBlockers.Targetting
 			// If you're aiming slightly top-left, then the point should be the upper-left-most area of the object etc..
 
 			// Currently it simply rays to the middle of the object.
-			Physics.Linecast(ray.origin, _closestTarget.position, out RaycastHit rayCastHit);
+			RayCaster.LineCast(ray.origin, _closestTarget.position, out RaycastHit hit);
 
-			var result = new Tuple<IInteractable, RaycastHit>(_closestTarget.GetComponent<IInteractable>(), rayCastHit);
+			var result = new Tuple<IInteractable, RaycastHit>(_closestTarget.GetComponent<IInteractable>(), hit);
 
 			_closestTarget = null;
 

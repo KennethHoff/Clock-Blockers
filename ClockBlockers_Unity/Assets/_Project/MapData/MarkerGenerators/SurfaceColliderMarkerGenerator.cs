@@ -203,7 +203,9 @@ namespace ClockBlockers.MapData.MarkerGenerators
 			collBack = false;
 			collRight = false;
 			
-			Collider[] colliders = Physics.OverlapBox(currPos, currSize, Quaternion.identity, ~0, QueryTriggerInteraction.Ignore);
+			
+			
+			Collider[] colliders = RayCaster.OverLapBox(currPos, currSize, Quaternion.identity);
 			int collidersSize = colliders.Length;
 
 			if (collidersSize == 0)
@@ -251,7 +253,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 					break;
 				}
 
-				Collider[] newColliders = Physics.OverlapBox(currPos, currSize , Quaternion.identity, ~0, QueryTriggerInteraction.Ignore);
+				Collider[] newColliders = RayCaster.OverLapBox(currPos, currSize, Quaternion.identity);
 
 				var forward = false;
 				var left = false;

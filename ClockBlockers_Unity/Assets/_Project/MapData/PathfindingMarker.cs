@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+
+using Between_Names.Property_References;
 
 using ClockBlockers.MapData.Pathfinding;
 using ClockBlockers.Utility;
@@ -8,6 +11,8 @@ using ClockBlockers.Utility;
 using Unity.Burst;
 
 using UnityEngine;
+
+using Random = System.Random;
 
 
 namespace ClockBlockers.MapData
@@ -20,7 +25,7 @@ namespace ClockBlockers.MapData
         [SerializeReference]
         public List<MarkerStats> connectedMarkers;
 
-        public IPathfinder CurrentPathfinder { get; set; }
+        public IPathfinder[] CurrentPathfinders { get; set; }
 
         public int ConnMarkerCount => connectedMarkers?.Count(node => node != null) ?? 0;
 
@@ -29,9 +34,11 @@ namespace ClockBlockers.MapData
 
         public float creationHeightAboveFloor;
 
-        private PathfindingMarker _otherSelectedMarker;
+        private List<PathfindingMarker> _currentlySelectedMarkers;
 
-        private List<PathfindingMarker> _pathToOtherSelectMarker;
+        private List<PathfindingMarker> _pathToCurrentlySelectedMarkers;
+
+        private List<PathfindingMarker>[] _workInProgressPath;
 
         #region Gizmo
 #if UNITY_EDITOR
@@ -48,17 +55,21 @@ namespace ClockBlockers.MapData
 
         }
         
+        [SuppressMessage("ReSharper", "BitwiseOperatorOnEnumWithoutFlags")]
         private void OnDrawGizmosSelected()
         {
             if (UnityEditor.Selection.activeGameObject != gameObject) return;
 
-            if (CurrentPathfinder != null)
+            if (CurrentPathfinders != null)
             {
-                AffectDrawOfMarkers(CurrentPathfinder.OpenList, Color.red, grid.searchedNodeScale);
+                foreach (IPathfinder currentPathfinder in CurrentPathfinders)
+                {
+                    if (currentPathfinder == null) continue;
+                    AffectDrawOfMarkers(currentPathfinder.OpenList, Color.red, grid.searchedNodeScale);
+                }
                 return;
             }
 
-            // ReSharper disable twice BitwiseOperatorOnEnumWithoutFlags
             const UnityEditor.SelectionMode selectionMode = UnityEditor.SelectionMode.TopLevel | UnityEditor.SelectionMode.ExcludePrefab | UnityEditor.SelectionMode.Editable;
             
             Transform[] transforms = UnityEditor.Selection.GetTransforms(selectionMode);
@@ -69,18 +80,14 @@ namespace ClockBlockers.MapData
                 return;
             }
 
-            var selectedMarkers = new List<PathfindingMarker>();
+            var selectedMarkers = new List<PathfindingMarker> {this};
 
-            PathfindingMarker otherMarker = null;
-            
             foreach (Transform currTrans in transforms)
             {
                 var currMarker = currTrans.GetComponent<PathfindingMarker>();
-                if (currMarker == null) continue;
+                if (currMarker == null || currMarker == this) continue;
 
                 selectedMarkers.Add(currMarker);
-
-                if (currMarker != this) otherMarker = currMarker;
             }
 
             grid.ResetMarkerGizmos();
@@ -90,28 +97,65 @@ namespace ClockBlockers.MapData
                     DrawSingleSelectedMarker();
                     break;
 
-                case 2 when otherMarker != null:
-                    DrawPathToSelectedMarker(otherMarker);
+                case 2:
+                    DrawPathToSelectedMarker(selectedMarkers);
+                    break;
+                default:
+                    DrawPathToSelectedMarkers(selectedMarkers);
                     break;
             }
         }
 
-
-        private void DrawPathToSelectedMarker(PathfindingMarker marker)
+        private void DrawPathToSelectedMarkers(List<PathfindingMarker> selectedMarkers)
         {
-            if (marker != _otherSelectedMarker)
+            if (_currentlySelectedMarkers == null || !selectedMarkers.SequenceEqual(_currentlySelectedMarkers))
             {
-                _otherSelectedMarker = marker;
-                // Logging.Log("Selected different markers");
-                RequestPathFrom(marker, grid.defaultJumpHeight);
+                Logging.Log("Selected multiple new markers");
+                RequestMultiPathTo(selectedMarkers, grid.defaultJumpHeight);
+                _currentlySelectedMarkers = selectedMarkers;
             }
 
-            if (_pathToOtherSelectMarker == null || _pathToOtherSelectMarker.Count == 0) return;
-            
-            // Logging.Log("Drawing path between markers");
-            AffectDrawOfMarkers( _pathToOtherSelectMarker);
+            if (_pathToCurrentlySelectedMarkers == null)
+            {
+                Logging.Log("Path not created yet!");
+                return;
+            }
 
-            _otherSelectedMarker._drawColor = Color.black;
+            AffectDrawOfMarkers(_pathToCurrentlySelectedMarkers);
+            
+            foreach (PathfindingMarker currentlySelectedMarker in _currentlySelectedMarkers)
+            {
+                currentlySelectedMarker._drawColor = Color.black;
+            }
+            
+        }
+        
+        private void DrawPathToSelectedMarker(IEnumerable<PathfindingMarker> selectedMarkers)
+        {
+            PathfindingMarker otherSelectedMarker = selectedMarkers.First(marker => marker != this);
+            
+            const int defaultIndex = 0;
+            if (_currentlySelectedMarkers == null || 
+                (_currentlySelectedMarkers != null && 
+                 _currentlySelectedMarkers[defaultIndex] 
+                 != otherSelectedMarker))
+            {
+                _currentlySelectedMarkers = new List<PathfindingMarker>() {otherSelectedMarker};
+                Logging.Log("Selected new markers");
+                RequestPathTo(otherSelectedMarker, grid.defaultJumpHeight);
+            }
+
+            if (_pathToCurrentlySelectedMarkers == null)
+            {
+                Logging.Log("Path not created yet");
+                return;
+            }
+
+            PathfindingMarker currentSelectedMarker = _currentlySelectedMarkers[defaultIndex];
+            // Logging.Log("Drawing path between markers");
+            AffectDrawOfMarkers( _pathToCurrentlySelectedMarkers);
+
+            currentSelectedMarker._drawColor = Color.black;
             _drawColor = Color.black;
         }
 
@@ -144,6 +188,7 @@ namespace ClockBlockers.MapData
         {
             AffectDrawOfMarkers(nodeList.ConvertAll(node => node.marker), newColor, newScale);
         }
+
         private void AffectDrawOfMarkers(IEnumerable<PathfindingMarker> markerList, Color newColor, float newScale)
         {
             foreach (PathfindingMarker marker in markerList.Where(marker => marker != null))
@@ -264,24 +309,66 @@ namespace ClockBlockers.MapData
         {
             Logging.Log($"Finding path to {marker.name} from {name}");
 
-            _pathToOtherSelectMarker = null;
+            _pathToCurrentlySelectedMarkers = null;
             
             grid.GetPath(this, marker, this, maxJumpHeight);
+            
+            _workInProgressPath = new List<PathfindingMarker>[1];
+            CurrentPathfinders = new IPathfinder[1];
         }
 
         private void RequestPathFrom(PathfindingMarker marker, float maxJumpHeight)
         {
             Logging.Log($"Finding path to {marker.name} from {name}");
             
-            _pathToOtherSelectMarker = null;
+            _pathToCurrentlySelectedMarkers = null;
             
-            grid.GetPath(marker, this, this, maxJumpHeight);
+            grid.GetPath(this, this, marker, maxJumpHeight);
+            
+            _workInProgressPath = new List<PathfindingMarker>[1];
+            
+            CurrentPathfinders = new IPathfinder[1];
         }
 
-        void IPathRequester.PathCallback(List<PathfindingMarker> pathFinderPath)
+        private void RequestMultiPathTo(List<PathfindingMarker> markers, float maxJumpHeight)
         {
-            _pathToOtherSelectMarker = pathFinderPath;
-            Logging.Log("Path Callback");
+            int markersCount = markers.Count;
+            
+            // If 3 markers, that means Start -> 1 -> End => 1 'other marker' (3-2)
+            
+            Logging.Log($"Requesting path to {markers.Last().name} from {name} via {markersCount - 2} other markers");
+
+            _pathToCurrentlySelectedMarkers = null;
+
+
+            grid.GetMultiPath(this, this, markers, maxJumpHeight);
+            
+            // If 3 marks, that means Start -> 1. 1 -> End ==> 2 paths (3-1)
+            _workInProgressPath = new List<PathfindingMarker>[markersCount-1];
+            CurrentPathfinders = new IPathfinder[markersCount];
+        }
+
+        public void PathCallback(List<PathfindingMarker> pathFinderPath, int pathfinderIndex)
+        {
+            if (CurrentPathfinders?[pathfinderIndex] == null) return;
+
+            CurrentPathfinders[pathfinderIndex] = null;
+
+            Logging.Log($"Got a path callback from pathfinder #{pathfinderIndex}!");
+
+            _workInProgressPath[pathfinderIndex] = pathFinderPath;
+
+            MergeWorkInProgressPaths();
+        }
+
+        private void MergeWorkInProgressPaths()
+        {
+            if (CurrentPathfinders.Any(pathfinder => pathfinder != null)) return;
+
+            _pathToCurrentlySelectedMarkers = _workInProgressPath.SelectMany(x => x).ToList();
+            Logging.Log("Finalized Creation of paths");
+
+            CurrentPathfinders = null;
         }
 
         public IEnumerable<PathfindingMarker> GetAvailableConnectedMarkers(float jumpHeight)

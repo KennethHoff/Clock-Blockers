@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6865903713920846830}
   - component: {fileID: 4633043596518141307}
   - component: {fileID: 6921800351776191084}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -118,7 +118,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1840957799448107733}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: ShootingTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}

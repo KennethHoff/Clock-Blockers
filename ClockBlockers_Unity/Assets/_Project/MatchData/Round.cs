@@ -107,9 +107,6 @@ namespace ClockBlockers.MatchData {
 			allActs.Add(newAct);
 			
 			newAct.Setup();
-			
-			// "10 seconds after start..." or whatever
-			newAct.Begin();
 		}
 
 		public void Inject(Match currMatch)

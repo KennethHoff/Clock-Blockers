@@ -187,10 +187,16 @@ namespace ClockBlockers.MapData
 			}
 		}
 
-		public void GetPath(PathfindingMarker marker1, PathfindingMarker marker2, IPathRequester pathRequester, float maxJumpHeight)
+		public void GetPath(IPathRequester pathRequester, PathfindingMarker marker1, PathfindingMarker marker2, float maxJumpHeight)
 		{
 			CheckPathfindingManager();
 			pathfindingManager.RequestPath(pathRequester, marker1, marker2, maxJumpHeight);
+		}
+
+		public void GetMultiPath(IPathRequester pathRequester, PathfindingMarker startMarker, List<PathfindingMarker> pathMarkers, float maxJumpHeight)
+		{
+			CheckPathfindingManager();
+			pathfindingManager.RequestMultiPath(pathRequester, startMarker, pathMarkers, maxJumpHeight);
 		}
 
 		private void ClearMarkerList()

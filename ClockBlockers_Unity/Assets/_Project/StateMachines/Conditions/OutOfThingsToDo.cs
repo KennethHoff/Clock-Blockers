@@ -1,7 +1,7 @@
 ﻿using ClockBlockers.ReplaySystem.ReplayRunner;
 
 
-namespace ClockBlockers.StateMachines
+namespace ClockBlockers.StateMachines.Conditions
 {
 	internal class OutOfThingsToDo : ICondition
 	{
@@ -13,7 +13,7 @@ namespace ClockBlockers.StateMachines
 
 		public bool Fulfilled()
 		{
-			return _replayRunner.RemainingActions == 0 && _replayRunner.RemainingTranslations == 0;
+			return _replayRunner.Unlinked || (_replayRunner.RemainingActions == 0 && _replayRunner.RemainingTranslations == 0);
 		}
 	}
 }

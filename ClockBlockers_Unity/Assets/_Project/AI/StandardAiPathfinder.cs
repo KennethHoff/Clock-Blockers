@@ -1,5 +1,7 @@
-﻿using System;
+﻿using System.Collections.Generic;
 
+using ClockBlockers.MapData;
+using ClockBlockers.MapData.Pathfinding;
 using ClockBlockers.Utility;
 
 using Unity.Burst;
@@ -15,6 +17,8 @@ namespace ClockBlockers.AI
 
 		public override void MoveTowardsNextWaypoint()
 		{
+			if (currentMarker == null) GetNextMarkerInPath();
+			
 			Vector3 currentMarkerPos = currentMarker.transform.position;
 
 			LookAt(currentMarkerPos);
@@ -32,17 +36,16 @@ namespace ClockBlockers.AI
 			float distanceToCurrentPathMarker = HorizontalDistanceToCurrentPathMarker();
 
 
-			if (distanceToCurrentPathMarker < distanceBeforeMarkerToChangeTargetMarker)
+			if (distanceToCurrentPathMarker >= distanceBeforeMarkerToChangeTargetMarker) return;
+			
+			if (currentPath.Count == 0)
 			{
-				if (currentPath.Count == 0)
-				{
-					Logging.Log("Reached the final marker!");
-					currentPath = null;
-					return;
-				}
-				
-				GetNextMarkerInPath();
+				Logging.Log("Reached the final marker!");
+				currentPath = null;
+				return;
 			}
+
+			GetNextMarkerInPath();
 		}
 
 		private void LookAt(Vector3 point)
@@ -60,8 +63,26 @@ namespace ClockBlockers.AI
 
 		public override void RequestPath(Vector3 destination)
 		{
-			CurrentPathfinder?.End();
+			EndAllPathfinders();
 			pathfindingManager.RequestPath(this, transform.position, destination, highestReachableRelativeAltitude);
+		}
+
+		private void EndAllPathfinders()
+		{
+			foreach (IPathfinder currentPathfinder in CurrentPathfinders)
+			{
+				currentPathfinder.EndPreemptively();
+			}
+		}
+
+		public override void RequestMultiPath(List<Vector3> listOfPoints)
+		{
+			pathfindingManager.RequestMultiPath(this, transform.position, listOfPoints, highestReachableRelativeAltitude);
+
+			int pathfinderCount = listOfPoints.Count-1;
+			_workInProgressPath = new List<PathfindingMarker>[pathfinderCount];
+			CurrentPathfinders = new IPathfinder[pathfinderCount];
+
 		}
 	}
 }

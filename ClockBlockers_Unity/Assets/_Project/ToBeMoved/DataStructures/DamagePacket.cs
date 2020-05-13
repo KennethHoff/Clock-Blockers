@@ -3,7 +3,7 @@
 using UnityEngine;
 
 
-namespace ClockBlockers.DataStructures
+namespace ClockBlockers.ToBeMoved.DataStructures
 {
 	[BurstCompile]
 	public readonly struct DamagePacket

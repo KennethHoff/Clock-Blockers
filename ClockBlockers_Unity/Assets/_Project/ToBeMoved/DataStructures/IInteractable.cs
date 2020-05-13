@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 
-namespace ClockBlockers.DataStructures
+namespace ClockBlockers.ToBeMoved.DataStructures
 {
 	public interface IInteractable
 	{

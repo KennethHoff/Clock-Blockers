@@ -18,8 +18,7 @@ namespace ClockBlockers.StateMachines
 		private List<Transition> _anyTransitions = new List<Transition>(); // From any state => ... | These are generally more urgent ("Stop AI", "Give control to a player", etc..)
 
 		// Basically a 'null'
-		// ReSharper disable once FieldCanBeMadeReadOnly.Local
-		private static List<Transition> EmptyTransitions = new List<Transition>(0);
+		private static readonly List<Transition> EmptyTransitions = new List<Transition>(0);
 
 		public void Tick()
 		{
@@ -36,6 +35,8 @@ namespace ClockBlockers.StateMachines
 		{
 			if (state == _current) return;
 
+			Logging.Log($"Changing state from {_current?.GetType()} to {state.GetType()}");
+
 			_current?.OnExit();
 			_current = state;
 
@@ -48,7 +49,6 @@ namespace ClockBlockers.StateMachines
 
 			_current.OnEnter();
 		}
-
 
 		public void AddTransition(IState from, IState to, ICondition condition)
 		{
@@ -97,6 +97,11 @@ namespace ClockBlockers.StateMachines
 				To = to;
 				Condition = condition;
 			}
+		}
+
+		public void Initialize(IState idle)
+		{
+			SetState(idle);
 		}
 	}
 }

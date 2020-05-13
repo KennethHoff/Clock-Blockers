@@ -1,6 +1,8 @@
 ﻿using Unity.Burst;
 
 using UnityEngine;
+
+
 // ReSharper disable UnusedMember.Global
 
 
@@ -8,6 +10,9 @@ namespace ClockBlockers.Utility
 {
 	[BurstCompile]
 	internal static class ExtensionMethods {
+
+		
+		
 		public static float[] ToFloatArray(this Vector3 vector3)
 		{
 			return new[]

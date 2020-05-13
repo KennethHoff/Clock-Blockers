@@ -4,6 +4,7 @@
     <e p="C:\Users\Modernkennnern\AppData\local\JetBrains\Rider2020.1\extResources" t="IncludeRecursive" />
     <e p="C:\Users\Modernkennnern\AppData\local\JetBrains\Rider2020.1\resharper-host\local\Transient\ReSharperHost\v201\SolutionCaches\_ClockBlockers_Unity.-373306959.00" t="ExcludeRecursive" />
     <e p="E:\Development\Games\Clock-Blockers\ClockBlockers_Unity" t="IncludeRecursive">
+      <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
       <e p="Assets" t="Include">
         <e p="_Project" t="Include">
@@ -64,6 +65,7 @@
             <e p="Pathfinding" t="Include">
               <e p="AStarPathFinder.cs" t="Include" />
               <e p="IPathfinder.cs" t="Include" />
+              <e p="MultiPathRequest.cs" t="Include" />
               <e p="Node.cs" t="Include" />
               <e p="PathfindingManagement" t="Include">
                 <e p="AStarPathfindingManager.cs" t="Include" />
@@ -93,20 +95,23 @@
           </e>
           <e p="StateMachines" t="Include">
             <e p="Conditions" t="Include">
+              <e p="ControlLost.cs" t="Include" />
+              <e p="ControlRegained.cs" t="Include" />
+              <e p="HasThingsToDo.cs" t="Include" />
               <e p="OutOfActions.cs" t="Include" />
+              <e p="OutOfThingsToDo.cs" t="Include" />
+              <e p="OutOfTranslationData.cs" t="Include" />
+              <e p="RoundBegun.cs" t="Include" />
             </e>
-            <e p="ControlLost.cs" t="Include" />
-            <e p="ControlRegained.cs" t="Include" />
             <e p="ICondition.cs" t="Include" />
             <e p="IState.cs" t="Include" />
-            <e p="OutOfThingsToDo.cs" t="Include" />
-            <e p="OutOfTranslationData.cs" t="Include" />
             <e p="StateMachine.cs" t="Include" />
             <e p="States" t="Include">
               <e p="ExternalControl.cs" t="Include" />
               <e p="Idle.cs" t="Include" />
               <e p="ReplicatingActions.cs" t="Include" />
               <e p="Unlinked.cs" t="Include" />
+              <e p="WaitingForRoundToBegin.cs" t="Include" />
             </e>
           </e>
           <e p="Targetting" t="Include">

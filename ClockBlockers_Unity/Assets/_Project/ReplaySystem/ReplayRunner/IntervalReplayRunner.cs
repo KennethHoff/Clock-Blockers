@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Between_Names.Property_References;
 
@@ -24,7 +25,6 @@ namespace ClockBlockers.ReplaySystem.ReplayRunner
 
 		private int _currentTranslationIndex = 0;
 
-		
 		private List<CharacterAction> _actions;
 
 		private int _currentActionIndex = 0;
@@ -38,6 +38,7 @@ namespace ClockBlockers.ReplaySystem.ReplayRunner
 		private float _timer;
 		public int RemainingActions => _actions.Count - -_currentActionIndex;
 		public int RemainingTranslations => _translations.Count - _currentTranslationIndex;
+		public bool Unlinked { get; set; } = false;
 
 		private void Awake()
 		{
@@ -51,33 +52,27 @@ namespace ClockBlockers.ReplaySystem.ReplayRunner
 			_translations = replayStorageTranslations;
 		}
 
-		public Translation? GetNextTranslationData()
-		{ 
-			_timer++;
+		public Translation? GetTranslationData()
+		{
+			_timer += Time.deltaTime;
+
 			if (_timer < translationInterval) return null;
-
-			_timer = 0;
-
-			if (_translations == null || _currentTranslationIndex >= _translations.Count)
-			{
-				Unlink();
-				return null;
-			}
+			_timer -= translationInterval;
 			
-			Translation translation = _translations[_currentTranslationIndex];
-			_currentTranslationIndex++;
-
-			return _translations[_currentTranslationIndex];
+			Translation resultTranslation = _translations[_currentTranslationIndex++];
 			
+			return resultTranslation;
 		}
 
-		/// <summary>
-		/// The character unlinks if:
-		/// There are no more actions and/or translations remaining (Both lists are 'completed'), or if the character fails to achieve an action or translation.
-		/// </summary>
-		private void Unlink()
+		public List<Translation> GetAllTranslations()
 		{
-			Logging.Log("!!!!!!!!!!!!!  ReplayRunner UNLINKED  !!!!!!!!!");
+			return _translations;
+		}
+
+		public List<Vector3> CreatePositionListFromTranslations()
+		{
+			List<Vector3> allPositions = _translations.Select(translation => translation.position).ToList();
+			return allPositions;
 		}
 	}
 }

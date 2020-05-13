@@ -1,7 +1,7 @@
 ﻿using ClockBlockers.ReplaySystem.ReplayRunner;
 
 
-namespace ClockBlockers.StateMachines
+namespace ClockBlockers.StateMachines.Conditions
 {
 	internal class OutOfTranslationData : ICondition
 	{

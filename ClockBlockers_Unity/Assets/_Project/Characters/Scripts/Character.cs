@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections;
 
-using ClockBlockers.DataStructures;
 using ClockBlockers.ToBeMoved;
+using ClockBlockers.ToBeMoved.DataStructures;
 using ClockBlockers.Utility;
 
 using Unity.Burst;

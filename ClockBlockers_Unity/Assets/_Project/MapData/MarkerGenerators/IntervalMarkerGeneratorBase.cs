@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-using ClockBlockers.Characters;
 using ClockBlockers.Utility;
 
 using Unity.Burst;
@@ -378,7 +377,7 @@ namespace ClockBlockers.MapData.MarkerGenerators
 				currSize += increasePerTime;
 				if (currSize.x >= 50) return null;
 				
-				Collider[] overlaps = Physics.OverlapBox(point, currSize, Quaternion.identity, markerLayerMask);
+				Collider[] overlaps = RayCaster.OverLapBoxTriggersIncludeMarkers(point, currSize, Quaternion.identity, markerLayerMask);
 				if (overlaps.Length == 0) continue;
 
 				return overlaps[0].GetComponent<PathfindingMarker>();

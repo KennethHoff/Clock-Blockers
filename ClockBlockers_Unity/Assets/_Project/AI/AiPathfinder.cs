@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 using ClockBlockers.Characters;
@@ -23,15 +22,19 @@ namespace ClockBlockers.AI
 
 		protected PathfindingMarker currentMarker;
 
-
 		// In relation to pathfinding - 'How high can I jump'
 		[SerializeField]
 		protected float highestReachableRelativeAltitude;
 
 		public IPathfindingManager pathfindingManager;
 
+		protected List<PathfindingMarker>[] _workInProgressPath;
+
+
+		// public IPathfinder CurrentPathfinder { get; set; }
+		public IPathfinder[] CurrentPathfinders { get; set; }
 		
-		public IPathfinder CurrentPathfinder { get; set; }
+		public bool OnAPath => currentPath != null || CurrentPathfinders != null || (currentMarker != null && HorizontalDistanceToCurrentPathMarker() > characterMovement.MoveSpd * 0.2f);
 
 		protected virtual void Awake()
 		{
@@ -50,13 +53,40 @@ namespace ClockBlockers.AI
 		}
 
 		public abstract void MoveTowardsNextWaypoint();
-
-		public void PathCallback(List<PathfindingMarker> pathFinderPath)
+		
+		public void PathCallback(IEnumerable<PathfindingMarker> pathFinderPath, IPathfinder pathfinder)
 		{
+			if (CurrentPathfinders == null || !CurrentPathfinders.Contains(pathfinder)) return;
+			
 			currentPath = new Queue<PathfindingMarker>(pathFinderPath);
 			GetNextMarkerInPath();
 			Logging.Log($"{name} successfully received their path");
+
 		}
+
+		public void PathCallback(List<PathfindingMarker> pathFinderPath, int pathfinderIndex)
+		{
+			if (CurrentPathfinders?[pathfinderIndex] == null) return;
+
+			CurrentPathfinders[pathfinderIndex] = null;
+
+			Logging.Log($"Got a path callback from pathfinder #{pathfinderIndex}!");
+
+			_workInProgressPath[pathfinderIndex] = pathFinderPath;
+
+			MergeWorkInProgressPaths();
+		}
+
+		private void MergeWorkInProgressPaths()
+		{
+			if (CurrentPathfinders.Any(pathfinder => pathfinder != null)) return;
+
+			currentPath = new Queue<PathfindingMarker>(_workInProgressPath.SelectMany(x => x));
+			Logging.Log("Finalized Creation of paths");
+
+			CurrentPathfinders = null;
+		}
+
 
 		public abstract void Tick();
 
@@ -65,6 +95,7 @@ namespace ClockBlockers.AI
 		public void EndCurrentPath()
 		{
 			currentPath = null;
+			CurrentPathfinders = null;
 		}
 
 		public void Inject(IPathfindingManager currPathfindingManager)
@@ -77,5 +108,7 @@ namespace ClockBlockers.AI
 			currentMarker = currentPath.Dequeue();
 			// Logging.Log($"Current marker is now {currentMarker.name}");
 		}
+
+		public abstract void RequestMultiPath(List<Vector3> listOfPoints);
 	}
 }

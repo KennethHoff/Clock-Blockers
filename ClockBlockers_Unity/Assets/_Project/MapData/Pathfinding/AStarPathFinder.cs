@@ -13,7 +13,7 @@ namespace ClockBlockers.MapData.Pathfinding
 {
 	// https://medium.com/@nicholas.w.swift/easy-a-star-pathfinding-7e6689c7f7b2
 
-	// TODO: Remove the entire dictionary. It feels unnecessary.
+	// HIGH-PRIO: Remove the entire dictionary. It feels unnecessary. <<--- It *needs* to go. I think it's what's causing crashes
 
 	[BurstCompile]
 	public class AStarPathFinder : IPathfinder
@@ -33,9 +33,10 @@ namespace ClockBlockers.MapData.Pathfinding
 		
 		private Dictionary<int, Node> _markerNodeDictionary;
 
+		public int PathfinderIndex { get; set; }
 		public List<Node> OpenList { get; set; }
 
-		public void End()
+		public void EndPreemptively()
 		{
 			//  The Coroutine is technically being ran from the Manager, and I can't find a way to stop a coroutine by sending in a reference to this GameObject.
 			// I could make a List<IPathfinder>, and add the instance of this Type to that list on creation, and remove it on deletion, but it's fine for now..
@@ -45,12 +46,12 @@ namespace ClockBlockers.MapData.Pathfinding
 
 		private readonly List<Node> _closedList;
 
-		public static AStarPathFinder CreateInstance(PathRequest pathRequest, int checksPerFrame)
+		public static AStarPathFinder CreateInstance(PathRequest pathRequest, int checksPerFrame, int pathfinderIndex)
 		{
-			return new AStarPathFinder(pathRequest, checksPerFrame);
+			return new AStarPathFinder(pathRequest, checksPerFrame, pathfinderIndex);
 		}
 		
-		private AStarPathFinder(PathRequest pathRequest, int checksPerFrame)
+		private AStarPathFinder(PathRequest pathRequest, int checksPerFrame, int pathfinderIndex)
 		{
 			_pathRequest = pathRequest;
 			
@@ -64,6 +65,8 @@ namespace ClockBlockers.MapData.Pathfinding
 
 			OpenList = new List<Node>();
 			_closedList = new List<Node>();
+
+			PathfinderIndex = pathfinderIndex;
 			
 			Logging.Log("New instance of AStarPathFinder was constructed!");
 		}
@@ -117,15 +120,6 @@ namespace ClockBlockers.MapData.Pathfinding
 			return from currMarker in availableConnectedMarkers
 				select GetOrAddMarkerToDictionary(currMarker);
 		}
-
-		private bool PathfindingStillRequired()
-		{
-			if (_pathRequest.pathRequester != null && _pathRequest.pathRequester.CurrentPathfinder == this) return true;
-			
-			Logging.Log("Pathfinding was no longer required.");
-			return false;
-
-		}
 		
 		public IEnumerator FindPathCoroutine()
 		{
@@ -134,6 +128,14 @@ namespace ClockBlockers.MapData.Pathfinding
 			Node startNode = GetOrAddMarkerToDictionary(_pathRequest.startMarker);
 			Node endNode = GetOrAddMarkerToDictionary(_pathRequest.endMarker);
 
+			if (startNode == endNode)
+			{
+				endNode.parentNode = startNode;
+				RetracePath(endNode);
+				Complete();
+				yield break;
+			}
+			
 			float distFromStartToEnd = Vector3.Distance(_pathRequest.startMarker.transform.position, _pathRequest.endMarker.transform.position);
 
 			startNode.G = 0;
@@ -152,8 +154,6 @@ namespace ClockBlockers.MapData.Pathfinding
 				{
 					_framesTaken++;
 					
-					if (!PathfindingStillRequired()) yield break;
-					
 					yield return null;
 				}
 
@@ -169,15 +169,7 @@ namespace ClockBlockers.MapData.Pathfinding
 
 				if (currNode == endNode)
 				{
-					Node current = currNode;
-
-					while (current != null)
-					{
-						_path.Add(current.marker);
-						current = current.parentNode;
-					}
-
-					_path.Reverse();
+					RetracePath(currNode);
 					break;
 				}
 
@@ -220,18 +212,30 @@ namespace ClockBlockers.MapData.Pathfinding
 			
 			// End of search
 
+			Complete();
+			yield break;
+		}
+
+		private void Complete()
+		{
 			IPathRequester pathRequester = _pathRequest.pathRequester;
-			
-			Logging.Log($"Pathfinding completed {(_path.Count > 0 ? "Successfully" : "Unsuccessfully" )}. Checked {_totalChecks} markers for {pathRequester}. It took {_framesTaken+1} frames to complete.");
 
-			if (!PathfindingStillRequired()) yield break;
+			Logging.Log($"Pathfinding completed {(_path.Count > 0 ? "Successfully" : "Unsuccessfully")}. Checked {_totalChecks} markers for {pathRequester}. It took {_framesTaken + 1} frames to complete.");
 
+			pathRequester.PathCallback(Path, PathfinderIndex);
+		}
 
-			pathRequester.CurrentPathfinder = null;
-			
-			if (Path == null) yield break;
+		private void RetracePath(Node currNode)
+		{
+			Node current = currNode;
 
-			pathRequester.PathCallback(Path);
+			while (current != null)
+			{
+				_path.Add(current.marker);
+				current = current.parentNode;
+			}
+
+			_path.Reverse();
 		}
 	}
 }

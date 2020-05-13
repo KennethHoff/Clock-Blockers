@@ -1,7 +1,7 @@
 ﻿using ClockBlockers.AI.AiControllers;
 
 
-namespace ClockBlockers.StateMachines
+namespace ClockBlockers.StateMachines.Conditions
 {
 	// This doesn't feel right - The first time I've wanted to store references to other fields in a field.
 	internal class ControlRegained : ICondition

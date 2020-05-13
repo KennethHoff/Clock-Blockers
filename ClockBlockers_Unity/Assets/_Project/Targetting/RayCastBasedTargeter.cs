@@ -1,7 +1,6 @@
 ﻿using System;
 
-using ClockBlockers.Characters;
-using ClockBlockers.DataStructures;
+using ClockBlockers.ToBeMoved.DataStructures;
 using ClockBlockers.Utility;
 
 using Unity.Burst;
