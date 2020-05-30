@@ -1,6 +1,8 @@
-﻿using ClockBlockers.StateMachines;
-using ClockBlockers.StateMachines.Conditions;
-using ClockBlockers.StateMachines.States;
+﻿using Between_Names.Property_References;
+
+using ClockBlockers.StateMachines;
+using ClockBlockers.StateMachines.AI.Conditions;
+using ClockBlockers.StateMachines.AI.States;
 using ClockBlockers.Visualizations;
 
 using Unity.Burst;
@@ -11,7 +13,7 @@ using UnityEngine;
 namespace ClockBlockers.AI.AiControllers
 {
 	[BurstCompile]
-	internal class StandardAiController : AiController
+	internal class StandardAiController : BaseAiController
 	{
 
 		#region States and Conditions
@@ -50,11 +52,19 @@ namespace ClockBlockers.AI.AiControllers
 		[SerializeField]
 		private VisualizerBase lookingForAssailantVisualizer = null;
 
-		
+		[SerializeField]
+		private FloatReference viewAngle;
+
+		[SerializeField]
+		private FloatReference viewRange;
+
 
 		protected override void SetupStates()
 		{
 			base.SetupStates();
+			
+			Transform thisTransform = transform;
+
 
 			_idle = new Idle();
 			_replicatingActions = new ReplicatingActions(aiPathfinder, replayRunner);
@@ -62,7 +72,7 @@ namespace ClockBlockers.AI.AiControllers
 			_externalControl = new ExternalControl(aiPathfinder);
 			
 			_walkingAround = new WalkingAround(aiPathfinder);
-			_lookingForAssailant = new LookingForAssailant(aiPathfinder, lookingForAssailantVisualizer, transform);
+			_lookingForAssailant = new LookingForAssailant(aiPathfinder, lookingForAssailantVisualizer, thisTransform);
 			// _assaultingTarget = new AssaultingTarget();
 
 			_dead = new Dead(character);
@@ -77,7 +87,7 @@ namespace ClockBlockers.AI.AiControllers
 			_controlLost = new ControlLost(this);
 
 
-			// _enemySpotted = new EnemySpotted();
+			_enemySpotted = new EnemySpotted(character, thisTransform, viewAngle, viewRange, character.Act);
 			_underFire = new UnderFire(healthComponent);
 			
 			// _assailantFound = new AssailantFound();
@@ -88,7 +98,6 @@ namespace ClockBlockers.AI.AiControllers
 			_died = new Died(healthComponent);
 
 			// _roundBegun = new RoundBegun();
-
 
 
 			AddTransition(_lookingForAssailant, _idle, always);
@@ -103,6 +112,9 @@ namespace ClockBlockers.AI.AiControllers
 			
 			AddTransition(_idle, _replicatingActions, _hasThingsToDo);
 			AddTransition(_idle, _lookingForAssailant, _underFire);
+			
+			// Temp; Should be 'AssaultingTarget'
+			AddTransition(_idle, _lookingForAssailant, _enemySpotted);
 
 			
 			// AddTransition(_walkingAround, _assaultingTarget, _enemySpotted);
@@ -128,5 +140,7 @@ namespace ClockBlockers.AI.AiControllers
 		{
 			stateMachine.Initialize(_idle);
 		}
+
+		protected override void End() { }
 	}
 }

@@ -11,6 +11,7 @@ using ClockBlockers.Utility;
 using Unity.Burst;
 
 using UnityEngine;
+using UnityEngine.Serialization;
 
 
 namespace ClockBlockers.MatchData
@@ -39,13 +40,14 @@ namespace ClockBlockers.MatchData
 		
 		[SerializeField]
 		private FloatReference timeWhenActStarted = null;
-		private List<Character> _playerCharacters;
+
+		public List<Character> characters;
 
 		private Round _round;
 
 		public void Setup()
 		{
-			_playerCharacters = new List<Character>();
+			characters = new List<Character>();
 			
 			SpawnAllCharacters();
 
@@ -86,7 +88,7 @@ namespace ClockBlockers.MatchData
 			
 			replaysCreated = new List<IntervalReplayStorage>();
 
-			_playerCharacters.ForEach(character => replaysCreated.Add(character.GetComponent<IntervalReplayStorage>()));
+			characters.ForEach(character => replaysCreated.Add(character.GetComponent<IntervalReplayStorage>()));
 			
 			actRemovedEvent.Raise();
 		}
@@ -122,6 +124,9 @@ namespace ClockBlockers.MatchData
 
 				var cloneReplayRunner = clone.GetComponent<IntervalReplayRunner>();
 
+				var actions = replayStorage.actions;
+				var translations = replayStorage.translations;
+
 				cloneReplayRunner.Initialize(replayStorage.actions, replayStorage.translations);
 				
 
@@ -137,18 +142,19 @@ namespace ClockBlockers.MatchData
 		[ContextMenu("Spawn a new Player")]
 		public Character SpawnNewPlayer()
 		{
-			Character newPlayer = _round.match.spawner.SpawnPlayer();
-			
+			Character newPlayer = _round.match.spawner.SpawnPlayer(this);
+			characters.Add(newPlayer);
+
 			newPlayer.transform.SetParent(transform, true);
-			_playerCharacters.Add(newPlayer);
-			
+
 			return newPlayer;
 		}
 
 		[ContextMenu("Spawn a new Clone")]
 		public Character SpawnNewClone()
 		{
-			Character newClone = _round.match.spawner.SpawnClone();
+			Character newClone = _round.match.spawner.SpawnClone(this);
+			characters.Add(newClone);
 
 			newClone.transform.SetParent(transform, true);
 
@@ -159,6 +165,13 @@ namespace ClockBlockers.MatchData
 		{
 			_round = currRound;
 			replaysForThisAct = replays;
+		}
+
+		public IEnumerable<Character> GetEnemyCharacters(Character character)
+		{
+			List<Character> newCharacters = characters;
+			newCharacters.RemoveAll(ch => ch == character);
+			return newCharacters;
 		}
 	}
 

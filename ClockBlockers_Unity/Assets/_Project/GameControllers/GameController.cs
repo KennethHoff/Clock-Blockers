@@ -62,7 +62,7 @@ namespace ClockBlockers.GameControllers
 			
 			StartCoroutine(newMatch.Setup());
 			
-			// Application.targetFrameRate = 60;
+			Application.targetFrameRate = 60;
 		}
 		
 	}

@@ -1,13 +1,14 @@
 ﻿using ClockBlockers.AI;
 
 
-namespace ClockBlockers.StateMachines.States
+namespace ClockBlockers.StateMachines.AI.States
 {
 	internal class WalkingAround : IState
 	{
 		private readonly AiPathfinder _aiPathfinder;
-		
-		private const float RandomPositionDistance = 10f; 
+
+		private const float RandomPositionDistance = 10f;
+
 		public WalkingAround(AiPathfinder aiPathfinder)
 		{
 			_aiPathfinder = aiPathfinder;
@@ -20,8 +21,8 @@ namespace ClockBlockers.StateMachines.States
 			if (_aiPathfinder.OnAPath) return;
 
 			_aiPathfinder.RequestPathToRandomLocationWithinDistance(RandomPositionDistance);
-			
 		}
+
 		public void OnEnter() { }
 		public void OnExit() { }
 	}

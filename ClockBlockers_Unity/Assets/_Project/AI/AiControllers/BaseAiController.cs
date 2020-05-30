@@ -4,7 +4,7 @@ using ClockBlockers.Characters;
 using ClockBlockers.Input;
 using ClockBlockers.ReplaySystem.ReplayRunner;
 using ClockBlockers.StateMachines;
-using ClockBlockers.StateMachines.Conditions;
+using ClockBlockers.StateMachines.AI.Conditions;
 using ClockBlockers.ToBeMoved;
 using ClockBlockers.Utility;
 
@@ -18,7 +18,7 @@ using UnityEngine;
 namespace ClockBlockers.AI.AiControllers
 {
 	[BurstCompile]
-	public abstract class AiController : MonoBehaviour
+	public abstract class BaseAiController : MonoBehaviour
 	{
 		#region States and Conditions
 
@@ -33,15 +33,11 @@ namespace ClockBlockers.AI.AiControllers
 		
 		protected IntervalReplayRunner replayRunner;
 		
-		[NonSerialized]
-		public AiPathfinder aiPathfinder;
+		protected AiPathfinder aiPathfinder;
 
-		[SerializeField]
 		protected HealthComponent healthComponent;
 
 		protected Character character;
-
-		
 
 		private void Awake()
 		{
@@ -56,7 +52,10 @@ namespace ClockBlockers.AI.AiControllers
 
 			aiPathfinder = GetComponent<AiPathfinder>();
 			Logging.CheckIfCorrectMonoBehaviourInstantiation(aiPathfinder, this, "Ai Pathfinder");
-			
+		}
+
+		private void Start()
+		{
 			InitializeStateMachine();
 		}
 
@@ -79,6 +78,7 @@ namespace ClockBlockers.AI.AiControllers
 		}
 
 		protected abstract void Begin();
+		protected abstract void End();
 
 
 		public void TakeControl(PlayerInputController player)
@@ -106,6 +106,12 @@ namespace ClockBlockers.AI.AiControllers
 		private void Update()
 		{
 			stateMachine.Tick();
+		}
+
+		public void ForceRequestPathTo(Vector3 hitPoint)
+		{
+			aiPathfinder.EndCurrentPath();
+			aiPathfinder.RequestPath(hitPoint);
 		}
 	}
 }

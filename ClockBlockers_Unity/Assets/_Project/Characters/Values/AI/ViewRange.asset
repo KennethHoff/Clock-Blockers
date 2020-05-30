@@ -10,6 +10,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3c07ec5838f69c7458901d70987514dc, type: 3}
-  m_Name: Time When Act Started
+  m_Name: ViewRange
   m_EditorClassIdentifier: 
-  value: 0
+  value: 30.4

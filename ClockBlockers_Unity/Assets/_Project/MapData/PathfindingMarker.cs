@@ -3,16 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-using Between_Names.Property_References;
-
 using ClockBlockers.MapData.Pathfinding;
 using ClockBlockers.Utility;
 
 using Unity.Burst;
 
 using UnityEngine;
-
-using Random = System.Random;
 
 
 namespace ClockBlockers.MapData
@@ -364,6 +360,13 @@ namespace ClockBlockers.MapData
         private void MergeWorkInProgressPaths()
         {
             if (CurrentPathfinders.Any(pathfinder => pathfinder != null)) return;
+
+            if (_workInProgressPath.Any(path => path == null))
+            {
+                Logging.Log("<color='red'>All Pathfinders were finalized, but at least one of the paths were unsuccessful</color>");
+                return;
+            }
+            
 
             _pathToCurrentlySelectedMarkers = _workInProgressPath.SelectMany(x => x).ToList();
             Logging.Log("Finalized Creation of paths");

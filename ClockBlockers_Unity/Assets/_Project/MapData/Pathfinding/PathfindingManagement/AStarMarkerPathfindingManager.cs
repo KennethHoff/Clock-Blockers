@@ -10,7 +10,7 @@ using UnityEngine;
 namespace ClockBlockers.MapData.Pathfinding.PathfindingManagement
 {
 	[ExecuteAlways][BurstCompile]
-	internal class AStarPathfindingManager : MonoBehaviour, IPathfindingManager
+	internal class AStarMarkerPathfindingManager : MonoBehaviour, IPathfindingManager
 	{
 		[SerializeField]
 		private int pathfindingChecksPerFramePerFinder = 100;
@@ -93,7 +93,7 @@ namespace ClockBlockers.MapData.Pathfinding.PathfindingManagement
 				foreach (PathRequest pathRequest in _pathRequests)
 				{
 					const int defaultIndex = 0;
-					var newPathfinder = AStarPathFinder.CreateInstance(pathRequest, pathfindingChecksPerFramePerFinder, defaultIndex);
+					var newPathfinder = AStarMarkerPathFinder.CreateInstance(pathRequest, pathfindingChecksPerFramePerFinder, defaultIndex);
 					pathRequest.pathRequester.CurrentPathfinders = new IPathfinder[] {newPathfinder};
 				
 					StartPathfinderCoroutine(newPathfinder);
@@ -121,7 +121,7 @@ namespace ClockBlockers.MapData.Pathfinding.PathfindingManagement
 
 						var newPathRequest = new PathRequest(pathRequester, currStartMarker, currEndMarker, multiPathRequest.maxJumpHeight);
 
-						var newPathfinder = AStarPathFinder.CreateInstance(newPathRequest, pathfindingChecksPerFramePerFinder, index);
+						var newPathfinder = AStarMarkerPathFinder.CreateInstance(newPathRequest, pathfindingChecksPerFramePerFinder, index);
 
 						pathRequester.CurrentPathfinders[index] = newPathfinder;
 
@@ -133,7 +133,7 @@ namespace ClockBlockers.MapData.Pathfinding.PathfindingManagement
 			_multiPathRequests.Clear();
 		}
 
-		private void StartPathfinderCoroutine(AStarPathFinder newPathfinder)
+		private void StartPathfinderCoroutine(AStarMarkerPathFinder newPathfinder)
 		{
 #if UNITY_EDITOR
 			if (!Application.isPlaying)

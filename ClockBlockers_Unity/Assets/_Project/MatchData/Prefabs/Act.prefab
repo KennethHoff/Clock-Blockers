@@ -53,7 +53,8 @@ MonoBehaviour:
   timeWhenActStarted:
     useConstant: 0
     constantValue: 0
-    variable: {fileID: 11400000, guid: 81883ca71d285dc4ba3865e75d32d1a1, type: 2}
+    variable: {fileID: 11400000, guid: b39bc742045b1134694ec66532c1c24d, type: 2}
+  characters: []
 --- !u!114 &-1637280871024434405
 MonoBehaviour:
   m_ObjectHideFlags: 0

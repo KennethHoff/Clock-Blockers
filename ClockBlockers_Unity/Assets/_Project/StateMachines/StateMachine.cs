@@ -35,7 +35,7 @@ namespace ClockBlockers.StateMachines
 		{
 			if (state == _current) return;
 
-			Logging.Log($"Changing state from {_current?.GetType()} to {state.GetType()}");
+			Logging.Log($"Changing state from {_current?.GetType().Name} to {state.GetType().Name}");
 
 			_current?.OnExit();
 			_current = state;

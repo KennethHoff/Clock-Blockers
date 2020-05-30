@@ -3,6 +3,7 @@ using System;
 using ClockBlockers.AI;
 using ClockBlockers.Characters;
 using ClockBlockers.MapData;
+using ClockBlockers.MatchData;
 using ClockBlockers.Utility;
 
 using Unity.Burst;
@@ -24,9 +25,9 @@ namespace ClockBlockers.GameControllers {
 		[NonSerialized]
 		private PathfindingGrid _grid;
 
-		public Character SpawnPlayer()
+		public Character SpawnPlayer(Act act)
 		{
-			Character newPlayer = SpawnCharacter(playerPrefab);
+			Character newPlayer = SpawnCharacter(playerPrefab, act);
 			return newPlayer;
 		}
 
@@ -35,9 +36,9 @@ namespace ClockBlockers.GameControllers {
 			_grid = grid;
 		}
 
-		public Character SpawnClone()
+		public Character SpawnClone(Act act)
 		{
-			Character newClone = SpawnCharacter(clonePrefab);
+			Character newClone = SpawnCharacter(clonePrefab, act);
 			var aiPathfinder = newClone.GetComponent<AiPathfinder>();
 
 			if (aiPathfinder != null)
@@ -52,9 +53,10 @@ namespace ClockBlockers.GameControllers {
 			return newClone;
 		}
 
-		private static Character SpawnCharacter(Character character)
+		private static Character SpawnCharacter(Character character, Act act)
 		{
 			Character newCharacter = Instantiate(character, Vector3.up *10, Quaternion.identity);
+			newCharacter.Inject(act);
 			return newCharacter;
 		}
 	}

@@ -1,4 +1,4 @@
-﻿namespace ClockBlockers.StateMachines.States
+﻿namespace ClockBlockers.StateMachines.AI.States
 {
 	internal class WaitingForRoundToBegin : IState
 	{

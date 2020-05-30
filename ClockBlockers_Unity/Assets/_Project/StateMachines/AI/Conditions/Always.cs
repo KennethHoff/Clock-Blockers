@@ -1,4 +1,4 @@
-﻿namespace ClockBlockers.StateMachines.Conditions
+﻿namespace ClockBlockers.StateMachines.AI.Conditions
 {
 	public class Always : ICondition
 	{

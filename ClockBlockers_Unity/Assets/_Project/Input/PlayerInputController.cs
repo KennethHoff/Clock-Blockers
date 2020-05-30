@@ -18,8 +18,6 @@ using UnityEngine.InputSystem;
 
 namespace ClockBlockers.Input
 {
-	[RequireComponent(typeof(Character))]
-	[RequireComponent(typeof(CharacterMovement))]
 	[BurstCompile]
 	public class PlayerInputController : MonoBehaviour
 	{
@@ -55,7 +53,7 @@ namespace ClockBlockers.Input
 
 
 
-		private AiController _controlledAi;
+		private BaseAiController _controlledAi;
 
 		private void Awake()
 		{
@@ -174,7 +172,7 @@ namespace ClockBlockers.Input
 
 			if (!hitSomething) return;
 
-			var aiController = hit.transform.GetComponent<AiController>();
+			var aiController = hit.transform.GetComponent<BaseAiController>();
 			if (aiController == null) return;
 
 
@@ -211,8 +209,7 @@ namespace ClockBlockers.Input
 
 			if (_controlledAi == null) return;
 
-			_controlledAi.aiPathfinder.EndCurrentPath();
-			_controlledAi.aiPathfinder.RequestPath(hit.point);
+			_controlledAi.ForceRequestPathTo(hit.point);
 		}
 
 		private void ToggleCursor()

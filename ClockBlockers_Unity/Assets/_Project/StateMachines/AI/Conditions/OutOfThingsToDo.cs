@@ -1,8 +1,7 @@
 ﻿using ClockBlockers.AI;
-using ClockBlockers.ReplaySystem.ReplayRunner;
 
 
-namespace ClockBlockers.StateMachines.Conditions
+namespace ClockBlockers.StateMachines.AI.Conditions
 {
 	internal class OutOfThingsToDo : ICondition
 	{

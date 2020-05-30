@@ -63,11 +63,12 @@ namespace ClockBlockers.Targetting
 
 				float distance = rayToTargetVector.magnitude;
 
+				if (_distanceToClosestTarget <= distance) continue;
+				
 				float lookPercentage = Vector3.Dot(rayVector.normalized, rayToTargetVector.normalized);
 
 				if (lookPercentage < Threshold) continue;
 
-				if (_distanceToClosestTarget <= distance) continue;
 
 				// if (lookPercentage < _bestLookPercentage) return;
 

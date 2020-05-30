@@ -2,11 +2,12 @@
 using ClockBlockers.Utility;
 
 
-namespace ClockBlockers.StateMachines.States
+namespace ClockBlockers.StateMachines.AI.States
 {
 	internal class ExternalControl : IState
 	{
 		private readonly AiPathfinder _aiPathfinder;
+
 		public ExternalControl(AiPathfinder aiPathfinder)
 		{
 			_aiPathfinder = aiPathfinder;

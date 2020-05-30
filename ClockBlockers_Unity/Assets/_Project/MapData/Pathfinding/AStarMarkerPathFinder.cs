@@ -9,13 +9,18 @@ using Unity.Burst;
 
 using UnityEngine;
 
+using Unity.Profiling;
+
 namespace ClockBlockers.MapData.Pathfinding
 {
 	// https://medium.com/@nicholas.w.swift/easy-a-star-pathfinding-7e6689c7f7b2
+	
 
 	[BurstCompile]
-	internal class AStarPathFinder : IPathfinder
+	internal class AStarMarkerPathFinder : IPathfinder
 	{
+		private static ProfilerMarker _pathfindingPerfMarker = new ProfilerMarker("AStarMarkerPathFinder.FindingPath");
+		private static ProfilerMarker _pathRetractingPerfMarker = new ProfilerMarker("AStarMarkerPathFinder.RetracingPath");
 		private readonly PathRequest _pathRequest;
 
 		private readonly int _checksPerFrame;
@@ -43,12 +48,12 @@ namespace ClockBlockers.MapData.Pathfinding
 		
 		private readonly List<Node> _closedList;
 
-		public static AStarPathFinder CreateInstance(PathRequest pathRequest, int checksPerFrame, int pathfinderIndex)
+		public static AStarMarkerPathFinder CreateInstance(PathRequest pathRequest, int checksPerFrame, int pathfinderIndex)
 		{
-			return new AStarPathFinder(pathRequest, checksPerFrame, pathfinderIndex);
+			return new AStarMarkerPathFinder(pathRequest, checksPerFrame, pathfinderIndex);
 		}
 		
-		private AStarPathFinder(PathRequest pathRequest, int checksPerFrame, int pathfinderIndex)
+		private AStarMarkerPathFinder(PathRequest pathRequest, int checksPerFrame, int pathfinderIndex)
 		{
 			_pathRequest = pathRequest;
 			
@@ -65,11 +70,12 @@ namespace ClockBlockers.MapData.Pathfinding
 
 			PathfinderIndex = pathfinderIndex;
 			
-			Logging.Log("New instance of AStarPathFinder was constructed!");
+			// Logging.Log("New instance of AStarMarkerPathFinder was constructed!");
 		}
-		~AStarPathFinder()
+		
+		~AStarMarkerPathFinder()
 		{
-			Logging.Log("An instance of AStarPathFinder was deconstructed!");
+			// Logging.Log("An instance of AStarMarkerPathFinder was deconstructed!");
 		}
 		
 		// ReSharper disable once SuggestBaseTypeForParameter
@@ -118,6 +124,7 @@ namespace ClockBlockers.MapData.Pathfinding
 		
 		public IEnumerator FindPathCoroutine()
 		{
+			_pathfindingPerfMarker.Begin();
 			ResetDictionary();
 
 			Node startNode = GetOrAddMarkerToDictionary(_pathRequest.startMarker);
@@ -219,10 +226,13 @@ namespace ClockBlockers.MapData.Pathfinding
 			Logging.Log($"Pathfinder #{PathfinderIndex} completed {(_path.Count > 0 ? "Successfully" : "Unsuccessfully")}. Checked {_totalChecks} markers for {pathRequester}. It took {_framesTaken + 1} frames to complete.");
 
 			pathRequester.PathCallback(Path, PathfinderIndex);
+			_pathfindingPerfMarker.End();
+
 		}
 
 		private void RetracePath(Node currNode)
 		{
+			_pathRetractingPerfMarker.Begin();
 			Node current = currNode;
 
 			while (current != null)
@@ -232,6 +242,7 @@ namespace ClockBlockers.MapData.Pathfinding
 			}
 
 			_path.Reverse();
+			_pathRetractingPerfMarker.End();
 		}
 	}
 }

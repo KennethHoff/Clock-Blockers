@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 
-using Between_Names.Property_References;
-
 using ClockBlockers.MapData;
 using ClockBlockers.MapData.Pathfinding;
 using ClockBlockers.Utility;

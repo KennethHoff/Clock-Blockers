@@ -10,7 +10,7 @@
         <e p="_Project" t="Include">
           <e p="AI" t="Include">
             <e p="AiControllers" t="Include">
-              <e p="AiController.cs" t="Include" />
+              <e p="BaseAiController.cs" t="Include" />
               <e p="StandardAiController.cs" t="Include" />
             </e>
             <e p="AiPathfinder.cs" t="Include" />
@@ -63,12 +63,12 @@
             </e>
             <e p="MarkerStats.cs" t="Include" />
             <e p="Pathfinding" t="Include">
-              <e p="AStarPathFinder.cs" t="Include" />
+              <e p="AStarMarkerPathFinder.cs" t="Include" />
               <e p="IPathfinder.cs" t="Include" />
               <e p="MultiPathRequest.cs" t="Include" />
               <e p="Node.cs" t="Include" />
               <e p="PathfindingManagement" t="Include">
-                <e p="AStarPathfindingManager.cs" t="Include" />
+                <e p="AStarMarkerPathfindingManager.cs" t="Include" />
                 <e p="IPathfindingManager.cs" t="Include" />
               </e>
               <e p="PathRequest.cs" t="Include" />
@@ -94,29 +94,32 @@
             <e p="Translation.cs" t="Include" />
           </e>
           <e p="StateMachines" t="Include">
-            <e p="Conditions" t="Include">
-              <e p="Always.cs" t="Include" />
-              <e p="ControlLost.cs" t="Include" />
-              <e p="ControlRegained.cs" t="Include" />
-              <e p="Died.cs" t="Include" />
-              <e p="HasThingsToDo.cs" t="Include" />
-              <e p="OutOfThingsToDo.cs" t="Include" />
-              <e p="RoundBegun.cs" t="Include" />
-              <e p="UnderFire.cs" t="Include" />
+            <e p="AI" t="Include">
+              <e p="Conditions" t="Include">
+                <e p="Always.cs" t="Include" />
+                <e p="ControlLost.cs" t="Include" />
+                <e p="ControlRegained.cs" t="Include" />
+                <e p="Died.cs" t="Include" />
+                <e p="EnemySpotted.cs" t="Include" />
+                <e p="HasThingsToDo.cs" t="Include" />
+                <e p="OutOfThingsToDo.cs" t="Include" />
+                <e p="RoundBegun.cs" t="Include" />
+                <e p="UnderFire.cs" t="Include" />
+              </e>
+              <e p="States" t="Include">
+                <e p="Dead.cs" t="Include" />
+                <e p="ExternalControl.cs" t="Include" />
+                <e p="Idle.cs" t="Include" />
+                <e p="LookingForAssailant.cs" t="Include" />
+                <e p="ReplicatingActions.cs" t="Include" />
+                <e p="Unlinked.cs" t="Include" />
+                <e p="WaitingForRoundToBegin.cs" t="Include" />
+                <e p="WalkingAround.cs" t="Include" />
+              </e>
             </e>
             <e p="ICondition.cs" t="Include" />
             <e p="IState.cs" t="Include" />
             <e p="StateMachine.cs" t="Include" />
-            <e p="States" t="Include">
-              <e p="Dead.cs" t="Include" />
-              <e p="ExternalControl.cs" t="Include" />
-              <e p="Idle.cs" t="Include" />
-              <e p="LookingForAssailant.cs" t="Include" />
-              <e p="ReplicatingActions.cs" t="Include" />
-              <e p="Unlinked.cs" t="Include" />
-              <e p="WaitingForRoundToBegin.cs" t="Include" />
-              <e p="WalkingAround.cs" t="Include" />
-            </e>
           </e>
           <e p="Targetting" t="Include">
             <e p="CameraForwardRayProvider.cs" t="Include" />

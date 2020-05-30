@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+using ClockBlockers.MatchData;
 using ClockBlockers.ToBeMoved;
 using ClockBlockers.ToBeMoved.DataStructures;
 using ClockBlockers.Utility;
@@ -54,8 +55,6 @@ namespace ClockBlockers.Characters
 
 
 
-	[DisallowMultipleComponent]
-	[RequireComponent(typeof(HealthComponent))]
 	[BurstCompile]
 	public class Character : MonoBehaviour, IInteractable
 	{
@@ -73,6 +72,9 @@ namespace ClockBlockers.Characters
 		private Material deadMaterial = null;
 
 		public Action onKilled;
+		
+		// This does not feel like the best solution
+		public Act Act { get; set; }
 
 		protected void Awake()
 		{
@@ -127,6 +129,11 @@ namespace ClockBlockers.Characters
 			onKilled?.Invoke();
 
 			StartCoroutine(FallThroughFloorRoutine(removalTime));
+		}
+
+		public void Inject(Act act)
+		{
+			Act = act;
 		}
 	}
 }
