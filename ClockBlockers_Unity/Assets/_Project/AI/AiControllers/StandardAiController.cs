@@ -93,14 +93,14 @@ namespace ClockBlockers.AI.AiControllers
 			// _assailantFound = new AssailantFound();
 			
 			// _targetDied = new TargetDied();
-			// _targetFled = new TargetFled();
+			_targetFled = new TargetFled(_enemySpotted);
 			
 			_died = new Died(healthComponent);
 
 			// _roundBegun = new RoundBegun();
 
 
-			AddTransition(_lookingForAssailant, _idle, always);
+			AddTransition(_lookingForAssailant, _idle, _targetFled);
 			
 			
 			

@@ -33,5 +33,7 @@ Now, after showing that, you can build and play. <br><br>
 There are four things you can do in this game. <br>
 You can move and rotate your character<br>
 You can shoot the gun (Only thing in the game with a sound). <br>
-You can press R to 'Reset the round', which promptly creates a Clone that retraces your previous path.<br>
+You can press R to 'Reset the round', which promptly creates a Clone that retraces your previous path.*<br>
 You can right-click on a clone to take control over that clone, and then you can middle-click anywhere to order the clone to move where you clicked. 
+
+\* Currently it follows the entire path, not taking time into consideration. Therefore, if the player goes to A, stands there for 10 seconds before starting to move towards B, the clone will go to A and then immediately go towards B.

@@ -28,7 +28,7 @@ namespace ClockBlockers.MapData.Pathfinding
 		private int _totalChecks;
 		private int _framesTaken;
 
-		private IPathfindingManager pathfindingManager;
+		// private IPathfindingManager _pathfindingManager;
 
 
 		private readonly List<PathfindingMarker> _path;

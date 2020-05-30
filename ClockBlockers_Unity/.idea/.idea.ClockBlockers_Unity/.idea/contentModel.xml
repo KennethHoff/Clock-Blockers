@@ -104,6 +104,7 @@
                 <e p="HasThingsToDo.cs" t="Include" />
                 <e p="OutOfThingsToDo.cs" t="Include" />
                 <e p="RoundBegun.cs" t="Include" />
+                <e p="TargetFled.cs" t="Include" />
                 <e p="UnderFire.cs" t="Include" />
               </e>
               <e p="States" t="Include">
