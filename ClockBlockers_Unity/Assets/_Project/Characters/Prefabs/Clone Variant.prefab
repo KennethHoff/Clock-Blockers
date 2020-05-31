@@ -87,6 +87,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controllingPlayer: {fileID: 0}
+  stateText: {fileID: 8666296872555982659}
   lookingForAssailantVisualizer: {fileID: 48027331327203101, guid: bfe24101a850d0247bb76f75a1701cc5, type: 3}
   viewAngle:
     useConstant: 0
@@ -116,6 +117,22 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 791905677608258768, guid: 67d00b1d2b3cb5e499d32550ea99e5e9, type: 3}
+      propertyPath: m_text
+      value: <Current State>
+      objectReference: {fileID: 0}
+    - target: {fileID: 791905677608258768, guid: 67d00b1d2b3cb5e499d32550ea99e5e9, type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 791905677608258768, guid: 67d00b1d2b3cb5e499d32550ea99e5e9, type: 3}
+      propertyPath: m_textInfo.spaceCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 791905677608258768, guid: 67d00b1d2b3cb5e499d32550ea99e5e9, type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 2253878129744993473, guid: 67d00b1d2b3cb5e499d32550ea99e5e9, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -179,3 +196,14 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 2253878130908946237, guid: 67d00b1d2b3cb5e499d32550ea99e5e9, type: 3}
   m_PrefabInstance: {fileID: 8266837681266467731}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &8666296872555982659 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 791905677608258768, guid: 67d00b1d2b3cb5e499d32550ea99e5e9, type: 3}
+  m_PrefabInstance: {fileID: 8266837681266467731}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿using ClockBlockers.BetweenNames.Attributes;
 using ClockBlockers.Characters;
 using ClockBlockers.Input;
 using ClockBlockers.ReplaySystem.ReplayRunner;
@@ -26,6 +25,7 @@ namespace ClockBlockers.AI.AiControllers
 
 		#endregion
 
+		[ReadOnlyField]
 		public PlayerInputController controllingPlayer;
 
 		[SerializeField]
@@ -59,16 +59,23 @@ namespace ClockBlockers.AI.AiControllers
 			InitializeStateMachine();
 		}
 
+		protected void Update()
+		{
+			stateMachine.Tick();
+		}
+
 		private void InitializeStateMachine()
 		{
 			stateMachine = new StateMachine();
 
 			SetupStates();
 		}
-		
+
 
 		// TODO: Turn states and conditions into ScriptableObjects. [More inside]
+
 		// You input a 'State' ScriptableObject and a 'Condition' Scriptable Object in the Inspector.
+
 
 		protected virtual void SetupStates()
 		{
@@ -78,6 +85,7 @@ namespace ClockBlockers.AI.AiControllers
 		}
 
 		protected abstract void Begin();
+
 		protected abstract void End();
 
 
@@ -93,6 +101,7 @@ namespace ClockBlockers.AI.AiControllers
 				controllingPlayer = null;
 			}
 		}
+
 		protected void AddTransition(IState from, IState to, ICondition condition)
 		{
 			stateMachine.AddTransition(from, to, condition);
@@ -101,11 +110,6 @@ namespace ClockBlockers.AI.AiControllers
 		protected void AddAnyTransition(IState to, ICondition condition)
 		{
 			stateMachine.AddAnyTransition(to, condition);
-		}
-
-		private void Update()
-		{
-			stateMachine.Tick();
 		}
 
 		public void ForceRequestPathTo(Vector3 hitPoint)

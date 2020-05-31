@@ -10,8 +10,10 @@ namespace ClockBlockers.StateMachines
 	// https://www.youtube.com/watch?v=V75hgcsCGOM
 	public class StateMachine
 	{
-		private IState _current;
-		
+		private IState _currentState;
+
+		public IState CurrentState => _currentState;
+
 		private Dictionary<Type, List<Transition>> _transitions = new Dictionary<Type, List<Transition>>(); // From A => B/C/D, From B => A/C/F, from D => A/E/G, etc..
 		private List<Transition> _currentTransitions = new List<Transition>(); // From currentState => ..
 
@@ -28,26 +30,26 @@ namespace ClockBlockers.StateMachines
 				SetState(transition.To);
 			}
 
-			_current?.Tick();
+			_currentState?.Tick();
 		}
 
 		private void SetState(IState state)
 		{
-			if (state == _current) return;
+			if (state == _currentState) return;
 
-			Logging.Log($"Changing state from {_current?.GetType().Name} to {state.GetType().Name}");
+			Logging.Log($"Changing state from {_currentState?.GetType().Name} to {state.GetType().Name}");
 
-			_current?.OnExit();
-			_current = state;
+			_currentState?.OnExit();
+			_currentState = state;
 
-			_transitions.TryGetValue(_current.GetType(), out _currentTransitions);
+			_transitions.TryGetValue(_currentState.GetType(), out _currentTransitions);
 
 			if (_currentTransitions == null)
 			{
 				_currentTransitions = EmptyTransitions;
 			}
 
-			_current.OnEnter();
+			_currentState.OnEnter();
 		}
 
 		public void AddTransition(IState from, IState to, ICondition condition)

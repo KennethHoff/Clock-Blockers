@@ -3,7 +3,10 @@
 using ClockBlockers.StateMachines;
 using ClockBlockers.StateMachines.AI.Conditions;
 using ClockBlockers.StateMachines.AI.States;
+using ClockBlockers.Utility;
 using ClockBlockers.Visualizations;
+
+using TMPro;
 
 using Unity.Burst;
 
@@ -50,6 +53,12 @@ namespace ClockBlockers.AI.AiControllers
 
 
 		[SerializeField]
+		private TMP_Text stateText;
+
+		
+
+
+		[SerializeField]
 		private VisualizerBase lookingForAssailantVisualizer = null;
 
 		[SerializeField]
@@ -58,6 +67,26 @@ namespace ClockBlockers.AI.AiControllers
 		[SerializeField]
 		private FloatReference viewRange;
 
+
+		private void OnGUI()
+		{
+			TestGuiText();
+		}
+
+		private void TestGuiText()
+		{
+			stateText.text = stateMachine.CurrentState.GetType().Name;
+
+			if (Camera.main == null)
+			{
+				Logging.LogWarning("<color='red'>No Main Camera!</color>");
+				return;
+			}
+			
+			float yRot = Quaternion.LookRotation(transform.position - Camera.main.transform.position).eulerAngles.y;
+			
+			stateText.rectTransform.rotation = Quaternion.Euler(0, yRot, 0);
+		}
 
 		protected override void SetupStates()
 		{
