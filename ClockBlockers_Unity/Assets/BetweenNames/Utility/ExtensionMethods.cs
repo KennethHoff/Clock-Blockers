@@ -1,17 +1,10 @@
-﻿using Unity.Burst;
-
-using UnityEngine;
+﻿using UnityEngine;
 
 
-// ReSharper disable UnusedMember.Global
-
-
-namespace ClockBlockers.Utility
+// ReSharper disable once CheckNamespace
+namespace Between_Names.Utility
 {
-	[BurstCompile]
 	public static class ExtensionMethods {
-
-		
 		
 		public static float[] ToFloatArray(this Vector3 vector3)
 		{
@@ -40,8 +33,7 @@ namespace ClockBlockers.Utility
 
 		public static float[] Scale(this float[] array, float scalar = 1)
 		{
-			// ReSharper disable once SuggestVarOrType_Elsewhere
-			float[] result = new float[array.Length];
+			var result = new float[array.Length];
 
 			for (var i = 0;
 				i < array.Length;
@@ -55,12 +47,8 @@ namespace ClockBlockers.Utility
 
 		public static Vector3 Round(this Vector3 vector3, int decimalPlaces = 2)
 		{
-			float multiplier = 1;
-			for (var i = 0; i < decimalPlaces; i++)
-			{
-				multiplier *= 10f;
-			}
-
+			var multiplier = (int) Mathf.Pow(10, decimalPlaces);
+			
 			return new Vector3(
 				Mathf.Round(vector3.x * multiplier) / multiplier,
 				Mathf.Round(vector3.y * multiplier) / multiplier,

@@ -16,6 +16,5 @@ namespace ClockBlockers.ToBeMoved.DataStructures
 			this.damage = damage;
 			this.source = source;
 		}
-
 	}
 }

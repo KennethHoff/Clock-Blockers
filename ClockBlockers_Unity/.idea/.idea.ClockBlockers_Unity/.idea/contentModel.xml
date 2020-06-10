@@ -132,7 +132,13 @@
           <e p="Tests" t="Include">
             <e p="EditMode" t="Include">
               <e p="EditModeTests.asmdef" t="Include" />
-              <e p="NewTestScript.cs" t="Include" />
+              <e p="ExtensionMethods" t="Include">
+                <e p="Types" t="Include">
+                  <e p="FloatTests.cs" t="Include" />
+                  <e p="Vector2Tests.cs" t="Include" />
+                  <e p="Vector3Tests.cs" t="Include" />
+                </e>
+              </e>
             </e>
             <e p="PlayMode" t="Include">
               <e p="NewTestScript.cs" t="Include" />
@@ -159,7 +165,6 @@
           </e>
           <e p="Utility" t="Include">
             <e p="DataManipulation.cs" t="Include" />
-            <e p="ExtensionMethods.cs" t="Include" />
             <e p="Logging.cs" t="Include" />
             <e p="RayCaster.cs" t="Include" />
           </e>
@@ -197,6 +202,9 @@
             <e p="IntReference.cs" t="Include" />
             <e p="IntVariable.cs" t="Include" />
             <e p="IPropertyReference.cs" t="Include" />
+          </e>
+          <e p="Utility" t="Include">
+            <e p="ExtensionMethods.cs" t="Include" />
           </e>
         </e>
       </e>

@@ -1,0 +1,334 @@
+commit 7516c4576ab82eec60432d7bbe9528e67a668518
+Author: Kenneth Hoff <kenneth.98@hotmail.com>
+Date:   Sun May 31 23:02:24 2020 +0200
+
+    La til eksamens-dokumentasjon
+
+commit 466970fa7a8da507a9fc75c8938235a45754c539
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Sun May 31 17:23:07 2020 +0200
+
+    Update README.md
+
+commit 2f1508d35d87c43f4bda60d00e865a1f01438376
+Author: Kenneth Hoff <kenneth.98@hotmail.com>
+Date:   Sun May 31 17:21:53 2020 +0200
+
+    First 'deliverable' version
+
+commit 9c075dc219a0b6f617bbb131adede09653cfd641
+Author: Kenneth Hoff <kenneth.98@hotmail.com>
+Date:   Sat May 30 23:47:37 2020 +0200
+
+    Update Readme with an introduction to the main (currently working) features
+    Add temporary targetFled condition (All it does is negate the result of the EnemySpotted condition)
+
+commit 02b958e132610771cfe81a8ed626e20f6dd40962
+Author: Kenneth Hoff <kenneth.98@hotmail.com>
+Date:   Sat May 30 22:52:01 2020 +0200
+
+    Update Readme with an introduction to the main (currently working) features
+
+commit 50bd31fb3ca7fa00f710af7ac863287da6db6e75
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Wed May 13 23:39:59 2020 +0200
+
+    Added a few more AiController states, refined class accessibility, added a document describing some of my implementation details
+    
+    *Concrete class implementations are now internal, rather than Public
+    * Changed the AStarPathFinder dictionary to use references rather than instanceIDs. (Was no reason to have it use IDs in the first place)
+    * Slightly refactored 'Death logic'. Now is activated by the new 'Dead' State - more work is required.
+    * New Word document that describes my usage of Internal/Public Class availability
+
+commit 78323aac0fa1e5ed3942f105576f7f98afd53231
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Wed May 13 13:09:39 2020 +0200
+
+    Movement Replication is now somewhat working
+    
+    *Fixed an infinite loop caused by looking for a path between the same marker (A -> A)
+
+commit 07bda87598be8b6aad6ca389509d58986c1d5e97
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Wed May 13 04:01:03 2020 +0200
+
+    Added multiStep pathfinding. However, it uses an exorbitant amount of memory, so I need to remove the Dictionary in the AStarPathfinder Class
+
+commit 3e19948e53403733ac81f62a64e609e4cf60112e
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Mon May 11 22:55:16 2020 +0200
+
+    Fixed a problem in the last push that made the PathfindingGrid no longer have a IPathfindingManager
+    
+    Fixed
+
+commit a3bc80d5c35688488675ef569647d4fa95e90276
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Mon May 11 22:34:43 2020 +0200
+
+    Gravity, Jumping and AI PathFollowing
+    
+    The implementation of 'jumping' needs to be though about. Currently it's jumping as as soon as it's colliding with anything on any side, so when he'll jump at every corner (as they hit the corner when they move)
+
+commit d9f80e334538bbc90d05bb288a85868b1cc37b3d
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Mon May 11 20:30:30 2020 +0200
+
+    Completely refactored State Machines
+    
+    Unity is still constantly crashing
+
+commit 686bdb53fdcc4f3a711e6dbb854b39beb0bdd7f3
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Sun May 10 22:23:49 2020 +0200
+
+    Slightly refactored Act/Round/Match.
+
+commit d036d369ac66b3586a3e2de9b1679c7027152aac
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Sun May 10 02:27:43 2020 +0200
+
+    Reorganized the folder structure somewhat - The game can now be built.
+    
+    * Renamed the main assembly to 'ClockBlockers'
+    * Moved all Editor scripts into a new Folder with their own Assembly 'Clockblockers.Editor'
+    * Same, but with 'BetweenNames' assembly (Only used for the Property References for now)
+    
+    * Started working on the CharacterController again
+
+commit 1f2022783094d244dbad782250b7883fcb64749f
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Fri May 8 18:32:16 2020 +0200
+
+    Refined Marker generation and adjacency
+    
+    * Markers are now named from top -> bottom rather now bottom -> top, if multiple are created on the same Y-axis
+    * Markers now always connected to all adjacent nodes, regardless of height, and now allows for height-related checks post-mortum
+    * Trying to create a path from one marker to another, via the Editor, now uses the grid's Default 'DefaultJumpHeight' field
+
+commit f079e9b3b424c63023ae5bdf22f6fc130819e62b
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Fri May 8 04:04:47 2020 +0200
+
+    Added 'FindNearestMarker', but it required me to add 'IsTrigger' colliders to the markers, which is something I didn't want
+
+commit 15169d01411c4bd0bca27d5744fb03a2b1f5132d
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Thu May 7 23:54:15 2020 +0200
+
+    Refactored AStarPathfinding. Now uses Coroutines(So it no longer freezes), and can be set to show its search in the Editor
+
+commit 153ee5672a43ad388be8ffbffef58087000e5484
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Thu May 7 02:37:44 2020 +0200
+
+    Take two on the A* Pathfinder (Promptly called 'AStarPathFinderTwo').
+    
+    This works a lot more reliably, and better - actually gets the best path.
+    
+    This still has the same issues the last one has, except the most important one: It actually gets the (roughly.. some kinks still) path
+    
+    I also moved all NodeDictionary-related things into the A* PathFinder class itself; Wasn't needed in Grid after all.
+
+commit f70e32003d500145e8dec0cfb48c2635344b817a
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Wed May 6 23:27:51 2020 +0200
+
+    First version of A* Pathfinding
+    
+    There are 3 main problems with it so far:
+    * It finds a valid path, but it's certainly not the fastest path. [https://cdn.discordapp.com/attachments/513222373483347979/707702163337379920/unknown.png]
+    * Each agent should have their own instance of the Pathfinding Class, as opposed to on the Grid itself as it is currently
+    * It should be parallelized (Requires the previous point to be implemented)
+
+commit f04c99692d0b9f796fa1d4702a10ff587dd1f4f5
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Wed May 6 01:27:08 2020 +0200
+
+    Started over from the 'Orbital Ray Marker Generator', and now it works fairly well. (Can't go up/down diagonally yet however)
+
+commit b12e23ff6ab9e941103a32e9741e644b937d7523
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Tue May 5 02:32:29 2020 +0200
+
+    Refactored SurfaceColliderMarkerGenerator - Now kind-of sort-of maybe not-really working
+
+commit 56b1f0749e39ddb01185f30e5c26d4604a54ff33
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Mon May 4 19:42:23 2020 +0200
+
+    Moved MarkerGenerators into sub-folders
+
+commit 34569aec1c0bd9c5211642e057c51b91bb7c2f92
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Mon May 4 00:06:15 2020 +0200
+
+    Slight refactoring and code-cleanup of two (no longer used, so not really sure why I did it) Marker Generators
+
+commit 8a92f9e2f7c9468b092238b6125f9127d41a3529
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Sat May 2 22:15:22 2020 +0200
+
+    First (not working) version of 'Surface Collider Marker Generation'
+
+commit 2dbd8d190e40f84f8f54020eec11f1a9ec65dee8
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Wed Apr 29 00:10:24 2020 +0200
+
+    Added 'Create Markers above Floor level' separate from 'Draw Markers Above Floor Level' (Which counteracts eachother in the DrawGizmo phase)
+
+commit 90e733733d6c4246e642637381b88e6a4448843a
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Tue Apr 28 20:05:43 2020 +0200
+
+    Pathfinding Markers are now serialized - for real this time.
+
+commit a4af1108c25522c0381f16fe1e2863996e2eb76a
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Tue Apr 28 18:32:09 2020 +0200
+
+    PathFindingGrid refactoring, as well as fixed the serialization of Markers
+    
+    * Refactored Grid into 'Marker Generator component'
+    * Markers are now properly saved across Editor Reloads, as well as in the scene file
+
+commit 66c9ad62e2006296674e8f3f43281df3261997bc
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Tue Apr 28 02:14:59 2020 +0200
+
+    Implemented Pathfinding markers
+
+commit 1f2c3421101a1c937309c6f5a7b1b71994f0ae71
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Sun Apr 26 13:55:00 2020 +0200
+
+    Pre-downgrade to 2018.4.22f1 LTS
+
+commit d5e1ea88e6ddc87a955652d9733bff4618b8c4fe
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Sun Apr 26 03:02:54 2020 +0200
+
+    Commented out a few non-functioning lines
+
+commit 90ad1a4eec39386082f598e5a5b26a5e910ad2fb
+Merge: 94a9ff4 249d72a
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Sun Apr 26 02:58:27 2020 +0200
+
+    Merge pull request #1 from Modernkennnern/GoodTest1
+    
+    Good test1
+
+commit 249d72a80f479717511a32453b8bbe52e5c1c340
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Sun Apr 26 02:57:31 2020 +0200
+
+    Implemented own collision-system
+
+commit 6a8e63ad7b2b9d5be72ec8dc07b3ab5db760815b
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Tue Mar 10 19:53:40 2020 +0100
+
+    Whatever I did 10 days ago
+
+commit 1415f324e9df138fec8523014e54a6fde754ec2d
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Fri Feb 28 08:50:59 2020 +0100
+
+    As always, I can never remember what I've done; Mostly with PlayerInputController
+
+commit 1d0afaf651321249ca03d759bb5fac7027720139
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Thu Feb 27 02:53:13 2020 +0100
+
+    Refactored GameController. Game *does not* work yet
+
+commit 1d1d1782b46361a8eba031adf8cb6e7a1f29d4c8
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Tue Feb 25 22:35:15 2020 +0100
+
+    Finalized folder restructuring
+
+commit 6e978b06a4a5c93fd16e063fd5b27c955c2a034b
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Tue Feb 25 11:43:23 2020 +0100
+
+    Started work on the new replay system
+    
+    * Modularized the current replay system. Now runs off of interfaces rather than concrete implementation (.. Except for one thing, but I don't know how to do it, as they're fundamentally different)
+    * Renamed a few things
+    * And more
+
+commit e4c74617e35a076a6f93f57668284a055a94c4ff
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Mon Feb 24 10:18:12 2020 +0100
+
+    Having issues with creating interfaces for targetting and ray-creation
+
+commit 10b4ecdb5ace793c54bd353d4f0c7b656fdc3c26
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Mon Feb 24 03:23:55 2020 +0100
+
+    Can't really remember what I've done..
+    
+    * Refactored action replaying; Now it's way more generic.
+
+commit 83289db45891c235a7e581c2c594d8e996779b35
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Sun Feb 23 04:27:07 2020 +0100
+
+    Started using JetBrains Rider
+
+commit c40ea00f499b131370367788d3497294e5826552
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Sun Feb 23 04:25:33 2020 +0100
+
+    Started using JetBrains Rider
+
+commit a7dbaa6e530d86291878f595519d4f8776f6e1cd
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Sat Feb 22 23:17:31 2020 +0100
+
+    Did things
+
+commit 94a9ff490c321cfd18b26a17f754c05eda2e3cc0
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Thu Feb 20 03:08:36 2020 +0100
+
+    Added a few things; Primarily improved accuracy of stored values.
+    
+    Added Targets to the Arena, to (manually) test consistency between actions(Player) and replays (Clones)
+    
+    Moved rotating back into Update, as opposed to FixedUpdate, as it made the camera feel unresponsive. No ill side effects.
+    
+    Dramatically improved accuracy of storage, as I made an oversight in implementation; Rotation values used was not capped at x decimal places as the rotation values stored were, so over time there was a decimal inconsistency.
+
+commit 3d4e5f499765d96179df315b25a55f5cdbdb922e
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Wed Feb 19 19:02:07 2020 +0100
+
+    Added rudimentary shooting mechanics. Removed RegEx in favor of two simple strings. Added support for recursive clones
+
+commit 3eba84f60c67a21504bd245d5bc653d95b0d5683
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Wed Feb 19 01:45:25 2020 +0100
+
+    End of First day. Quite content with the result so far.
+
+commit 96a090cfa6d583195afd67f79ff438a9d485aebc
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Wed Feb 19 01:11:17 2020 +0100
+
+    Changed from Update => FixedUpdate
+
+commit ff970cd9727db5c4df2c255ac95bcec92b564dfb
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Tue Feb 18 22:43:27 2020 +0100
+
+    First version
+
+commit 0e23faf0118b06540c0694d419301ff4a757a82a
+Author: Modernkennnern <kenneth.98@hotmail.com>
+Date:   Tue Feb 18 22:36:07 2020 +0100
+
+    Initial commit
