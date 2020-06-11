@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+
+using UnityEngine;
 
 
 // ReSharper disable once CheckNamespace
@@ -16,10 +18,13 @@ namespace Between_Names.Utility
 			};
 		}
 
+		/// <param name="f"></param>
+		/// <param name="decimalPlaces">Should not be higher than 4, otherwise I can't guarantee precision</param>
 		public static float Round(this float f, int decimalPlaces)
 		{
 			var multiplier = (int) Mathf.Pow(10, decimalPlaces);
-			return Mathf.Round(f * multiplier) / multiplier;
+
+			return Mathf.Round(f * multiplier) / multiplier;	
 		}
 
 		public static float[] ToFloatArray(this Vector2 vector2)
